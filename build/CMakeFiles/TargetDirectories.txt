@@ -1,4 +1,0 @@
-D:/source/AStarPathfinder2/build/CMakeFiles/ALL_BUILD.dir
-D:/source/AStarPathfinder2/build/CMakeFiles/ZERO_CHECK.dir
-D:/source/AStarPathfinder2/build/AStarPathfinder/CMakeFiles/AStarPathfinder.dir
-D:/source/AStarPathfinder2/build/AStarPathfinder/CMakeFiles/ALL_BUILD.dir
