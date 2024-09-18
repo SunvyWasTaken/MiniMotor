@@ -10,12 +10,12 @@ struct Vec2
 	template <typename OtherType>
 	void operator()(OtherType op) const
 	{
-		x = op.x;
-		y = op.y;
+		x = static_cast<type>(op.x);
+		y = static_cast<type>(op.y);
 	}
 
 	template <typename OtherType>
-	Vec2(OtherType _x, OtherType _y) : x(static_cast<OtherType>(_x)), y(static_cast<OtherType>(_y)) {}
+	Vec2(OtherType _x, OtherType _y) : x(static_cast<type>(_x)), y(static_cast<type>(_y)) {}
 
 	template <typename OtherType>
 	bool operator<(const OtherType& other) const
@@ -29,30 +29,35 @@ struct Vec2
 	template <typename operandType>
 	void operator=(const Vec2<operandType>& op)
 	{
-		x = op.x; y = op.y;
+		x = static_cast<type>(op.x); y = static_cast<type>(op.y);
 	}
 
 	template <typename operandType>
 	Vec2<type> operator+(const Vec2<operandType>& op) const
 	{
-		return Vec2<type>(x + op.x, y + op.y);
+		return Vec2<type>(x + static_cast<type>(op.x), y + static_cast<type>(op.y));
 	}
 
 	template <typename operandType>
 	Vec2<type> operator-(const Vec2<operandType>& op) const
 	{
-		return Vec2<type>(x - op.x, y - op.y);
+		return Vec2<type>(x - static_cast<type>(op.x), y - static_cast<type>(op.y));
 	}
 
 	template <typename operandType>
 	void operator+=(const Vec2<operandType>& op)
 	{
-		x += op.x; y += op.y;
+		x += static_cast<type>(op.x); y += static_cast<type>(op.y);
+	}
+
+	double squareLength() const
+	{
+		return x * x + y * y;
 	}
 
 	double length() const
 	{
-		return std::sqrt(x * x + y * y);
+		return std::sqrt(squareLength());
 	}
 
 };

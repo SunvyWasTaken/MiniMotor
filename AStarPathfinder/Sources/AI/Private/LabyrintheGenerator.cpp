@@ -8,18 +8,22 @@
 std::default_random_engine rGen;
 using intRand = std::uniform_int_distribution<int>;
 
-void LabyrintheGenerator::GenerateLabyrinthe(IWorld* World)
+void LabyrintheGenerator::GenerateLabyrinthe(IWorld* World, std::atomic<bool>& IsGenerationDone)
 {
-	bool MazeComplete = false;
-	while (!MazeComplete)
+	int it = 0; 
+	while (!IsGenerationDone)
 	{
+		if (it >= 2)
+		{
+			return;
+		}
 		std::map<IVec2, Cell*> CellMap;
 		World->GetCellMap(CellMap);
 
 		std::vector<Wall*> WallList;
 		World->GetWallList(WallList);
 
-		intRand RandomBorder(0, WallList.size() - 1);
+		intRand RandomBorder(0, static_cast<int>(WallList.size() - 1));
 		int CurrentIndex = RandomBorder(rGen);
 		Wall* TargetWall = WallList[CurrentIndex];
 
@@ -41,6 +45,7 @@ void LabyrintheGenerator::GenerateLabyrinthe(IWorld* World)
 
 		if (Cell* CurrentCell = World->SetCellAt(World->m_WallHead + CurrentIndex))
 		{
+			++it;
 			Cell* ReferentCell = CellNeighboor[0];
 
 			CurrentCell->Neighbors.push_back(CellNeighboor[0]);
@@ -53,14 +58,14 @@ void LabyrintheGenerator::GenerateLabyrinthe(IWorld* World)
 			// End the loop if all the cell have the same value.
 			for (const auto& [key, cell] : CellMap)
 			{
-				MazeComplete = true;
+				IsGenerationDone = true;
 				if (ReferentCell->CurrentValue != cell->CurrentValue)
 				{
-					MazeComplete = false;
+					IsGenerationDone.exchange(false, std::memory_order_relaxed);
 					break;
 				}
 			}
-			if (MazeComplete)
+			if (IsGenerationDone.load(std::memory_order_relaxed))
 			{
 				std::cout << "Maze Complete!! " << std::endl;
 				return;

@@ -9,11 +9,13 @@ class SFMLRender : public IDraw<SFMLRender>
 public:
 	void Init();
 
+	void HandleEvent();
+
 	void Draw();
 
 	bool IsWindowOpen();
 
-	void BufferFrame(class IEntity* Entity);
+	void BufferFrame(size_t index, class IEntity* Entity);
 
 	void ClearWindow();
 
@@ -32,6 +34,10 @@ private:
 		std::unique_ptr<sf::RenderWindow> Window;
 
 		sf::VertexArray Rectangle;
+
+		sf::Clock clock;
+
+		sf::Font font;
 
 	private:
 		MyContainer() {}

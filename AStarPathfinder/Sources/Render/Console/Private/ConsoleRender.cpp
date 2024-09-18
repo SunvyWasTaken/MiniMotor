@@ -13,6 +13,10 @@ void Console::Init()
 	ClearWindow();
 }
 
+void Console::HandleEvent()
+{
+}
+
 void Console::Draw() const
 {
 	for (size_t y = 0; y < GRID_SIZE_Y + 1; ++y)
@@ -48,7 +52,7 @@ void Console::ClearWindow()
 	}
 }
 
-void Console::BufferFrame(IEntity* targetEntity)
+void Console::BufferFrame(size_t index, IEntity* targetEntity)
 {
 	if (targetEntity)
 	{

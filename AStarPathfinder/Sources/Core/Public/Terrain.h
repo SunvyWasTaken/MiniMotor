@@ -39,13 +39,13 @@ public:
 		// Draw the terrain.
 		for (size_t i = 0; i < TerrainGrid.size(); ++i)
 		{
-			targetDraw.BufferFrame(TerrainGrid[i].get());
+			targetDraw.BufferFrame(i, TerrainGrid[i].get());
 		}
 		// Next the Entity
-		for (int nbr = 0; nbr < EntityList.size(); ++nbr)
-		{
-			targetDraw.BufferFrame(EntityList[nbr].get());
-		}
+		//for (int nbr = 0; nbr < EntityList.size(); ++nbr)
+		//{
+		//	targetDraw.BufferFrame(i, EntityList[nbr].get());
+		//}
 	}
 
 	void GetCellMap(std::map<IVec2, Cell*>& CellMap);

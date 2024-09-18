@@ -13,13 +13,15 @@ public:
 
 	void Init();
 
+	void HandleEvent();
+
 	void Draw() const;
 
 	bool IsWindowOpen();
 
 	void ClearWindow();
 
-	void BufferFrame(class IEntity* targetEntity);
+	void BufferFrame(size_t index, class IEntity* targetEntity);
 
 	void CloseWindow();
 

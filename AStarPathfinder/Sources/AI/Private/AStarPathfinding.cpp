@@ -44,7 +44,7 @@ void PathFinderAlgo::AStarPathfinding(IWorld* World, IVec2 Start, IVec2 End)
 				continue;
 			}
 
-			int NewCost = (CurrentCell->Location - End).length() + 1;
+			int NewCost = static_cast<int>((CurrentCell->Location - End).length() + 1);
 			if (NewCost < (Neighboor->Location - End).length() || std::find(OpenList.begin(), OpenList.end(), Neighboor) == OpenList.end())
 			{
 				if (std::find(OpenList.begin(), OpenList.end(), Neighboor) == OpenList.end())

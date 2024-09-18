@@ -20,23 +20,28 @@ using CurrentRender = SFMLDraw;
 
 int main()
 {
-	IWorld CurrentWorld;
-	CurrentRender CurrentRender;
-	CurrentRender.World = &CurrentWorld;
-	CurrentRender.Init();
-	CurrentWorld.FillWorldGrid();
-	Player* CurrentPlayer = CurrentWorld.SpawnEntity<Player>({1, 1});
-	EndPoint* CurrentEndPoint = CurrentWorld.SpawnEntity<EndPoint>({39, 19});
+	std::unique_ptr<IWorld> CurrentWorld = std::make_unique<IWorld>();
+	CurrentRender CurrentRenderObj;
+	CurrentRenderObj.World = CurrentWorld.get();
+	CurrentRenderObj.Init();
+	CurrentWorld->FillWorldGrid();
+	Player* CurrentPlayer = CurrentWorld->SpawnEntity<Player>({1, 1});
+	EndPoint* CurrentEndPoint = CurrentWorld->SpawnEntity<EndPoint>({39, 19});
 
-	LabyrintheGenerator::GenerateLabyrinthe(&CurrentWorld);
+	std::atomic<bool> IsLabyrintheGenerationDone = false;
 
-	PathFinderAlgo::AStarPathfinding(&CurrentWorld, CurrentPlayer->Location, CurrentEndPoint->Location);
+	//PathFinderAlgo::AStarPathfinding(&CurrentWorld, CurrentPlayer->Location, CurrentEndPoint->Location);
 
-	while (CurrentRender.IsWindowOpen())
+	while (CurrentRenderObj.IsWindowOpen())
 	{
-		CurrentWorld.BufferFrameEntitys(CurrentRender);
-		CurrentRender.Draw();
-		CurrentRender.ClearWindow();
+		if (!IsLabyrintheGenerationDone)
+		{
+			LabyrintheGenerator::GenerateLabyrinthe(CurrentWorld.get(), IsLabyrintheGenerationDone);
+		}
+		CurrentRenderObj.HandleEvent();
+		CurrentWorld->BufferFrameEntitys(CurrentRenderObj);
+		CurrentRenderObj.Draw();
+		CurrentRenderObj.ClearWindow();
 	}
-	CurrentRender.CloseWindow();
+	CurrentRenderObj.CloseWindow();
 }

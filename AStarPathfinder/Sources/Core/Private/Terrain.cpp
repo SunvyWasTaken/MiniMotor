@@ -8,7 +8,7 @@
 IWorld::IWorld()
 	: m_BorderHead(0)
 	, m_WallHead((2 * GRID_SIZE_Y) + (2 * GRID_SIZE_X))
-	, m_CellHead((GRID_SIZE_Y* GRID_SIZE_X * 0.75) + GRID_SIZE_Y + GRID_SIZE_X + 1)
+	, m_CellHead(static_cast<size_t>((GRID_SIZE_Y* GRID_SIZE_X * 0.75) + GRID_SIZE_Y + GRID_SIZE_X + 1))
 {}
 
 Cell* IWorld::SetCellAt(size_t Index)
