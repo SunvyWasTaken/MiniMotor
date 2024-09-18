@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\source\AStarPathfinder2\AStarPathfinder\Sources\AI\Private\AStarPathfinding.cpp">
+      <Filter>Sources\AI\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\source\AStarPathfinder2\AStarPathfinder\Sources\AI\Private\LabyrintheGenerator.cpp">
+      <Filter>Sources\AI\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\source\AStarPathfinder2\AStarPathfinder\Sources\Core\Private\Terrain.cpp">
+      <Filter>Sources\Core\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\source\AStarPathfinder2\AStarPathfinder\Sources\Private\Entitys.cpp">
+      <Filter>Sources\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\source\AStarPathfinder2\AStarPathfinder\Sources\Private\main.cpp">
+      <Filter>Sources\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\source\AStarPathfinder2\AStarPathfinder\Sources\Render\Console\Private\ConsoleRender.cpp">
+      <Filter>Sources\Render\Console\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\source\AStarPathfinder2\AStarPathfinder\Sources\Render\SFML\Private\SFMLRender.cpp">
+      <Filter>Sources\Render\SFML\Private</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\source\AStarPathfinder2\AStarPathfinder\Sources\AI\Public\AStarPathfinding.h">
+      <Filter>Sources\AI\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\source\AStarPathfinder2\AStarPathfinder\Sources\AI\Public\LabyrintheGenerator.h">
+      <Filter>Sources\AI\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\source\AStarPathfinder2\AStarPathfinder\Sources\Core\Public\Setting.h">
+      <Filter>Sources\Core\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\source\AStarPathfinder2\AStarPathfinder\Sources\Core\Public\Terrain.h">
+      <Filter>Sources\Core\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\source\AStarPathfinder2\AStarPathfinder\Sources\Core\Public\Vec2.h">
+      <Filter>Sources\Core\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\source\AStarPathfinder2\AStarPathfinder\Sources\Public\Entitys.h">
+      <Filter>Sources\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\source\AStarPathfinder2\AStarPathfinder\Sources\Render\Console\Public\ConsoleRender.h">
+      <Filter>Sources\Render\Console\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\source\AStarPathfinder2\AStarPathfinder\Sources\Render\Public\IRender.h">
+      <Filter>Sources\Render\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\source\AStarPathfinder2\AStarPathfinder\Sources\Render\SFML\Public\SFMLRender.h">
+      <Filter>Sources\Render\SFML\Public</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\source\AStarPathfinder2\AStarPathfinder\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{55C89363-5CA7-3DEB-81CB-5CCA8DA3E4AD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\AI">
+      <UniqueIdentifier>{065AA14D-AF9C-3BEB-9C94-F3E9F13F5058}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\AI\Private">
+      <UniqueIdentifier>{9BCF9D09-D0C4-3429-84DF-EC3F4F00FDE0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\AI\Public">
+      <UniqueIdentifier>{CD98ED28-896A-3E9C-BD19-7744F8EE01B4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Core">
+      <UniqueIdentifier>{0D0C006D-F53B-3313-8F02-3F737134BD83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Core\Private">
+      <UniqueIdentifier>{D3742F94-6B6A-39D4-9A0D-8DF1E04B5318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Core\Public">
+      <UniqueIdentifier>{6B2F6247-755C-39BB-B32A-2577AD33A02A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Private">
+      <UniqueIdentifier>{A4BA495D-4F04-3C40-8A09-629971796E45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Public">
+      <UniqueIdentifier>{183DF128-7F0C-33BD-A8FF-5FCD5921C664}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Render">
+      <UniqueIdentifier>{1B9C8F9B-56D7-366D-9674-6F33C3995096}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Render\Console">
+      <UniqueIdentifier>{BAED048D-EA53-3566-95F6-E93561071FDA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Render\Console\Private">
+      <UniqueIdentifier>{A34E7575-D5F7-3F26-945A-8887EC7F42BD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Render\Console\Public">
+      <UniqueIdentifier>{44E920F6-520F-3DB8-8CC8-555F746AAA59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Render\Public">
+      <UniqueIdentifier>{03A3277D-12F8-34C1-B3CB-6165161833CE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Render\SFML">
+      <UniqueIdentifier>{BCEA0721-F9AC-3E5A-B6BB-27CA5BAEF1D6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Render\SFML\Private">
+      <UniqueIdentifier>{EE2AB647-D7BC-35A4-B5F1-8B36959E831A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Render\SFML\Public">
+      <UniqueIdentifier>{D086C210-C249-337E-B2F9-8AF2823E9438}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

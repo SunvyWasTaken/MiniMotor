@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\source\AStarPathfinder2\build\CMakeFiles\1bad37592d0c59cccbbf1d920be6fc06\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{C3ED362D-14BF-3D48-88BA-65B38BE87F91}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
