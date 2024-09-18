@@ -8,15 +8,14 @@
 #include "Debug.h"
 
 #define CellSize 4
-#define WindowSize 800
+#define WindowSize 850
 
 void SFMLRender::Init()
 {
 	MyContainer::GetValue()->Window = std::make_unique<sf::RenderWindow>(sf::VideoMode(WindowSize, WindowSize), "SFML works!");
 	MyContainer::GetValue()->Rectangle.setPrimitiveType(sf::Quads);
 	MyContainer::GetValue()->Rectangle.resize(4 * World->TerrainGrid.size());
-	bool LoadFont = MyContainer::GetValue()->font.loadFromFile({"Ressources/PoiretOne-Regular.ttf"});
-	ensure(LoadFont);
+	ensure(MyContainer::GetValue()->font.loadFromFile("Ressources/PoiretOne-Regular.ttf"));
 }
 
 void SFMLRender::HandleEvent()
@@ -40,16 +39,9 @@ void SFMLRender::HandleEvent()
 void SFMLRender::Draw()
 {
 	sf::Time ElapseTime = MyContainer::GetValue()->clock.restart();
-	double FPS = 1.0 / ElapseTime.asSeconds();
-
-	sf::Text text;
-	//text.setFillColor(sf::Color::Transparent);
-	text.setOutlineColor(sf::Color::Red);
-	text.setCharacterSize(10);
-	text.setPosition(0, 0);
-	text.setScale({50, 50});
-	text.setFont(MyContainer::GetValue()->font);
-	text.setString(std::to_string(FPS));
+	int FPS = static_cast<int>(1.f / ElapseTime.asSeconds());
+	std::string FPSString = "Fps : " + std::to_string(FPS);
+	sf::Text text{FPSString, MyContainer::GetValue()->font};
 	MyContainer::GetValue()->Window->draw(MyContainer::GetValue()->Rectangle);
 	MyContainer::GetValue()->Window->draw(text);
 	MyContainer::GetValue()->Window->display();
@@ -63,10 +55,10 @@ bool SFMLRender::IsWindowOpen()
 void SFMLRender::BufferFrame(size_t index, class IEntity* Entity)
 {
 	size_t i = index * 4;
-	MyContainer::GetValue()->Rectangle[i + 0].position = sf::Vector2f(static_cast<float>(Entity->Location.x * CellSize), static_cast<float>(Entity->Location.y * CellSize));
-	MyContainer::GetValue()->Rectangle[i + 1].position = sf::Vector2f(static_cast<float>((Entity->Location.x * CellSize) + CellSize), static_cast<float>(Entity->Location.y * CellSize));
-	MyContainer::GetValue()->Rectangle[i + 2].position = sf::Vector2f(static_cast<float>((Entity->Location.x * CellSize) + CellSize), static_cast<float>((Entity->Location.y * CellSize) + CellSize));
-	MyContainer::GetValue()->Rectangle[i + 3].position = sf::Vector2f(static_cast<float>(Entity->Location.x * CellSize), static_cast<float>((Entity->Location.y * CellSize) + CellSize));
+	MyContainer::GetValue()->Rectangle[i + 0].position = sf::Vector2f(static_cast<float>((Entity->Location.x * CellSize) + (CellSize/2)), static_cast<float>(Entity->Location.y * CellSize) + (CellSize/2));
+	MyContainer::GetValue()->Rectangle[i + 1].position = sf::Vector2f(static_cast<float>(((Entity->Location.x * CellSize) + (CellSize/2)) + CellSize), static_cast<float>(Entity->Location.y * CellSize) + (CellSize/2));
+	MyContainer::GetValue()->Rectangle[i + 2].position = sf::Vector2f(static_cast<float>((Entity->Location.x * CellSize) + (CellSize/2) + CellSize), static_cast<float>((Entity->Location.y * CellSize) + CellSize + (CellSize/2)));
+	MyContainer::GetValue()->Rectangle[i + 3].position = sf::Vector2f(static_cast<float>((Entity->Location.x * CellSize) + (CellSize/2)), static_cast<float>((Entity->Location.y * CellSize) + CellSize) + (CellSize/2));
 
 	sf::Color color = (Entity->IsCell() ? sf::Color::Black : sf::Color::Blue);
 
