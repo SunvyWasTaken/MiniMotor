@@ -401,3 +401,4 @@ FodyWeavers.xsd
 *.vcxproj
 *.filters
 *.sln
+/build
