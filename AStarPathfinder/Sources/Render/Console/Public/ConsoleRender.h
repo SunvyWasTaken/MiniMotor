@@ -1,11 +1,11 @@
 #pragma once
 
-#include "IRender.h"
+#include "GenericRender.h"
 #include "Setting.h"
 
 #include <string>
 
-class Console : public IDraw<Console>
+class ConsoleRender : public GenericRender<ConsoleRender>
 {
 	using type = std::string[GRID_SIZE_X + 1][GRID_SIZE_Y + 1];
 
@@ -21,29 +21,14 @@ public:
 
 	void ClearWindow();
 
-	void BufferFrame(size_t index, class IEntity* targetEntity);
+	void BufferFrame(size_t index, class Entity* targetEntity);
 
 	void CloseWindow();
 
 private:
 
-	struct MyContainer
-	{
-		static MyContainer* GetValue();
+	type m_Image;
 
-		static MyContainer* SelfPtr;
-
-		static void DestroyContainer();
-
-		type m_Image;
-
-		int i = 0;
-
-	private:
-		MyContainer() {}
-		MyContainer(const MyContainer&) = delete;
-		MyContainer& operator=(const MyContainer&) = delete;
-	};
+	int i = 0;
 };
 
-using ConsoleDraw = IDraw<Console>;

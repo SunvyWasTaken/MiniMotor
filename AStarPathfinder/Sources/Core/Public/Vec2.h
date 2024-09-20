@@ -7,15 +7,20 @@ struct Vec2
 {
 	type x, y;
 
+	Vec2() : x(static_cast<type>(0)), y(static_cast<type>(0)) {}
+
+	template <typename OtherType>
+	Vec2(OtherType v) : x(static_cast<type>(v)), y(static_cast<type>(v)) {}
+
+	template <typename OtherType>
+	Vec2(OtherType _x, OtherType _y) : x(static_cast<type>(_x)), y(static_cast<type>(_y)) {}
+
 	template <typename OtherType>
 	void operator()(OtherType op) const
 	{
 		x = static_cast<type>(op.x);
 		y = static_cast<type>(op.y);
 	}
-
-	template <typename OtherType>
-	Vec2(OtherType _x, OtherType _y) : x(static_cast<type>(_x)), y(static_cast<type>(_y)) {}
 
 	template <typename OtherType>
 	bool operator<(const OtherType& other) const
@@ -62,5 +67,5 @@ struct Vec2
 
 };
 
-using FVec2 = Vec2<float>;
+using FVec2 = Vec2<double>;
 using IVec2 = Vec2<int>;

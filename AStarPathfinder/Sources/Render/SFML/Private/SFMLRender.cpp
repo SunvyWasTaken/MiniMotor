@@ -1,103 +1,109 @@
 
 #include "SFMLRender.h"
 
+#include "Debug/Debug.h"
 #include "Entitys.h"
 #include "Setting.h"
-#include "Terrain.h"
+#include "Utils/StateMachine.h"
 
-#include "Debug.h"
+#include <SFML/Graphics.hpp>
 
-#define CellSize 4
+#include <variant>
+
 #define WindowSize 850
+
+namespace
+{
+	sf::RenderWindow Window;
+
+	sf::Font font;
+
+	void DrawQuad2D(FQuad2D& obj)
+	{
+		sf::RectangleShape rectangle(sf::Vector2f(obj.size.x * CellSize, obj.size.y * CellSize));
+		rectangle.setPosition(obj.position.x * CellSize, obj.position.y * CellSize);
+		rectangle.setFillColor(sf::Color(obj.color.r, obj.color.g, obj.color.b, obj.color.a));
+		Window.draw(rectangle);
+	}
+
+	void DrawVertexArray(VertexArray2D& obj)
+	{
+		sf::VertexArray vertexArray(sf::Quads, obj->size());
+		for (uint64_t index = 0; index < obj->size(); ++index)
+		{
+			uint64_t i = index * 4;
+
+			vertexArray[i + 0].position = sf::Vector2f(obj[i].GetVerticePosition<Side::TopLeft>().x, obj[i].GetVerticePosition<Side::TopLeft>().y);
+			vertexArray[i + 1].position = sf::Vector2f(obj[i].GetVerticePosition<Side::TopRight>().x, obj[i].GetVerticePosition<Side::TopRight>().y);
+			vertexArray[i + 2].position = sf::Vector2f(obj[i].GetVerticePosition<Side::BottomRight>().x, obj[i].GetVerticePosition<Side::BottomRight>().y);
+			vertexArray[i + 3].position = sf::Vector2f(obj[i].GetVerticePosition<Side::BottomLeft>().x, obj[i].GetVerticePosition<Side::BottomLeft>().y);
+
+			vertexArray[i + 0].color = sf::Color(obj[i].GetVertice<Side::TopLeft>().color.r, obj[i].GetVertice<Side::TopLeft>().color.g, obj[i].GetVertice<Side::TopLeft>().color.b, obj[i].GetVertice<Side::TopLeft>().color.a);
+			vertexArray[i + 1].color = sf::Color(obj[i].GetVertice<Side::TopRight>().color.r, obj[i].GetVertice<Side::TopLeft>().color.g, obj[i].GetVertice<Side::TopLeft>().color.b, obj[i].GetVertice<Side::TopLeft>().color.a);
+			vertexArray[i + 2].color = sf::Color(obj[i].GetVertice<Side::BottomRight>().color.r, obj[i].GetVertice<Side::TopLeft>().color.g, obj[i].GetVertice<Side::TopLeft>().color.b, obj[i].GetVertice<Side::TopLeft>().color.a);
+			vertexArray[i + 3].color = sf::Color(obj[i].GetVertice<Side::BottomLeft>().color.r, obj[i].GetVertice<Side::TopLeft>().color.g, obj[i].GetVertice<Side::TopLeft>().color.b, obj[i].GetVertice<Side::TopLeft>().color.a);
+		}
+		Window.draw(vertexArray);
+	}
+}
 
 void SFMLRender::Init()
 {
-	MyContainer::GetValue()->Window = std::make_unique<sf::RenderWindow>(sf::VideoMode(WindowSize, WindowSize), "SFML works!");
-	MyContainer::GetValue()->Rectangle.setPrimitiveType(sf::Quads);
-	MyContainer::GetValue()->Rectangle.resize(4 * World->TerrainGrid.size());
-	ensure(MyContainer::GetValue()->font.loadFromFile("Ressources/PoiretOne-Regular.ttf"));
+	Window.create(sf::VideoMode(WindowSize, WindowSize), "SFML works!");
+	ensure(Window);
+	ensure(font.loadFromFile("Ressources/PoiretOne-Regular.ttf"));
 }
 
 void SFMLRender::HandleEvent()
 {
 	sf::Event event;
-	while (MyContainer::GetValue()->Window->pollEvent(event))
+	while (Window.pollEvent(event))
 	{
 		if (event.type == sf::Event::Closed)
-			MyContainer::GetValue()->Window->close();
+			Window.close();
 
 		if(event.type == sf::Event::Resized)
 		{
 			float ratio = (float)event.size.width / (float)event.size.height;
-			sf::View view = MyContainer::GetValue()->Window->getView();
+			sf::View view = Window.getView();
 			view.setSize(WindowSize * ratio, WindowSize);
-			MyContainer::GetValue()->Window->setView(view);
+			Window.setView(view);
 		}
 	}
 }
 
 void SFMLRender::Draw()
 {
-	sf::Time ElapseTime = MyContainer::GetValue()->clock.restart();
-	int FPS = static_cast<int>(1.f / ElapseTime.asSeconds());
-	std::string FPSString = "Fps : " + std::to_string(FPS);
-	sf::Text text{FPSString, MyContainer::GetValue()->font};
-	MyContainer::GetValue()->Window->draw(MyContainer::GetValue()->Rectangle);
-	MyContainer::GetValue()->Window->draw(text);
-	MyContainer::GetValue()->Window->display();
+	Window.display();
 }
 
 bool SFMLRender::IsWindowOpen()
 {
-	return MyContainer::GetValue()->Window->isOpen();
+	return Window.isOpen();
 }
 
-void SFMLRender::BufferFrame(size_t index, class IEntity* Entity)
+void SFMLRender::BufferFrame(Entity* Entity)
 {
-	size_t i = index * 4;
-	MyContainer::GetValue()->Rectangle[i + 0].position = sf::Vector2f(static_cast<float>((Entity->Location.x * CellSize) + (CellSize/2)), static_cast<float>(Entity->Location.y * CellSize) + (CellSize/2));
-	MyContainer::GetValue()->Rectangle[i + 1].position = sf::Vector2f(static_cast<float>(((Entity->Location.x * CellSize) + (CellSize/2)) + CellSize), static_cast<float>(Entity->Location.y * CellSize) + (CellSize/2));
-	MyContainer::GetValue()->Rectangle[i + 2].position = sf::Vector2f(static_cast<float>((Entity->Location.x * CellSize) + (CellSize/2) + CellSize), static_cast<float>((Entity->Location.y * CellSize) + CellSize + (CellSize/2)));
-	MyContainer::GetValue()->Rectangle[i + 3].position = sf::Vector2f(static_cast<float>((Entity->Location.x * CellSize) + (CellSize/2)), static_cast<float>((Entity->Location.y * CellSize) + CellSize) + (CellSize/2));
-
-	sf::Color color = (Entity->IsCell() ? sf::Color::Black : sf::Color::Blue);
-
-	MyContainer::GetValue()->Rectangle[i + 0].color = color;
-	MyContainer::GetValue()->Rectangle[i + 1].color = color;
-	MyContainer::GetValue()->Rectangle[i + 2].color = color;
-	MyContainer::GetValue()->Rectangle[i + 3].color = color;
+	for (auto drawable : Entity->drawables)
+	{
+		std::visit(overloaded(
+			[&](FQuad2D& obj)
+			{
+			}, 
+			[&](VertexArray2D& obj)
+			{
+				DrawVertexArray(obj);
+			}
+			), drawable);
+	}
 }
 
 void SFMLRender::ClearWindow()
 {
-	MyContainer::GetValue()->Window->clear();
-	//MyContainer::GetValue()->Rectangle.clear();
-	//MyContainer::GetValue()->Rectangle.setPrimitiveType(sf::Quads);
-	//MyContainer::GetValue()->Rectangle.resize(4 * World->TerrainGrid.size());
+	Window.clear();
 }
 
 void SFMLRender::CloseWindow()
 {
-	MyContainer::GetValue()->Window->close();
-	MyContainer::DestroyContainer();
+	Window.close();
 }
-
-SFMLRender::MyContainer* SFMLRender::MyContainer::GetValue()
-{
-	if (!SelfPtr)
-	{
-		SelfPtr = new MyContainer();
-	}
-	return SelfPtr;
-}
-
-void SFMLRender::MyContainer::DestroyContainer()
-{
-	if (SelfPtr)
-	{
-		delete SelfPtr;
-		SelfPtr = nullptr;
-	}
-}
-
-SFMLRender::MyContainer* SFMLRender::MyContainer::SelfPtr = nullptr;
