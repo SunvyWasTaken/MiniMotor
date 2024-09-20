@@ -34,7 +34,15 @@ public:
 	}
 
 	template <typename TargetSide>
-	vertice_type& GetVertice() const
+	vertice_type GetVertice() const
+	{
+		constexpr int index = GetTypelistIndex<TargetSide, QuadSide>::value;
+		static_assert(index != -1, "Invalid side");
+		return vertices[index];
+	}
+
+	template <typename TargetSide>
+	vertice_type& GetVertice()
 	{
 		constexpr int index = GetTypelistIndex<TargetSide, QuadSide>::value;
 		static_assert(index != -1, "Invalid side");

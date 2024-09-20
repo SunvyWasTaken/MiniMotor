@@ -50,6 +50,12 @@ struct Vec2
 	}
 
 	template <typename operandType>
+	Vec2<type> operator*(const Vec2<operandType>& op) const
+	{
+		return Vec2<type>(x * static_cast<type>(op.x), y * static_cast<type>(op.y));
+	}
+
+	template <typename operandType>
 	void operator+=(const Vec2<operandType>& op)
 	{
 		x += static_cast<type>(op.x); y += static_cast<type>(op.y);

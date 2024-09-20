@@ -17,6 +17,8 @@ using CurrentRender = SFMLRender;
 #include "LabyrintheGenerator.h"
 #include "Setting.h"
 
+
+
 int main()
 {
 	std::unique_ptr<World> CurrentWorld = std::make_unique<World>();
