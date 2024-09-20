@@ -10,6 +10,8 @@
 
 #include <variant>
 
+#define CellSize 10
+
 #define WindowSize 850
 
 namespace
@@ -20,9 +22,8 @@ namespace
 
 	void DrawQuad2D(FQuad2D& obj)
 	{
-		sf::RectangleShape rectangle(sf::Vector2f(obj.size.x * CellSize, obj.size.y * CellSize));
-		rectangle.setPosition(obj.position.x * CellSize, obj.position.y * CellSize);
-		rectangle.setFillColor(sf::Color(obj.color.r, obj.color.g, obj.color.b, obj.color.a));
+		sf::RectangleShape rectangle(sf::Vector2f(obj.transform.scale.x * CellSize, obj.transform.scale.y * CellSize));
+		rectangle.setPosition(obj.transform.pos.x * CellSize, obj.transform.pos.y * CellSize);
 		Window.draw(rectangle);
 	}
 
@@ -89,6 +90,7 @@ void SFMLRender::BufferFrame(Entity* Entity)
 		std::visit(overloaded(
 			[&](FQuad2D& obj)
 			{
+				DrawQuad2D(obj);
 			}, 
 			[&](VertexArray2D& obj)
 			{

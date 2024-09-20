@@ -12,7 +12,5 @@ public:
 	BasicDrawable2D();
 	virtual ~BasicDrawable2D();
 
-protected:
-
 	FTrans2 transform;
 };
