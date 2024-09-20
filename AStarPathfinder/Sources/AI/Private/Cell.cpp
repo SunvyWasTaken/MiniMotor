@@ -13,16 +13,18 @@ Wall::Wall()
 
 void Wall::ChangeValue(uint64_t val)
 {
-	if (value == -1)
-		return;
-
-	for (auto& curr : neighbors)
+	IVec2 Sides[4] = { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };
+	for (IVec2& side : Sides)
 	{
-		if (!curr)
-			continue;
+		if (Cell* curr = parent->GetCellByPos(pos + side))
+		{
+			if (Unit<Path>* path = std::get_if<Unit<Path>>(curr))
+			{
+				if (path->value != val)
+					return;
+			}
+		}
 
-		if(curr->value != val)
-			return;
 	}
 	parent->RemoveWall(this);
 }
@@ -61,15 +63,16 @@ void Path::ChangeValue(uint64_t val)
 		return;
 
 	value = val;
-	for (Cell* curr : neighbors)
+	IVec2 Sides[4] = { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };
+	for (IVec2& side : Sides)
 	{
-		if (!curr)
-			continue;
-
-		std::visit([&](auto&& tmp)
-			{
-				tmp.ChangeValue(val);
-			}, *curr);
+		if (Cell* curr = parent->GetCellByPos(pos + side))
+		{
+			std::visit([&](auto&& tmp)
+				{
+					tmp.ChangeValue(val);
+				}, *curr);
+		}
 	}
 }
 

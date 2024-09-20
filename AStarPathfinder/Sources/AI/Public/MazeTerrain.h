@@ -28,6 +28,20 @@ public:
 
 	Cell* GetCellByPos(const IVec2& pos);
 
+	template <typename Type>
+	Cell* ChangeCellAt(const IVec2& pos)
+	{
+		for (size_t i = 0; i < Maze.size(); ++i)
+		{
+			if (std::visit([&](auto&& tmp)->bool{return tmp.pos == pos;}, Maze[i]))
+			{
+				Maze[i] = Type();
+				return &Maze[i];
+			}
+		}
+	
+	}
+
 private:
 
 	void GetAllNeighbors();
