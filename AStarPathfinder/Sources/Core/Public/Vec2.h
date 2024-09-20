@@ -22,13 +22,13 @@ struct Vec2
 		y = static_cast<type>(op.y);
 	}
 
-	template <typename OtherType>
-	bool operator<(const OtherType& other) const
+	template <typename operandType>
+	bool operator<(const Vec2<operandType>& op) const
 	{
-		if (x != other.x) {
-			return x < other.x;
+		if (x != op.x) {
+			return x < op.x;
 		}
-		return y < other.y;
+		return y < op.y;
 	}
 
 	template <typename operandType>
@@ -40,6 +40,17 @@ struct Vec2
 	bool operator==(const Vec2<type>& op) const
 	{
 		return x == op.x && y == op.y;
+	}
+
+	bool operator!=(const Vec2<type>& op) const
+	{
+		return x != op.x || y != op.y;
+	}
+
+	template <typename operandType>
+	Vec2<type> operator+(const operandType& op) const
+	{
+		return Vec2<type>(x + static_cast<type>(op), y + static_cast<type>(op));
 	}
 
 	template <typename operandType>
@@ -58,6 +69,12 @@ struct Vec2
 	Vec2<type> operator*(const Vec2<operandType>& op) const
 	{
 		return Vec2<type>(x * static_cast<type>(op.x), y * static_cast<type>(op.y));
+	}
+
+	template <typename operandType>
+	Vec2<type> operator*(const operandType op) const
+	{
+		return Vec2<type>(x * static_cast<type>(op), y * static_cast<type>(op));
 	}
 
 	template <typename operandType>

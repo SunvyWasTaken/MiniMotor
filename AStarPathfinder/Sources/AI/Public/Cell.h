@@ -3,6 +3,8 @@
 
 #include "Define/CRTP.h"
 
+#include "Vec2.h"
+
 #include <array>
 #include <variant>
 #include <vector>
@@ -30,7 +32,11 @@ public:
 
 	CRTP_CALL_OneParam(ChangeValue, uint64_t)
 
+	CRTP_CALL(GetNeighbor)
+
 	uint64_t value;
+
+	IVec2 pos;
 
 	MazeTerrain* parent;
 };
@@ -45,7 +51,9 @@ public:
 
 	void ChangeValue(uint64_t val);
 
-	std::array<Path*, 2> neighbors;
+	void GetNeighbor();
+
+	std::vector<Unit<Path>*> neighbors;
 };
 
 class Path : public Unit<Path>
@@ -56,6 +64,8 @@ public:
 
 	void ChangeValue(uint64_t val);
 
-	std::array<Cell*, 4> neighbors;
+	void GetNeighbor();
+
+	std::vector<Cell*> neighbors;
 };
 

@@ -25,10 +25,10 @@ void MazeTerrain::SetMazeSize(const IVec2& size)
 	ensure(size.x % 2 == 0);
 	ensure(size.y % 2 == 0);
 
-	MazeSize = size;
-
 	// this need to not be even
-	GetVertexArray().Resize((MazeSize.x + 1) * (MazeSize.y + 1));
+	MazeSize = size + 1;
+
+	GetVertexArray().Resize((MazeSize.x) * (MazeSize.y));
 }
 
 void MazeTerrain::GenerateTerrain(const IVec2& size)
@@ -36,55 +36,98 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 	SetMazeSize(size);
 
 	size_t it = 0;
-	for (int x = 0; x <= MazeSize.x; ++x)
+	for (int x = 0; x < MazeSize.x; ++x)
 	{
-		for (int y = 0; y <= MazeSize.y; ++y)
+		for (int y = 0; y < MazeSize.y; ++y)
 		{
 			IVec2 pos = { x, y };
 
-			if (x % 2 == 0 || y % 2 == 0)
+			bool xTrue = x % 2 == 0;
+			bool yTrue = y % 2 == 0;
+
+			if (xTrue || yTrue)
 			{
-				Maze.insert({ pos, Path() });
-				std::get<Unit<Path>>(Maze.at(pos)).parent = this;
-				std::get<Unit<Path>>(Maze.at(pos)).SetValue(it);
+				Maze.emplace_back(Wall());
+				std::get<Unit<Wall>>(Maze[it]).parent = this;
+				std::get<Unit<Wall>>(Maze[it]).pos = pos;
+				std::get<Unit<Wall>>(Maze[it]).SetValue(it);
+
+				if ((!xTrue && !yTrue) || ((x > 0 && x < MazeSize.x - 1) && (y > 0 && y < MazeSize.y - 1)))
+				{
+					WallList.push_back(pos);
+				}
+				//else
+				//{
+				//	std::get<Unit<Wall>>(Maze.at(pos)).value = -1;
+				//}
 				GetVertexArray()[it].FillColor({ 255, 102, 153 });
 			}
 			else
 			{
-				Maze.insert({ pos, Wall() });
-				std::get<Unit<Wall>>(Maze.at(pos)).parent = this;
-				std::get<Unit<Wall>>(Maze.at(pos)).SetValue(it);
-				GetVertexArray()[it].FillColor({ 0, 0, 0 });
+				Maze.emplace_back(Path());
+				std::get<Unit<Path>>(Maze[it]).parent = this;
+				std::get<Unit<Path>>(Maze[it]).SetValue(it);
+				GetVertexArray()[it].FillColor({0,0,0});
 			}
-			GetVertexArray()[it].transform.pos = pos;
+			GetVertexArray()[it].transform.scale = {5, 5};
+			GetVertexArray()[it].transform.pos = pos * GetVertexArray()[it].transform.scale;
 			++it;
 		}
 	}
 }
 
-void MazeTerrain::GenerateLabyrinthe(MazeTerrain* Terrain, std::atomic<bool>& IsGenerationDone)
+void MazeTerrain::GenerateLabyrinthe(std::atomic<bool>& IsGenerationDone)
 {
-	uint8_t it = 0;
-	while (it >= 5 || WallList.size() > 0)
+	
+	GetAllNeighbors();
+	uint64_t val = -1;
+	while (!IsGenerationDone.load(std::memory_order_relaxed))
 	{
-		size_t index = intRand(0, WallList.size() - 1)(rGen);
+		++val;
+		size_t index = intRand(0, (int)WallList.size() - 1)(rGen);
 		IVec2 pos = WallList[index];
-		Maze.at(pos) = Path();
-		// Todo : Redefine neighbors
-		std::get<Unit<Path>>(Maze.at(pos)).ChangeValue(1);
+
+		if (Unit<Wall>* wallPath = std::get_if<Unit<Wall>>(GetCellByPos(pos)))
+		{
+			ensure(wallPath);
+			val = wallPath->value;
+		}
+
+		GetVertexArray()[val].FillColor({ 0,0,0 });
+
+		// Transform the wall to a path
+
+		*GetCellByPos(pos) = Path();
+
+		if (Unit<Path>* currPath = std::get_if<Unit<Path>>(GetCellByPos(pos)))
+		{
+			ensure(currPath);
+			currPath->parent = this;
+			GetAllNeighbors();
+			currPath->ChangeValue(val);
+		}
+		else
+		{
+			__nop(); __debugbreak();
+		}
 		WallList.erase(WallList.begin() + index);
+
+		if (WallList.size() <= 0)
+		{
+			IsGenerationDone.exchange(true, std::memory_order_relaxed);
+		}
 	}
 }
 
 void MazeTerrain::RemoveWall(Wall* target)
 {
-	for(auto& [pos, cell] : Maze)
+	for(auto& cell : Maze)
 	{
 		if (Unit<Wall>* wall = std::get_if<Unit<Wall>>(&cell))
 		{
 			if (wall->value == target->value)
 			{
-				auto it = std::find(WallList.begin(), WallList.end(), pos);
+				auto it = std::find(WallList.begin(), WallList.end(), wall->pos);
 				if (it != WallList.end())
 				{
 					WallList.erase(it);
@@ -92,6 +135,32 @@ void MazeTerrain::RemoveWall(Wall* target)
 				return;
 			}
 		}
+	}
+}
+
+Cell* MazeTerrain::GetCellByPos(const IVec2& pos)
+{
+	for (auto& cell : Maze)
+	{
+		if (std::visit([pos](auto&& tmp)
+			{
+				return tmp.pos == pos;
+			}, cell))
+		{
+			return &cell;
+		}
+	}
+	return nullptr;
+}
+
+void MazeTerrain::GetAllNeighbors()
+{
+	for (auto& cell : Maze)
+	{
+		std::visit([](auto&& tmp)
+			{
+				tmp.GetNeighbor();
+			}, cell);
 	}
 }
 

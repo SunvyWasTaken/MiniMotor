@@ -15,7 +15,7 @@ namespace Side
 	struct BottomRight {};
 }
 
-using QuadSide = Typelist<Side::TopLeft, Side::TopRight, Side::BottomLeft, Side::BottomRight>;
+using QuadSide = Typelist<Side::TopLeft, Side::TopRight, Side::BottomRight, Side::BottomLeft>;
 
 template <typename T>
 struct Quad2D : public BasicDrawable2D

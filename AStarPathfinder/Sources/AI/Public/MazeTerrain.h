@@ -18,17 +18,21 @@ public:
 
 	void GenerateTerrain(const IVec2& size);
 
-	void GenerateLabyrinthe(MazeTerrain* Terrain, std::atomic<bool>& IsGenerationDone);
+	void GenerateLabyrinthe(std::atomic<bool>& IsGenerationDone);
 
 	void RemoveWall(Wall* target);
 
-private:
-
-	VertexArray2D& GetVertexArray();
-
 	IVec2 MazeSize;
 
-	std::map<IVec2, Cell> Maze;
+	std::vector<Cell> Maze;
+
+	Cell* GetCellByPos(const IVec2& pos);
+
+private:
+
+	void GetAllNeighbors();
+
+	VertexArray2D& GetVertexArray();
 
 	std::vector<IVec2> WallList;
 

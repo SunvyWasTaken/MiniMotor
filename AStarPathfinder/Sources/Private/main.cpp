@@ -26,7 +26,10 @@ int main()
 	MazeTerrain* Maze = new MazeTerrain();
 
 	CurrentWorld->Entities.push_back(Maze);
-	Maze->GenerateTerrain({200, 200});
+	Maze->GenerateTerrain({4, 4});
+
+	std::atomic<bool> IsGenerationDone = false;
+	Maze->GenerateLabyrinthe(IsGenerationDone);
 	// Todo : Changer pour que ce soit tant que l'application est ouverte.
 	while (CurrentRenderObj->IsWindowOpen())
 	{
