@@ -55,6 +55,14 @@ public:
 		return (GetVertice<TargetSide>().position * transform.scale) + transform.pos;
 	}
 
+	void FillColor(const Color& color)
+	{
+		for (auto& vertice : vertices)
+		{
+			vertice.color = color;
+		}
+	}
+
 public:
 	Vertex2DArray vertices;
 

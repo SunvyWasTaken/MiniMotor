@@ -8,12 +8,15 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <iostream>
+#include <memory>
 #include <variant>
 
 #define CellSize 10
 
 #define WindowSize 850
 
+// This is a private
 namespace
 {
 	sf::RenderWindow Window;
@@ -51,7 +54,6 @@ namespace
 void SFMLRender::Init()
 {
 	Window.create(sf::VideoMode(WindowSize, WindowSize), "SFML works!");
-	ensure(Window);
 	ensure(font.loadFromFile("Ressources/PoiretOne-Regular.ttf"));
 }
 
@@ -85,7 +87,7 @@ bool SFMLRender::IsWindowOpen()
 
 void SFMLRender::BufferFrame(Entity* Entity)
 {
-	for (auto drawable : Entity->drawables)
+	for (auto& [key, drawable] : Entity->drawables)
 	{
 		std::visit(overloaded(
 			[&](FQuad2D& obj)

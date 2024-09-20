@@ -1,8 +1,6 @@
 
 #include "GenericRender.h"
 
-#include <memory>
-
 class SFMLRender : public GenericRender<SFMLRender>
 {
 public:

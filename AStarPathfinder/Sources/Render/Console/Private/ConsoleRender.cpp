@@ -50,7 +50,7 @@ void ConsoleRender::ClearWindow()
 	}
 }
 
-void ConsoleRender::BufferFrame(size_t index, Entity* targetEntity)
+void ConsoleRender::BufferFrame(Entity* targetEntity)
 {
 	//if (targetEntity)
 	//{

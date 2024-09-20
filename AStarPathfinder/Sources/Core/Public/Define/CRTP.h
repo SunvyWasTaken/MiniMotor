@@ -13,6 +13,6 @@
 
 #define CRTP_CALL_ret(returnType, func_name) CRTP_CALL_ret_Impl(Derived, returnType, func_name)
 
-#define CRTP_CALL_Variadic(crtpType, func_name, ...) \
+#define CRTP_CALL_Variadic(crtpType, func_name) \
 template <typename ...types> \
 void func_name(types... args) { crtpType* tmp = static_cast<crtpType*>(this); tmp->func_name(args...); }

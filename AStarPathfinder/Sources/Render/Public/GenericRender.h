@@ -19,6 +19,5 @@ public:
 	CRTP_CALL(ClearWindow)
 	CRTP_CALL(CloseWindow)
 
-
 	class World* world = nullptr;
 };

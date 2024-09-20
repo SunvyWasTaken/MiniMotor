@@ -21,7 +21,7 @@ public:
 
 	void ClearWindow();
 
-	void BufferFrame(size_t index, class Entity* targetEntity);
+	void BufferFrame(class Entity* targetEntity);
 
 	void CloseWindow();
 

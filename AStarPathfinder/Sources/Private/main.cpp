@@ -14,10 +14,8 @@ using CurrentRender = SFMLRender;
 #endif
 
 #include "Entitys.h"
-#include "LabyrintheGenerator.h"
+#include "MazeTerrain.h"
 #include "Setting.h"
-
-
 
 int main()
 {
@@ -26,6 +24,10 @@ int main()
 	CurrentRenderObj->world = CurrentWorld.get();
 	CurrentRenderObj->Init();
 
+	MazeTerrain* Maze = new MazeTerrain();
+
+	CurrentWorld->Entities.push_back(Maze);
+	Maze->GenerateTerrain({200, 200});
 	// Todo : Changer pour que ce soit tant que l'application est ouverte.
 	while (CurrentRenderObj->IsWindowOpen())
 	{
@@ -34,6 +36,7 @@ int main()
 		CurrentRenderObj->Draw();
 		CurrentRenderObj->ClearWindow();
 	}
+	delete Maze;
 	// Todo : Ici tu close la fenêtre.
 	CurrentRenderObj->CloseWindow();
 }

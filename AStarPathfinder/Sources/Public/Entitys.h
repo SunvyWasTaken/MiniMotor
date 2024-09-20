@@ -12,6 +12,8 @@ public:
 	Entity();
 	virtual ~Entity();
 
+	void GetDrawablesList(MVectorDrawable& drawList);
+
 	MDrawableList drawables;
 
 };
