@@ -21,7 +21,6 @@ int main()
 {
 	std::unique_ptr<World> CurrentWorld = std::make_unique<World>();
 	std::unique_ptr<GenericRender<CurrentRender>> CurrentRenderObj = std::make_unique<CurrentRender>();
-	CurrentRenderObj->world = CurrentWorld.get();
 	CurrentRenderObj->Init();
 
 	MazeTerrain* Maze = new MazeTerrain();

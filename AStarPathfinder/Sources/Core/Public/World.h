@@ -18,7 +18,7 @@ public:
 	template <typename RendeType>
 	void BufferFrameEntitys(GenericRender<RendeType>& targetDraw)
 	{
-		for (auto& entity : Entities)
+		for (auto* entity : Entities)
 		{
 			targetDraw.BufferFrame(entity);
 		}
