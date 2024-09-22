@@ -102,7 +102,7 @@ void MazeTerrain::GenerateLabyrinthe(std::atomic<bool>& IsGenerationDone)
 			ensure(currPath);
 			currPath->parent = this;
 			currPath->pos = pos;
-			/*Crash à cause des neighbor la manière dans je traverse ma carte est pas bonne*/
+			/*Crash Ã  cause des neighbor la maniÃ¨re dans je traverse ma carte est pas bonne*/
 			//GetAllNeighbors();
 			currPath->ChangeValue(val);
 		}
@@ -121,6 +121,10 @@ void MazeTerrain::GenerateLabyrinthe(std::atomic<bool>& IsGenerationDone)
 
 void MazeTerrain::RemoveWall(Wall* target)
 {
+	size_t index = WallList.size()*0,5;
+	if(WallList[index].pos<target.pos)
+	index*=1,5;
+	//compare wall faire un call recursif
 	auto it = std::find(WallList.begin(), WallList.end(), target->pos);
 	if (it != WallList.end())
 	{
