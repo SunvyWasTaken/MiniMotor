@@ -60,7 +60,7 @@ find_package(SFML CONFIG REQUIRED COMPONENTS system window graphics)
 
 add_Library(${PROJECT_NAME} SHARED ${Sources})
 
-set(LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 target_link_libraries(MiniMotor PRIVATE
     sfml-system sfml-graphics sfml-window

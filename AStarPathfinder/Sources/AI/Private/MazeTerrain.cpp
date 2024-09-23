@@ -1,7 +1,5 @@
 #include "MazeTerrain.h"
 
-#include "Debug/Debug.h"
-
 #include "Geometry/VertexArray2D.h"
 
 #include <iostream>
@@ -78,8 +76,6 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 
 void MazeTerrain::GenerateLabyrinthe(std::atomic<bool>& IsGenerationDone)
 {
-	
-	//GetAllNeighbors();
 	uint64_t val = -1;
 	uint8_t it = 0;
 	while (it <= 5 && !IsGenerationDone.load(std::memory_order_relaxed))
@@ -104,8 +100,6 @@ void MazeTerrain::GenerateLabyrinthe(std::atomic<bool>& IsGenerationDone)
 			ensure(currPath);
 			currPath->parent = this;
 			currPath->pos = pos;
-			/*Crash à cause des neighbor la manière dans je traverse ma carte est pas bonne*/
-			//GetAllNeighbors();
 			currPath->ChangeValue(val);
 		}
 		else

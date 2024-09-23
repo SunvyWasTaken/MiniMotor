@@ -14,13 +14,11 @@
 // This is a private
 namespace
 {
-	static sf::RenderWindow Window;
+	sf::RenderWindow Window;
 
-	static sf::Font font;
+	sf::Font font;
 
-	static sf::Clock CurrClock;
-
-	static sf::VertexArray vertexArray(sf::Quads, 4);
+	sf::Clock CurrClock;
 
 	void DrawQuad2D(FQuad2D& obj)
 	{
@@ -31,6 +29,7 @@ namespace
 
 	void DrawVertexArray(VertexArray2D& obj)
 	{
+		sf::VertexArray vertexArray(sf::Quads, 4);
 		vertexArray.resize(obj->size() * 4);
 		for (uint64_t index = 0; index < obj->size(); ++index)
 		{
@@ -117,5 +116,5 @@ void SFMLRender::ClearWindow()
 
 void SFMLRender::CloseWindow()
 {
-	Window.close();
+	/*Window.close();*/
 }
