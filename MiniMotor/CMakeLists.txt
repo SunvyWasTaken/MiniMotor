@@ -1,11 +1,16 @@
-project(AStarPathfinder)
+project(MiniMotor)
+
+set(PreCompileFiles 
+	Sources/Core/Public/CoreMinimal.h
+	Sources/Core/Private/CoreMinimal.cpp
+)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 
-file(GLOB_RECURSE Sources "*.h" "*.cpp" ".txt")
+file(GLOB_RECURSE Sources "*.h" "*.cpp" "*.txt" "*.hxx")
 
 if(WIN32)
-    # Sous Windows, utiliser une commande PowerShell pour trouver les dossiers nommés "Public"
+    # Sous Windows, utiliser une commande PowerShell pour trouver les dossiers nommÃ©s "Public"
     execute_process(
         COMMAND powershell -Command "Get-ChildItem -Recurse -Directory | Where-Object { $_.Name -eq 'Public' } | ForEach-Object { $_.FullName }"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -21,13 +26,13 @@ else()
     )
 endif()
 
-# Remplacer les nouvelles lignes par des espaces pour garantir que les chemins sont bien séparés
+# Remplacer les nouvelles lignes par des espaces pour garantir que les chemins sont bien sÃ©parÃ©s
 string(REPLACE "\n" " " PUBLIC_DIRS "${PUBLIC_DIRS}")
 
-# Transformer le résultat en une liste CMake
+# Transformer le rÃ©sultat en une liste CMake
 separate_arguments(PUBLIC_DIRS)
 
-# Ajouter chaque dossier trouvé dans les includes
+# Ajouter chaque dossier trouvÃ© dans les includes
 foreach(DIR ${PUBLIC_DIRS})
     include_directories(${DIR})
 endforeach()
@@ -51,12 +56,18 @@ endmacro()
 # Execute the macro
 GroupSources(Sources)
 
-add_executable(AStarPathfinder ${Sources})
+find_package(SFML CONFIG REQUIRED COMPONENTS system window graphics)
 
-target_link_libraries(AStarPathfinder PRIVATE
-    MiniMotor
+add_Library(${PROJECT_NAME} SHARED ${Sources})
+
+set(LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+target_link_libraries(MiniMotor PRIVATE
+    sfml-system sfml-graphics sfml-window
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:DEBUG>)
+
+target_precompile_headers(${PROJECT_NAME} PRIVATE ${PreCompileFiles})
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)

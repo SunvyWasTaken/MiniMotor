@@ -5,7 +5,8 @@
 
 #include "Debug/Debug.h"
 
-Wall::Wall() 
+
+Wall::Wall()
 	: Unit<Wall>()
 	, neighbors()
 {
@@ -13,6 +14,9 @@ Wall::Wall()
 
 void Wall::ChangeValue(uint64_t val)
 {
+	if(!bCanBeOpen)
+		return;
+
 	IVec2 Sides[4] = { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };
 	for (IVec2& side : Sides)
 	{
@@ -27,6 +31,7 @@ void Wall::ChangeValue(uint64_t val)
 
 	}
 	parent->RemoveWall(this);
+	bCanBeOpen = false;
 }
 
 void Wall::GetNeighbor()

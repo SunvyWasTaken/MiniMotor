@@ -1,10 +1,9 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
 #include "Cell.h"
 #include "Entitys.h"
-
-#include <map>
 
 class Wall;
 
@@ -39,10 +38,12 @@ public:
 				return &Maze[i];
 			}
 		}
-	
+		return nullptr;
 	}
 
 private:
+
+	bool GetWallPos(const IVec2& pos, size_t& index);
 
 	void GetAllNeighbors();
 

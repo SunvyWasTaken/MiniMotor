@@ -2,7 +2,7 @@
 
 #include "Debug/Debug.h"
 
-#include "VertexArray2D.h"
+#include "Geometry/VertexArray2D.h"
 
 #include <iostream>
 #include <random>
@@ -56,7 +56,9 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 				if ((x != 0 && x != MazeSize.x - 1) && (y != 0 && y != MazeSize.y - 1) && !(xTrue && yTrue))
 				{
 					WallList.push_back(pos);
+					std::get<Unit<Wall>>(Maze[it]).bCanBeOpen = true;
 				}
+
 				GetVertexArray()[it].FillColor({ 255, 102, 153 });
 			}
 			else
@@ -121,10 +123,13 @@ void MazeTerrain::GenerateLabyrinthe(std::atomic<bool>& IsGenerationDone)
 
 void MazeTerrain::RemoveWall(Wall* target)
 {
-	size_t index = WallList.size()*0,5;
-	if(WallList[index].pos<target.pos)
-	index*=1,5;
-	//compare wall faire un call recursif
+	//size_t index = (WallList.size() - 1) * 0.5;
+
+	//if (GetWallPos(target->pos, index))
+	//{
+	//	WallList.erase(WallList.begin() + index);
+	//}
+
 	auto it = std::find(WallList.begin(), WallList.end(), target->pos);
 	if (it != WallList.end())
 	{
@@ -165,6 +170,29 @@ Cell* MazeTerrain::GetCellByPos(const IVec2& pos)
 		return &cell;
 	}
 	return nullptr;
+}
+
+bool MazeTerrain::GetWallPos(const IVec2& pos, size_t& index)
+{
+	if(index >= WallList.size() - 1 || (pos.x % 2 == 0 && pos.y % 2 == 0) || (pos.x >= MazeSize.x - 1 || pos.y >= MazeSize.y - 1) || (pos.x <= 0 || pos.y <= 0)) { return false; }
+
+	if (WallList[index] < pos)
+	{
+		index *= 1.5;
+	}
+	else if (pos < WallList[index])
+	{
+		index *= 0.5;
+	}
+	else if (WallList[index] == pos)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+	return GetWallPos(pos, index);
 }
 
 void MazeTerrain::GetAllNeighbors()

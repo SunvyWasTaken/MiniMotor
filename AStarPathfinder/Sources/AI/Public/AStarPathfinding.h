@@ -1,5 +1,6 @@
 #pragma once
-#include "Vec2.h"
+
+#include "CoreMinimal.h"
 
 struct PathFinderAlgo
 {

@@ -3,11 +3,7 @@
 
 #include "Define/CRTP.h"
 
-#include "Vec2.h"
-
-#include <array>
-#include <variant>
-#include <vector>
+#include "CoreMinimal.h"
 
 class Path;
 class Wall;
@@ -21,6 +17,7 @@ public:
 	Unit()
 		: parent(nullptr)
 		, value(0)
+		, bCanBeOpen(false)
 	{}
 	
 	virtual ~Unit() = default;
@@ -39,6 +36,8 @@ public:
 	IVec2 pos;
 
 	MazeTerrain* parent;
+
+	bool bCanBeOpen;
 };
 
 using Cell = std::variant<Unit<Wall>, Unit<Path>>;
