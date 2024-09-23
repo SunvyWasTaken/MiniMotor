@@ -402,3 +402,4 @@ FodyWeavers.xsd
 *.filters
 *.sln
 /build
+/vcpkg_installed

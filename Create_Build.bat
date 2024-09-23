@@ -7,3 +7,5 @@ cmake -DCMAKE_TOOLCHAIN_FILE=%cd%/vcpkg/scripts/buildsystems/vcpkg.cmake -S %cd%
 
 ECHO =============================
 ECHO Install done
+
+Pause

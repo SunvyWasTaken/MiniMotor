@@ -52,7 +52,7 @@ public:
 		return (GetVertice<TargetSide>().position * transform.scale) + transform.pos;
 	}
 
-	void FillColor(const Color& color)
+	void FillColor(const FColor& color)
 	{
 		for (auto& vertice : vertices)
 		{

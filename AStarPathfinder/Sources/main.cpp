@@ -11,6 +11,9 @@ using CurrentRender = ConsoleRender;
 #elif RENDERTYPE == 1
 #include "SFMLRender.h"
 using CurrentRender = SFMLRender;
+#elif RENDERTYPE == 2
+#include "OpenGLRender.h"
+using CurrentRender = OpenGLRender;
 #endif
 
 #include "Entitys.h"
@@ -20,7 +23,6 @@ int main()
 {
 	std::unique_ptr<World> CurrentWorld = std::make_unique<World>();
 	std::unique_ptr<GenericRender<CurrentRender>> CurrentRenderObj = std::make_unique<CurrentRender>();
-	CurrentRenderObj->Init();
 
 	MazeTerrain* Maze = new MazeTerrain();
 
@@ -28,9 +30,11 @@ int main()
 	Maze->GenerateTerrain({200, 200});
 
 	std::atomic<bool> IsGenerationDone = false;
+	CurrentRenderObj->Init();
 	// Todo : Changer pour que ce soit tant que l'application est ouverte.
 	while (CurrentRenderObj->IsWindowOpen())
 	{
+		// Todo : Add PreRender function for class like ImGuiRender who need a ImGuiNewFrame() call.
 		if (!IsGenerationDone.load(std::memory_order_relaxed))
 		{
 			Maze->GenerateLabyrinthe(IsGenerationDone);
