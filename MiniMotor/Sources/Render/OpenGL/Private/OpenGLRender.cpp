@@ -14,7 +14,7 @@
 
 namespace
 {
-	std::unique_ptr<GLFWwindow, decltype(&glfwDestroyWindow)> m_windowOpenGL(nullptr, glfwDestroyWindow);
+	GLFWwindow* m_windowOpenGL(nullptr);
 	const int m_width = 800;
 	const int m_height = 600;
 	const std::string m_title = "OpenGL Render";
@@ -54,7 +54,7 @@ void OpenGLRender::Init()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	m_windowOpenGL = std::move(std::unique_ptr<GLFWwindow, decltype(&glfwDestroyWindow)>(glfwCreateWindow(m_width, m_height, m_title.c_str(), nullptr, nullptr), glfwDestroyWindow));
+	m_windowOpenGL = glfwCreateWindow(m_width, m_height, m_title.c_str(), nullptr, nullptr);
 	if (!m_windowOpenGL)
 	{
 		std::cout << "Failed to create GLFW window 1" << std::endl;
@@ -62,7 +62,7 @@ void OpenGLRender::Init()
 		return;
 	}
 
-	glfwMakeContextCurrent(m_windowOpenGL.get());
+	glfwMakeContextCurrent(m_windowOpenGL);
 
 	//Load glad so it configures OpenGL
 	gladLoadGL();
@@ -76,7 +76,7 @@ void OpenGLRender::Init()
 	(void)io;
 	ImGui::StyleColorsDark();
 
-	ImGui_ImplGlfw_InitForOpenGL(m_windowOpenGL.get(), true);
+	ImGui_ImplGlfw_InitForOpenGL(m_windowOpenGL, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 }
 
@@ -99,7 +99,7 @@ void OpenGLRender::Draw()
 
 bool OpenGLRender::IsWindowOpen()
 {
-	return !glfwWindowShouldClose(m_windowOpenGL.get());;
+	return !glfwWindowShouldClose(m_windowOpenGL);;
 }
 
 void OpenGLRender::BufferFrame(Entity* Entity)
@@ -135,6 +135,6 @@ void OpenGLRender::CloseWindow()
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
-	glfwDestroyWindow(m_windowOpenGL.get());
+	glfwDestroyWindow(m_windowOpenGL);
 	glfwTerminate();
 }
