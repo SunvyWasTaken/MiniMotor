@@ -11,7 +11,7 @@ void ConsoleRender::Init()
 	ClearWindow();
 }
 
-void ConsoleRender::HandleEvent()
+void ConsoleRender::HandleEvents()
 {
 }
 

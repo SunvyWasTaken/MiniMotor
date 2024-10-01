@@ -80,7 +80,7 @@ void OpenGLRender::Init()
 	ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-void OpenGLRender::HandleEvent()
+void OpenGLRender::HandleEvents()
 {
 	//Create new imgui frame
 	ImGui_ImplOpenGL3_NewFrame();

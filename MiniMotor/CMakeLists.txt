@@ -1,13 +1,8 @@
 project(MiniMotor)
 
-set(PreCompileFiles 
-	Sources/Core/Public/CoreMinimal.h
-	Sources/Core/Private/CoreMinimal.cpp
-)
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo" CACHE STRING "" FORCE)
 
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
-
-file(GLOB_RECURSE Sources "*.h" "*.cpp" "*.txt" "*.hxx")
+file(GLOB_RECURSE Sources "*.h" "*.cpp" "*.txt")
 
 if(WIN32)
     # Sous Windows, utiliser une commande PowerShell pour trouver les dossiers nommés "Public"
@@ -77,7 +72,8 @@ target_link_libraries(MiniMotor PRIVATE
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:DEBUG>)
+target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:RelWithDebInfo>:DO_CHECK>)
 
-target_precompile_headers(${PROJECT_NAME} PRIVATE ${PreCompileFiles})
+target_precompile_headers(MiniMotor PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/Sources/Core/Public/CoreMinimal.h")
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)

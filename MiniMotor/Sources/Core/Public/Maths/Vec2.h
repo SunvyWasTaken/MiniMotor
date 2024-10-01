@@ -32,9 +32,16 @@ struct MM_EXPORT Vec2
 	}
 
 	template <typename operandType>
-	void operator=(const Vec2<operandType>& op)
+	Vec2<type>& operator=(const Vec2<operandType>& op)
 	{
 		x = static_cast<type>(op.x); y = static_cast<type>(op.y);
+		return *this;
+	}
+
+	Vec2<type>& operator=(const type& op)
+	{
+		x = op; y = op;
+		return *this;
 	}
 
 	bool operator==(const Vec2<type>& op) const

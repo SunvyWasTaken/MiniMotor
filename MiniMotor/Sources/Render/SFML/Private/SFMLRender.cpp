@@ -8,8 +8,8 @@
 
 #define CellSize 100
 
-#define WindowSizeX 800
-#define WindowSizeY 800
+#define WindowSizeX 850
+#define WindowSizeY 850
 
 // This is a private
 namespace
@@ -51,26 +51,51 @@ namespace
 
 void SFMLRender::Init()
 {
-	Window.create(sf::VideoMode(WindowSizeX, WindowSizeY), "SFML works!");
+	Window.create(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style::Fullscreen);
 	ensure(&Window);
 	bool loaded = font.loadFromFile("Ressources/PoiretOne-Regular.ttf");
 	ensure(loaded);
 }
 
-void SFMLRender::HandleEvent()
+void SFMLRender::HandleEvents()
 {
 	sf::Event event;
 	while (Window.pollEvent(event))
 	{
 		if (event.type == sf::Event::Closed)
-			Window.close();
-
-		if(event.type == sf::Event::Resized)
+		{
+			EventCall(MEvents::OnClose());
+		}
+		else if(event.type == sf::Event::Resized)
 		{
 			float ratio = (float)event.size.width / (float)event.size.height;
 			sf::View view = Window.getView();
 			view.setSize(WindowSizeY * ratio, WindowSizeX);
 			Window.setView(view);
+		}
+		else if (event.type == sf::Event::KeyPressed)
+		{
+			EventCall(MEvents::OnKeyPressed());
+		}
+		else if (event.type == sf::Event::KeyReleased)
+		{
+			EventCall(MEvents::OnKeyReleased());
+		}
+		else if (event.type == sf::Event::MouseButtonPressed)
+		{
+			EventCall(MEvents::OnMouseButtonPressed());
+		}
+		else if (event.type == sf::Event::MouseButtonReleased)
+		{
+			EventCall(MEvents::OnMouseButtonReleased());
+		}
+		else if (event.type == sf::Event::MouseMoved)
+		{
+			EventCall(MEvents::OnMouseMoved());
+		}
+		else if (event.type == sf::Event::MouseWheelScrolled)
+		{
+			EventCall(MEvents::OnMouseScrolled());
 		}
 	}
 }
@@ -116,5 +141,5 @@ void SFMLRender::ClearWindow()
 
 void SFMLRender::CloseWindow()
 {
-	/*Window.close();*/
+	Window.close();
 }

@@ -26,7 +26,7 @@ void MazeTerrain::SetMazeSize(const IVec2& size)
 
 	// this need to not be even
 	MazeSize = size + 1;
-
+	Maze.reserve(MazeSize.x * MazeSize.y);
 	GetVertexArray().Resize(MazeSize.x * MazeSize.y);
 }
 
@@ -67,20 +67,21 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 				std::get<Unit<Path>>(Maze[it]).SetValue(it);
 				GetVertexArray()[it].FillColor({0,0,0});
 			}
-			GetVertexArray()[it].transform.scale = {4, 4};
+			GetVertexArray()[it].transform.scale = {2, 2};
 			GetVertexArray()[it].transform.pos = pos * GetVertexArray()[it].transform.scale;
 			++it;
 		}
 	}
 }
 
-void MazeTerrain::GenerateLabyrinthe(std::atomic<bool>& IsGenerationDone)
+void MazeTerrain::GenerateLabyrinthe()
 {
 	uint64_t val = -1;
-	uint8_t it = 0;
-	while (it <= 5 && !IsGenerationDone.load(std::memory_order_relaxed))
+	//uint8_t it = 0;
+	std::atomic<bool> IsGenerationDone = false;
+	while (/*it <= 5 && */!IsGenerationDone.load(std::memory_order_relaxed))
 	{
-		++it;
+		//++it;
 		size_t index = intRand(0, (int)WallList.size() - 1)(rGen);
 		IVec2 pos = WallList[index];
 
@@ -104,7 +105,7 @@ void MazeTerrain::GenerateLabyrinthe(std::atomic<bool>& IsGenerationDone)
 		}
 		else
 		{
-			__nop(); __debugbreak();
+			PLATEFORM_BREAK
 		}
 
 		if (WallList.size() <= 0)
@@ -187,17 +188,6 @@ bool MazeTerrain::GetWallPos(const IVec2& pos, size_t& index)
 		return false;
 	}
 	return GetWallPos(pos, index);
-}
-
-void MazeTerrain::GetAllNeighbors()
-{
-	for (auto& cell : Maze)
-	{
-		std::visit([](auto&& tmp)
-			{
-				tmp.GetNeighbor();
-			}, cell);
-	}
 }
 
 VertexArray2D& MazeTerrain::GetVertexArray()

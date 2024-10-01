@@ -9,7 +9,7 @@ public:
 
 	void Init();
 
-	void HandleEvent();
+	void HandleEvents();
 
 	void Draw();
 

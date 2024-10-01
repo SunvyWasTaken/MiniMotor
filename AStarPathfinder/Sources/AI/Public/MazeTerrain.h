@@ -17,7 +17,7 @@ public:
 
 	void GenerateTerrain(const IVec2& size);
 
-	void GenerateLabyrinthe(std::atomic<bool>& IsGenerationDone);
+	void GenerateLabyrinthe();
 
 	void RemoveWall(Wall* target);
 
@@ -30,13 +30,10 @@ public:
 	template <typename Type>
 	Cell* ChangeCellAt(const IVec2& pos)
 	{
-		for (size_t i = 0; i < Maze.size(); ++i)
+		if (std::visit([&](auto&& tmp)->bool{return tmp.pos == pos; }, Maze[pos.x * MazeSize.x + pos.y]))
 		{
-			if (std::visit([&](auto&& tmp)->bool{return tmp.pos == pos;}, Maze[i]))
-			{
-				Maze[i] = Type();
-				return &Maze[i];
-			}
+			Maze[pos.x * MazeSize.x + pos.y] = Type();
+			return &Maze[pos.x * MazeSize.x + pos.y];
 		}
 		return nullptr;
 	}
@@ -44,8 +41,6 @@ public:
 private:
 
 	bool GetWallPos(const IVec2& pos, size_t& index);
-
-	void GetAllNeighbors();
 
 	VertexArray2D& GetVertexArray();
 

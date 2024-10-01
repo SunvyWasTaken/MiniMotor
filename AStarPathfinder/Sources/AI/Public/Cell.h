@@ -17,6 +17,7 @@ public:
 	Unit()
 		: parent(nullptr)
 		, value(0)
+		, pos(0, 0)
 		, bCanBeOpen(false)
 	{}
 	
@@ -27,15 +28,13 @@ public:
 		value = val;
 	}
 
-	CRTP_CALL_OneParam(ChangeValue, uint64_t)
+	CRTP_CALL_OneParam(ChangeValue, const uint64_t)
 
-	CRTP_CALL(GetNeighbor)
+	MazeTerrain* parent;
 
 	uint64_t value;
 
 	IVec2 pos;
-
-	MazeTerrain* parent;
 
 	bool bCanBeOpen;
 };
@@ -48,11 +47,7 @@ public:
 
 	Wall();
 
-	void ChangeValue(uint64_t val);
-
-	void GetNeighbor();
-
-	std::vector<Unit<Path>*> neighbors;
+	void ChangeValue(const uint64_t val);
 };
 
 class Path : public Unit<Path>
@@ -61,10 +56,6 @@ public:
 
 	Path();
 
-	void ChangeValue(uint64_t val);
-
-	void GetNeighbor();
-
-	std::vector<Cell*> neighbors;
+	void ChangeValue(const uint64_t val);
 };
 

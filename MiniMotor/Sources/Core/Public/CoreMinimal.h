@@ -5,6 +5,7 @@
 
 #include "Define/CRTP.h"
 #include "Define/ImportExportDLL.h"
+#include "Define/PlateformBreak.h"
 
 #include "Maths/Color.h"
 #include "Maths/Rot3.h"
@@ -17,10 +18,10 @@
 
 #include <array>
 #include <atomic>
-#include <intrin.h>
+#include <functional>
 #include <map>
 #include <memory>
 #include <string>
+#include <thread>
 #include <variant>
 #include <vector>
-

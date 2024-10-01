@@ -1,6 +1,8 @@
 
 #pragma once
 
+#define MAKE_STATE(StateName) struct MM_API StateName {};
+
 // helper type for the visitor #4
 template<class... Ts>
 struct overloaded : Ts... { using Ts::operator()...; };

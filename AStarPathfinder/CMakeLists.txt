@@ -1,6 +1,6 @@
 project(AStarPathfinder)
 
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo" CACHE STRING "" FORCE)
 
 file(GLOB_RECURSE Sources "*.h" "*.cpp" ".txt")
 
@@ -60,5 +60,7 @@ target_link_libraries(AStarPathfinder PRIVATE
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:DEBUG>)
+target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:RelWithDebInfo>:DO_CHECK>)
+
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
