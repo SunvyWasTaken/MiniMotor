@@ -67,7 +67,7 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 				std::get<Unit<Path>>(Maze[it]).SetValue(it);
 				GetVertexArray()[it].FillColor({0,0,0});
 			}
-			GetVertexArray()[it].transform.scale = {2, 2};
+			GetVertexArray()[it].transform.scale = {4, 4};
 			GetVertexArray()[it].transform.pos = pos * GetVertexArray()[it].transform.scale;
 			++it;
 		}

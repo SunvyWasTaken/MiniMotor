@@ -23,9 +23,15 @@ namespace
 
 	sf::Font font;
 
+	sf::Clock DeltaClock;
+
 	sf::Clock CurrClock;
 
-	double CurrZoom = 1.0;
+	sf::Vector2f OldMousePosition;
+
+	double currZoom = 1.0;
+
+	bool IsMousePressed = false;
 
 	void DrawQuad2D(FQuad2D& obj)
 	{
@@ -120,6 +126,8 @@ void SFMLRender::Init()
 {
 	Window.create(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style::Fullscreen);
 	ensure(&Window);
+	Window.setFramerateLimit(0);
+	Window.setVerticalSyncEnabled(false);
 	bool loaded = font.loadFromFile("Ressources/PoiretOne-Regular.ttf");
 	ensure(loaded);
 	ImGui::SFML::Init(Window);
@@ -133,12 +141,12 @@ void SFMLRender::Update()
 
 void SFMLRender::Draw()
 {
-
-	// Todo : Tmp ImGui example
-	//ImGui::NewFrame();
-	//static bool show_demo_window = true;
-	//ImGui::ShowDemoWindow(&show_demo_window);
-
+	ImGui::Begin("Performance", 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoInputs);
+	ImGui::SetWindowSize(ImVec2{ 200, 100 });
+	ImGui::SetWindowPos(ImVec2{ 0, 0 });
+	ImGui::Text("Framerate : %f", 1.f / DeltaClock.getElapsedTime().asSeconds());
+	DeltaClock.restart();
+	ImGui::End();
 	ImGui::SFML::Render(Window);
 	Window.display();
 }
@@ -156,7 +164,7 @@ void SFMLRender::BufferFrame(Entity* Entity)
 			[](FQuad2D obj)
 			{
 				DrawQuad2D(obj);
-			}, 
+			},
 			[](VertexArray2D obj)
 			{
 				DrawVertexArray(obj);
@@ -229,16 +237,36 @@ void SFMLRender::HandleEvents()
 		{
 			if(EventCall(MEvents::OnMouseButtonPressed(currEvent.key.code)))
 				return;
+
+			if (currEvent.mouseButton.button == sf::Mouse::Right)
+			{
+				OldMousePosition = sf::Vector2f{ (float)currEvent.mouseButton.x, (float)currEvent.mouseButton.y };
+				IsMousePressed = true;
+			}
 		}
 		else if (currEvent.type == sf::Event::MouseButtonReleased)
 		{
 			if(EventCall(MEvents::OnMouseButtonReleased(currEvent.key.code)))
 				return;
+
+			if (currEvent.mouseButton.button == sf::Mouse::Right)
+			{
+				IsMousePressed = false;
+			}
 		}
 		else if (currEvent.type == sf::Event::MouseMoved)
 		{
-			if(EventCall(MEvents::OnMouseMoved({ currEvent.mouseMove.x, currEvent.mouseMove.y })))
+			if(EventCall(MEvents::OnMouseMoved({ currEvent.mouseMove.x, currEvent.mouseMove.y})))
 				return;
+
+			if (IsMousePressed)
+			{
+				sf::View view = Window.getView();
+				sf::Vector2f diff = sf::Vector2f{(float)currEvent.mouseMove.x, (float)currEvent.mouseMove.y} - OldMousePosition;
+				view.move(diff.x*-(currZoom/1.5), diff.y*-(currZoom/1.5));
+				OldMousePosition = sf::Vector2f{ (float)currEvent.mouseMove.x, (float)currEvent.mouseMove.y };
+				Window.setView(view);
+			}
 		}
 		else if (currEvent.type == sf::Event::MouseWheelScrolled)
 		{
@@ -248,11 +276,19 @@ void SFMLRender::HandleEvents()
 			sf::View view = Window.getView();
 			if (currEvent.mouseWheelScroll.delta > 0)
 			{
-				view.zoom(0.9);
+				if (currZoom > 0.96)
+				{
+					view.zoom(0.95);
+					currZoom -= 0.001;
+				}
 			}
 			else
 			{
-				view.zoom(1.1);
+				if (currZoom < 1.02)
+				{
+					view.zoom(1.05);
+					currZoom += 0.001;
+				}
 			}
 			Window.setView(view);
 		}

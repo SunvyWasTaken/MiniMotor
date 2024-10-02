@@ -52,7 +52,7 @@ int main()
 
 	MazeTerrain* Maze = new MazeTerrain();
 	CurrentWorld->Entities.push_back(Maze);
-	CHECK_PERF(Maze->GenerateTerrain({ 500, 500 }))
+	CHECK_PERF(Maze->GenerateTerrain({ 300, 300 }))
 	//CHECK_PERF(Maze->GenerateLabyrinthe())
 	MyGenButton.BindOnPressed(Maze, &MazeTerrain::GenerateLabyrinthe);
 	MyClearTerrain.BindOnPressed(Maze, &MazeTerrain::ClearLabyrinthe);
