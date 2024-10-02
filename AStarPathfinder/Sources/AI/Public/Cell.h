@@ -28,6 +28,12 @@ public:
 		value = val;
 	}
 
+	std::vector<Unit<Path>*> GetNeighbours()
+	{
+		Derived* derived = static_cast<Derived*>(this);
+		return derived->GetNeighbours();
+	}
+
 	CRTP_CALL_OneParam(ChangeValue, const uint64_t)
 
 	MazeTerrain* parent;
@@ -37,6 +43,13 @@ public:
 	IVec2 pos;
 
 	bool bCanBeOpen;
+
+	// A* Pathfinding
+	Unit<Path>* beforePath;
+
+	uint64_t gCost;
+
+	uint64_t hCost;
 };
 
 using Cell = std::variant<Unit<Wall>, Unit<Path>>;
@@ -57,5 +70,7 @@ public:
 	Path();
 
 	void ChangeValue(const uint64_t val);
+
+	std::vector<Unit<Path>*> GetNeighbours();
 };
 

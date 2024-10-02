@@ -93,16 +93,17 @@ public:
 	{}
 	std::string m_Text;
 
-	template <typename type>
-	Slate& BindOnPressed(type* target, void(type::* func)())
+	template <typename type, typename ...Args>
+	Slate& BindOnPressed(type* target, void(type::* func)(Args...))
 	{
 		m_OnPressed = std::bind(func, target);
 		return *this;
 	}
 
-	void OnPressed()
+	template <typename ...Args>
+	void OnPressed(Args... args)
 	{
-		m_OnPressed();
+		m_OnPressed(std::forward<Args>(args)...);
 	}
 
 private:

@@ -136,7 +136,6 @@ void SFMLRender::Init()
 void SFMLRender::Update()
 {
 	ImGui::SFML::Update(Window, CurrClock.restart());
-	//ImGui::NewFrame();
 }
 
 void SFMLRender::Draw()

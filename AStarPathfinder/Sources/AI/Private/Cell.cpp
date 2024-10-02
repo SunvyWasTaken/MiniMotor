@@ -57,3 +57,19 @@ void Path::ChangeValue(const uint64_t val)
 		}
 	}
 }
+
+std::vector<Unit<Path>*> Path::GetNeighbours()
+{
+	std::vector<Unit<Path>*> Neighbours;
+	for (IVec2& side : Sides)
+	{
+		if (Cell* curr = parent->GetCellByPos(pos + side))
+		{
+			if (Unit<Path>* path = std::get_if<Unit<Path>>(curr))
+			{
+				Neighbours.push_back(path);
+			}
+		}
+	}
+	return Neighbours;
+}

@@ -1,8 +1,27 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Cell.h"
 
-struct PathFinderAlgo
+namespace PathFinderAlgo
 {
-	static void AStarPathfinding();
+	struct AStarPathfinding
+	{
+		AStarPathfinding(MazeTerrain* _parent);
+		~AStarPathfinding() = default;
+
+		void SetStart(Unit<Path>* start);
+		void SetEnd(Unit<Path>* end);
+
+		void operator()();
+		
+	private:
+		std::vector<Unit<Path>*> OpenList;
+		std::vector<Unit<Path>*> CloseList;
+
+		Unit<Path>* Start;
+		Unit<Path>* End;
+
+		MazeTerrain* parent;
+	};
 };

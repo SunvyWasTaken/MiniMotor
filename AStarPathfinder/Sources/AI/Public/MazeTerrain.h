@@ -40,11 +40,11 @@ public:
 		return nullptr;
 	}
 
+	VertexArray2D& GetVertexArray();
+
 private:
 
 	bool GetWallPos(const IVec2& pos, size_t& index);
-
-	VertexArray2D& GetVertexArray();
 
 	std::vector<IVec2> WallList;
 

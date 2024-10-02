@@ -2,6 +2,8 @@
 
 #include "Geometry/VertexArray2D.h"
 
+#include "AStarPathfinding.h"
+
 #include <iostream>
 #include <random>
 
@@ -114,6 +116,11 @@ void MazeTerrain::GenerateLabyrinthe()
 			std::cout << "Generation Done" << std::endl;
 		}
 	}
+
+	PathFinderAlgo::AStarPathfinding pathfinding(this);
+	pathfinding.SetStart(std::get_if<Unit<Path>>(GetCellByPos({ 1, 1 })));
+	pathfinding.SetEnd(std::get_if<Unit<Path>>(GetCellByPos({ MazeSize.x - 2, MazeSize.y - 2 })));
+	pathfinding();
 }
 
 void MazeTerrain::ClearLabyrinthe()
