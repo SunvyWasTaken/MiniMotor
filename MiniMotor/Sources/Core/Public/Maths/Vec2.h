@@ -67,6 +67,12 @@ struct MM_EXPORT Vec2
 	}
 
 	template <typename operandType>
+	Vec2<type> operator-(const operandType& op) const
+	{
+		return Vec2<type>(x - static_cast<type>(op), y - static_cast<type>(op));
+	}
+
+	template <typename operandType>
 	Vec2<type> operator-(const Vec2<operandType>& op) const
 	{
 		return Vec2<type>(x - static_cast<type>(op.x), y - static_cast<type>(op.y));

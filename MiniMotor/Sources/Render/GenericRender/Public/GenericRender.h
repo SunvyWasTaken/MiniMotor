@@ -4,18 +4,21 @@
 #include "DrawableList.h"
 #include "Events/Events.h"
 
+class MiniMotorApp;
+
 class MM_API EventsCallback
 {
-	using EventCallbackType = std::function<void(const Events&)>;
+	using EventCallbackType = bool(MiniMotorApp::*)(const Events&);
 public:
 	EventsCallback();
 
-	void Bind(const EventCallbackType& func);
+	void Bind(MiniMotorApp* app, const EventCallbackType& func);
 
-	void operator()(const Events& event);
+	bool operator()(const Events& event);
 
 private:
 	EventCallbackType m_Callback;
+	MiniMotorApp* m_App;
 };
 
 template <typename Derived>
@@ -26,12 +29,16 @@ public:
 	virtual ~GenericRender() = default;
 
 	CRTP_CALL(Init)
+	CRTP_CALL(Update)
 	CRTP_CALL(Draw)
 	CRTP_CALL_ret(bool, IsWindowOpen)
 	CRTP_CALL_OneParam(BufferFrame, class Entity*)
 	CRTP_CALL(HandleEvents)
 	CRTP_CALL(ClearWindow)
 	CRTP_CALL(CloseWindow)
+
+	// Todo : Tmp solution change for the Slate
+	CRTP_CALL_OneParam(DrawSlate, class SContainer*)
 
 	EventsCallback EventCall;
 };

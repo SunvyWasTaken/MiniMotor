@@ -8,7 +8,7 @@ VertexArray2D::~VertexArray2D()
 {
 }
 
-void VertexArray2D::Resize(size_t size)
+void VertexArray2D::Resize(const size_t size)
 {
 	quads.resize(size);
 }

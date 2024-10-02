@@ -2,15 +2,18 @@
     "name": "minimotor",
     "version": "0.1.0",
     "dependencies": [
-      "sfml",
-      "opengl",
-      "glfw3",
-      "glad",
-      "glew",
-      {
-        "name": "imgui",
-        "features": ["glfw-binding", "opengl3-binding"]
-      },
+	"sfml",
+	"opengl",
+	"glfw3",
+	"glad",
+	"glew",
+	{
+		"name": "imgui",
+		"features": ["glfw-binding", "opengl3-binding"]
+	},
+	{
+		"name": "imgui-sfml"
+	},
       "stb"
     ]
   }

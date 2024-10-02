@@ -1,16 +1,20 @@
 #include "GenericRender.h"
+#include "MiniMotorApp.h"
 
 EventsCallback::EventsCallback()
+	: m_Callback(nullptr)
+	, m_App(nullptr)
 {
 }
 
-void EventsCallback::Bind(const EventCallbackType& func)
+void EventsCallback::Bind(MiniMotorApp* app, const EventCallbackType& func)
 {
+	m_App = app;
 	m_Callback = func;
 }
 
-void EventsCallback::operator()(const Events& event)
+bool EventsCallback::operator()(const Events& event)
 {
 	ensure(m_Callback);
-	m_Callback(event);
+	return (m_App->*m_Callback)(event);
 }

@@ -19,6 +19,8 @@ public:
 
 	void GenerateLabyrinthe();
 
+	void ClearLabyrinthe();
+
 	void RemoveWall(Wall* target);
 
 	IVec2 MazeSize;

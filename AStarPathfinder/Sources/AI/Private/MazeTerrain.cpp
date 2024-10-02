@@ -116,6 +116,15 @@ void MazeTerrain::GenerateLabyrinthe()
 	}
 }
 
+void MazeTerrain::ClearLabyrinthe()
+{
+	Maze.clear();
+	WallList.clear();
+	GetVertexArray().Resize(0);
+
+	GenerateTerrain(MazeSize - 1);
+}
+
 void MazeTerrain::RemoveWall(Wall* target)
 {
 	//size_t index = (WallList.size() - 1) * 0.5;

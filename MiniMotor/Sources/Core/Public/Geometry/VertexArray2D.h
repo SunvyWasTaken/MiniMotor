@@ -17,7 +17,7 @@ public:
 
 	virtual ~VertexArray2D();
 
-	void Resize(size_t size);
+	void Resize(const size_t size);
 
 	FQuad2D& operator[](const size_t index);
 

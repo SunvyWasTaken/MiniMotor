@@ -3,8 +3,13 @@
 #include "Entitys.h"
 #include "SFMLRender.h"
 #include "Utils/StateMachine.h"
+#include "Slate/SlateContainer.h"
 
 #include <SFML/Graphics.hpp>
+#include <imgui.h>
+#include <imgui-SFML.h>
+
+#include <iostream>
 
 #define CellSize 100
 
@@ -19,6 +24,8 @@ namespace
 	sf::Font font;
 
 	sf::Clock CurrClock;
+
+	double CurrZoom = 1.0;
 
 	void DrawQuad2D(FQuad2D& obj)
 	{
@@ -47,6 +54,66 @@ namespace
 		}
 		Window.draw(vertexArray);
 	}
+
+	void HandleAnchor(SContainer* slate)
+	{
+		ImVec2 targetPosition;
+		std::visit(overloaded(
+			[&](const TopLeft)
+			{
+				targetPosition = ImVec2{ (float)slate->GetPosition()->x, (float)slate->GetPosition()->y };
+			},
+			[&](const Left)
+			{
+				targetPosition = ImVec2{ (float)slate->GetPosition()->x, (float)slate->GetPosition()->y - (float)slate->GetSize()->y / 2 };
+			},
+			[&](const BottomLeft)
+			{
+				targetPosition = ImVec2{ (float)slate->GetPosition()->x, (float)slate->GetPosition()->y - (float)slate->GetSize()->y };
+			},
+			[&](const TopRight)
+			{
+				targetPosition = ImVec2{ (float)slate->GetPosition()->x - (float)slate->GetSize()->x, (float)slate->GetPosition()->y };
+			},
+			[&](const Right)
+			{
+				targetPosition = ImVec2{ (float)slate->GetPosition()->x - (float)slate->GetSize()->x, (float)slate->GetPosition()->y - (float)slate->GetSize()->y / 2 };
+			},
+			[&](const BottomRight)
+			{
+				targetPosition = ImVec2{ (float)slate->GetPosition()->x - (float)slate->GetSize()->x, (float)slate->GetPosition()->y - (float)slate->GetSize()->y };
+			},
+			[&](const Top)
+			{
+				targetPosition = ImVec2{ (float)slate->GetPosition()->x - (float)slate->GetSize()->x / 2, (float)slate->GetPosition()->y };
+			},
+			[&](const Bottom)
+			{
+				targetPosition = ImVec2{ (float)slate->GetPosition()->x - (float)slate->GetSize()->x / 2, (float)slate->GetPosition()->y - (float)slate->GetSize()->y };
+			},
+			[&](const Center)
+			{
+				targetPosition = ImVec2{ (float)slate->GetPosition()->x - (float)slate->GetSize()->x / 2, (float)slate->GetPosition()->y - (float)slate->GetSize()->y / 2 };
+			}
+		), slate->GetPadding());
+		ImGui::SetWindowPos(targetPosition);
+	}
+
+	void DrawChild(SContainer* slate)
+	{
+		for (auto& child : slate->m_Children)
+		{
+			if (SButton* obj = dynamic_cast<SButton*>(child))
+			{
+				if(ImGui::Button(obj->m_Text.c_str()))
+				{
+					obj->OnPressed();
+				}
+
+			}
+		}
+	}
+
 }
 
 void SFMLRender::Init()
@@ -55,60 +122,24 @@ void SFMLRender::Init()
 	ensure(&Window);
 	bool loaded = font.loadFromFile("Ressources/PoiretOne-Regular.ttf");
 	ensure(loaded);
+	ImGui::SFML::Init(Window);
 }
 
-void SFMLRender::HandleEvents()
+void SFMLRender::Update()
 {
-	sf::Event event;
-	while (Window.pollEvent(event))
-	{
-		if (event.type == sf::Event::Closed)
-		{
-			EventCall(MEvents::OnClose());
-		}
-		else if(event.type == sf::Event::Resized)
-		{
-			float ratio = (float)event.size.width / (float)event.size.height;
-			sf::View view = Window.getView();
-			view.setSize(WindowSizeY * ratio, WindowSizeX);
-			Window.setView(view);
-		}
-		else if (event.type == sf::Event::KeyPressed)
-		{
-			EventCall(MEvents::OnKeyPressed());
-		}
-		else if (event.type == sf::Event::KeyReleased)
-		{
-			EventCall(MEvents::OnKeyReleased());
-		}
-		else if (event.type == sf::Event::MouseButtonPressed)
-		{
-			EventCall(MEvents::OnMouseButtonPressed());
-		}
-		else if (event.type == sf::Event::MouseButtonReleased)
-		{
-			EventCall(MEvents::OnMouseButtonReleased());
-		}
-		else if (event.type == sf::Event::MouseMoved)
-		{
-			EventCall(MEvents::OnMouseMoved());
-		}
-		else if (event.type == sf::Event::MouseWheelScrolled)
-		{
-			EventCall(MEvents::OnMouseScrolled());
-		}
-	}
+	ImGui::SFML::Update(Window, CurrClock.restart());
+	//ImGui::NewFrame();
 }
 
 void SFMLRender::Draw()
 {
-	sf::Time curr = CurrClock.restart();
-	sf::Text text;
-	text.setFont(font);
-	text.setString("FPS : " + std::to_string(1.f / curr.asSeconds()));
-	text.setCharacterSize(50);
-	text.setFillColor(sf::Color::White);
-	Window.draw(text);
+
+	// Todo : Tmp ImGui example
+	//ImGui::NewFrame();
+	//static bool show_demo_window = true;
+	//ImGui::ShowDemoWindow(&show_demo_window);
+
+	ImGui::SFML::Render(Window);
 	Window.display();
 }
 
@@ -134,6 +165,101 @@ void SFMLRender::BufferFrame(Entity* Entity)
 	}
 }
 
+void SFMLRender::HandleEvents()
+{
+	sf::Event currEvent;
+	while (Window.pollEvent(currEvent))
+	{
+		if (currEvent.type == sf::Event::Closed)
+		{
+			if(EventCall(MEvents::OnWindowClose()))
+				return;
+		}
+		else if (currEvent.type == sf::Event::Resized)
+		{
+			float ratio = (float)currEvent.size.width / (float)currEvent.size.height;
+			sf::View view = Window.getView();
+			view.setSize(WindowSizeY * ratio, WindowSizeX);
+			Window.setView(view);
+			return;
+		}
+		else if (currEvent.type == sf::Event::KeyPressed)
+		{
+			if (currEvent.key.code >= 0 && currEvent.key.code <= 25)
+			{
+				if(EventCall(MEvents::OnKeyPressed(currEvent.key.code + 65)))
+					return;
+
+				// Todo : revoir le Bind à la zub
+				if (currEvent.key.code == sf::Keyboard::Key::Q)
+				{
+					sf::View view = Window.getView();
+					view.move(-1, 0);
+					Window.setView(view);
+				}
+				else if (currEvent.key.code == sf::Keyboard::Key::D)
+				{
+					sf::View view = Window.getView();
+					view.move(1, 0);
+					Window.setView(view);
+				}
+				else if (currEvent.key.code == sf::Keyboard::Key::Z)
+				{
+					sf::View view = Window.getView();
+					view.move(0, -1);
+					Window.setView(view);
+				}
+				else if (currEvent.key.code == sf::Keyboard::Key::S)
+				{
+					sf::View view = Window.getView();
+					view.move(0, 1);
+					Window.setView(view);
+				}
+			}
+		}
+		else if (currEvent.type == sf::Event::KeyReleased)
+		{
+			if (currEvent.key.code >= 0 && currEvent.key.code <= 25)
+			{
+				if(EventCall(MEvents::OnKeyReleased(currEvent.key.code + 65)))
+					return;
+			}
+		}
+		else if (currEvent.type == sf::Event::MouseButtonPressed)
+		{
+			if(EventCall(MEvents::OnMouseButtonPressed(currEvent.key.code)))
+				return;
+		}
+		else if (currEvent.type == sf::Event::MouseButtonReleased)
+		{
+			if(EventCall(MEvents::OnMouseButtonReleased(currEvent.key.code)))
+				return;
+		}
+		else if (currEvent.type == sf::Event::MouseMoved)
+		{
+			if(EventCall(MEvents::OnMouseMoved({ currEvent.mouseMove.x, currEvent.mouseMove.y })))
+				return;
+		}
+		else if (currEvent.type == sf::Event::MouseWheelScrolled)
+		{
+			if (EventCall(MEvents::OnMouseScrolled(currEvent.mouseWheelScroll.delta)))
+				return;
+
+			sf::View view = Window.getView();
+			if (currEvent.mouseWheelScroll.delta > 0)
+			{
+				view.zoom(0.9);
+			}
+			else
+			{
+				view.zoom(1.1);
+			}
+			Window.setView(view);
+		}
+		ImGui::SFML::ProcessEvent(currEvent);
+	}
+}
+
 void SFMLRender::ClearWindow()
 {
 	Window.clear();
@@ -142,4 +268,16 @@ void SFMLRender::ClearWindow()
 void SFMLRender::CloseWindow()
 {
 	Window.close();
+	ImGui::SFML::Shutdown();
+}
+
+void SFMLRender::DrawSlate(SContainer* slate)
+{
+	ImGui::Begin("Slate", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+	HandleAnchor(slate);
+	ImGui::SetWindowSize(ImVec2{(float)slate->GetSize()->x, (float)slate->GetSize()->y});
+
+	DrawChild(slate);
+
+	ImGui::End();
 }

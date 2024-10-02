@@ -6,7 +6,7 @@
 MiniMotorApp::MiniMotorApp()
 	: m_IsRunning(true)
 	, m_World(nullptr)
-	, m_Render(std::unique_ptr<CurrentRender>())
+	, m_Render(std::make_unique<CurrentRender>())
 {
 }
 
@@ -17,14 +17,19 @@ MiniMotorApp::~MiniMotorApp()
 void MiniMotorApp::Init()
 {
 	m_Render->Init();
-	m_Render->EventCall.Bind(std::bind(&MiniMotorApp::OnEvents, this, std::placeholders::_1));
+	m_Render->EventCall.Bind(this, &MiniMotorApp::OnEvents);
 }
 
 void MiniMotorApp::Run()
 {
 	while (m_IsRunning)
 	{
+		m_Render->Update();
 		m_Render->HandleEvents();
+		for (auto& slate : m_SlateContainer)
+		{
+			m_Render->DrawSlate(slate);
+		}
 		m_World->BufferFrameEntitys(*m_Render);
 		m_Render->Draw();
 		m_Render->ClearWindow();
@@ -42,22 +47,70 @@ void MiniMotorApp::SetWorld(World* world)
 	m_World = world;
 }
 
-void MiniMotorApp::OnEvents(const Events& event)
+bool MiniMotorApp::OnEvents(const Events& event)
 {
-	//std::visit(overloaded(
-	//	[this](const MEvents::OnClose tmp) { m_IsRunning = false; },
-	//	[this](const MEvents::OnResize tmp) {  },
-	//	[this](const MEvents::OnFocus tmp) {  },
-	//	[this](const MEvents::OnLostFocus tmp) {  },
-	//	[this](const MEvents::OnMoved tmp) {  },
-	//	[this](const MEvents::OnAppTick tmp) {  },
-	//	[this](const MEvents::OnAppUpdate tmp) {  },
-	//	[this](const MEvents::OnAppRender tmp) {  },
-	//	[this](const MEvents::OnKeyPressed tmp) {  },
-	//	[this](const MEvents::OnKeyReleased tmp) {  },
-	//	[this](const MEvents::OnMouseButtonPressed tmp) {  },
-	//	[this](const MEvents::OnMouseButtonReleased tmp) {  },
-	//	[this](const MEvents::OnMouseMoved tmp) {  },
-	//	[this](const MEvents::OnMouseScrolled tmp) {  }
-	//	), event);
+	return std::visit(overloaded(
+		[this](const MEvents::OnWindowClose tmp)->bool
+		{
+			m_IsRunning = false;
+			return true;
+		},
+		[this](const MEvents::OnWindowResize tmp)->bool
+		{
+			return false;
+		},
+		[this](const MEvents::OnWindowFocus tmp)->bool
+		{
+			return false;
+		},
+		[this](const MEvents::OnWindowLostFocus tmp)->bool
+		{
+			return false;
+		},
+		[this](const MEvents::OnWindowMoved tmp)->bool
+		{
+			return false;
+		},
+		[this](const MEvents::OnAppTick tmp)->bool
+		{
+			return false;
+		},
+		[this](const MEvents::OnAppUpdate tmp)->bool
+		{
+			return false;
+		},
+		[this](const MEvents::OnAppRender tmp)->bool
+		{
+			return false;
+		},
+		[this](const MEvents::OnKeyPressed tmp)->bool
+		{
+			return SendEventThroughSlate(tmp);
+		},
+		[this](const MEvents::OnKeyReleased tmp)->bool
+		{
+			return SendEventThroughSlate(tmp);
+		},
+		[this](const MEvents::OnMouseButtonPressed tmp)->bool
+		{
+			return SendEventThroughSlate(tmp);
+		},
+		[this](const MEvents::OnMouseButtonReleased tmp)->bool
+		{
+			return SendEventThroughSlate(tmp);
+		},
+		[this](const MEvents::OnMouseMoved tmp)->bool
+		{
+			return SendEventThroughSlate(tmp);
+		},
+		[this](const MEvents::OnMouseScrolled tmp)->bool
+		{
+			return SendEventThroughSlate(tmp);
+		}
+	), event);
+}
+
+void MiniMotorApp::PushLayer(SContainer* slate)
+{
+	m_SlateContainer.PushLayer(slate);
 }

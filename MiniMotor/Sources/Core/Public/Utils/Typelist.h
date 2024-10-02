@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <variant>
+
 template <typename... Types>
 struct Typelist {};
 
@@ -27,4 +29,50 @@ template <typename T, typename First, typename... Rest>
 struct GetTypelistIndex<T, Typelist<First, Rest...>>
 {
 	static const int value = 1 + GetTypelistIndex<T, Typelist<Rest...>>::value;
+};
+
+/************************************************************************/
+/* CheckIfTypeIsInList													*/
+/************************************************************************/
+
+template <typename T, typename Typelist>
+struct IsTypeInList;
+
+template <typename T>
+struct IsTypeInList<T, Typelist<>>
+{
+	static const bool value = false;
+};
+
+template <typename T, typename... Types>
+struct IsTypeInList<T, Typelist<T, Types...>>
+{
+	static const bool value = true;
+};
+
+template <typename T, typename First, typename... Rest>
+struct IsTypeInList<T, Typelist<First, Rest...>>
+{
+	static const bool value = IsTypeInList<T, Typelist<Rest...>>::value;
+};
+
+template <typename T, typename Typelist>
+struct IsTypeInVariant;
+
+template <typename T>
+struct IsTypeInVariant<T, std::variant<>>
+{
+	static const bool value = false;
+};
+
+template <typename T, typename... Types>
+struct IsTypeInVariant<T, std::variant<T, Types...>>
+{
+	static const bool value = true;
+};
+
+template <typename T, typename First, typename... Rest>
+struct IsTypeInVariant<T, std::variant<First, Rest...>>
+{
+	static const bool value = IsTypeInVariant<T, std::variant<Rest...>>::value;
 };
