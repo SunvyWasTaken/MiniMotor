@@ -78,6 +78,8 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 
 void MazeTerrain::GenerateLabyrinthe()
 {
+	ClearLabyrinthe();
+
 	uint64_t val = -1;
 	//uint8_t it = 0;
 	std::atomic<bool> IsGenerationDone = false;

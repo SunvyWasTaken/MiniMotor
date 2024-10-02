@@ -41,7 +41,7 @@ namespace PathFinderAlgo
 			Unit<Path>* current = OpenList[0];
 			for (auto& cell : OpenList)
 			{
-				if (cell->gCost < current->gCost)
+				if (cell->hCost < current->hCost)
 				{
 					current = cell;
 				}
@@ -53,12 +53,17 @@ namespace PathFinderAlgo
 			if (current == End)
 			{
 				std::cout << "Path found" << std::endl;
+				while (current != Start)
+				{
+					parent->GetVertexArray()[current->pos.x * parent->MazeSize.x + current->pos.y].FillColor({0, 255, 0});
+					current = current->beforePath;
+				}
 				return;
 			}
 
 			for (auto& neighbour : current->GetNeighbours())
 			{
-				if (std::find(CloseList.begin(), CloseList.end(), neighbour) != CloseList.end() || !neighbour->bCanBeOpen)
+				if (std::find(CloseList.begin(), CloseList.end(), neighbour) != CloseList.end())
 				{
 					continue;
 				}
