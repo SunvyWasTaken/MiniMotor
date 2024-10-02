@@ -82,11 +82,6 @@ namespace PathFinderAlgo
 				}
 			}
 		}
-		std::cout << "No path found" << std::endl;
-		for (auto& ha: CloseList)
-		{
-			parent->GetVertexArray()[ha->pos.x * parent->MazeSize.x + ha->pos.y].FillColor({255, 0, 0});
-		}
 	}
 
 };

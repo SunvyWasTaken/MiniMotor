@@ -122,7 +122,7 @@ void MazeTerrain::GenerateLabyrinthe()
 	PathFinderAlgo::AStarPathfinding pathfinding(this);
 	pathfinding.SetStart(std::get_if<Unit<Path>>(GetCellByPos({ 1, 1 })));
 	pathfinding.SetEnd(std::get_if<Unit<Path>>(GetCellByPos({ MazeSize.x - 2, MazeSize.y - 2 })));
-	pathfinding();
+	CHECK_PERF(pathfinding());
 }
 
 void MazeTerrain::ClearLabyrinthe()

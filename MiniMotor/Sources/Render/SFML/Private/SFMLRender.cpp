@@ -27,6 +27,8 @@ namespace
 
 	sf::Clock CurrClock;
 
+	std::chrono::duration<double> GenClock;
+
 	sf::Vector2f OldMousePosition;
 
 	double currZoom = 1.0;
@@ -113,9 +115,14 @@ namespace
 			{
 				if(ImGui::Button(obj->m_Text.c_str()))
 				{
+					auto start = std::chrono::high_resolution_clock::now();
 					obj->OnPressed();
+					auto end = std::chrono::high_resolution_clock::now();
+					GenClock = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
+					std::cout << "It takes : " << GenClock.count() << "secondes." << std::endl;
 				}
-
+				ImGui::SameLine();
+				ImGui::Text("Time elapsed : %.00f s", GenClock.count());
 			}
 		}
 	}
@@ -262,7 +269,7 @@ void SFMLRender::HandleEvents()
 			{
 				sf::View view = Window.getView();
 				sf::Vector2f diff = sf::Vector2f{(float)currEvent.mouseMove.x, (float)currEvent.mouseMove.y} - OldMousePosition;
-				view.move(diff.x*-(currZoom/1.5), diff.y*-(currZoom/1.5));
+				view.move(diff.x*-(currZoom), diff.y*-(currZoom));
 				OldMousePosition = sf::Vector2f{ (float)currEvent.mouseMove.x, (float)currEvent.mouseMove.y };
 				Window.setView(view);
 			}
@@ -275,18 +282,18 @@ void SFMLRender::HandleEvents()
 			sf::View view = Window.getView();
 			if (currEvent.mouseWheelScroll.delta > 0)
 			{
-				if (currZoom > 0.96)
+				if (currZoom > 0.15)
 				{
 					view.zoom(0.95);
-					currZoom -= 0.001;
+					currZoom -= 0.05;
 				}
 			}
 			else
 			{
-				if (currZoom < 1.02)
+				if (currZoom < 1.5)
 				{
 					view.zoom(1.05);
-					currZoom += 0.001;
+					currZoom += 0.05;
 				}
 			}
 			Window.setView(view);

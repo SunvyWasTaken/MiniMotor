@@ -38,7 +38,7 @@ int main()
 
 	MazeTerrain* Maze = new MazeTerrain();
 	CurrentWorld->Entities.push_back(Maze);
-	Maze->SetMazeSize({ 300, 300 });
+	Maze->SetMazeSize({ 500, 500 });
 	//CHECK_PERF(Maze->GenerateLabyrinthe())
 
 	MyGenButton.BindOnPressed(Maze, &MazeTerrain::GenerateLabyrinthe);
