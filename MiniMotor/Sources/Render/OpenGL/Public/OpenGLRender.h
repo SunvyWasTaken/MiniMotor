@@ -9,7 +9,7 @@ public:
 
 	void Init();
 
-	void HandleEvents();
+	void Update();
 
 	void Draw();
 
@@ -17,7 +17,11 @@ public:
 
 	void BufferFrame(class Entity* Entity);
 
+	void HandleEvents();
+
 	void ClearWindow();
 
 	void CloseWindow();
+
+	void DrawSlate(class SContainer* slate);
 };
