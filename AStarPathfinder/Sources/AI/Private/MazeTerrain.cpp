@@ -2,13 +2,16 @@
 
 #include "Geometry/VertexArray2D.h"
 
-#include "AStarPathfinding.h"
-
 #include <iostream>
 #include <random>
 
 std::default_random_engine rGen;
 using intRand = std::uniform_int_distribution<int>;
+
+namespace
+{
+	uint64_t NbrIteration = 0;
+}
 
 MazeTerrain::MazeTerrain() 
 	: MazeSize(0)
@@ -18,6 +21,14 @@ MazeTerrain::MazeTerrain()
 
 MazeTerrain::~MazeTerrain()
 {
+}
+
+void MazeTerrain::Update(float delta)
+{
+	if (!IsGenerationDone.load(std::memory_order_relaxed))
+	{
+		ConstructLabyrinthe();
+	}
 }
 
 void MazeTerrain::SetMazeSize(const IVec2& size)
@@ -30,6 +41,7 @@ void MazeTerrain::SetMazeSize(const IVec2& size)
 	MazeSize = size + 1;
 	Maze.reserve(MazeSize.x * MazeSize.y);
 	GetVertexArray().Resize(MazeSize.x * MazeSize.y);
+	NbrIteration = MazeSize.x;
 }
 
 void MazeTerrain::GenerateTerrain(const IVec2& size)
@@ -76,57 +88,38 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 	}
 }
 
-void MazeTerrain::GenerateLabyrinthe()
+void MazeTerrain::RegenerateLabyrinthe()
 {
 	ClearLabyrinthe();
+	IsGenerationDone.exchange(false, std::memory_order_relaxed);
+}
 
-	uint64_t val = -1;
-	//uint8_t it = 0;
-	std::atomic<bool> IsGenerationDone = false;
-	while (/*it <= 5 && */!IsGenerationDone.load(std::memory_order_relaxed))
+void MazeTerrain::ConstructLabyrinthe()
+{
+	uint64_t it = 0;
+	while (!IsGenerationDone.load(std::memory_order_relaxed))
 	{
-		//++it;
-		size_t index = intRand(0, (int)WallList.size() - 1)(rGen);
-		IVec2 pos = WallList[index];
-
-		Unit<Wall>* wallPath = std::get_if<Unit<Wall>>(GetCellByPos(pos));
-		ensure(wallPath);
-		val = wallPath->value;
-
-		GetVertexArray()[val].FillColor({ 0,0,0 });
-
-		// Transform the wall to a path
-
-		Cell* CurrentCellPtr = ChangeCellAt<Path>(pos);
-		WallList.erase(WallList.begin() + index);
-
-		if (Unit<Path>* currPath = std::get_if<Unit<Path>>(CurrentCellPtr))
+		++it;
+		if (it >= 1000)
 		{
-			ensure(currPath);
-			currPath->parent = this;
-			currPath->pos = pos;
-			currPath->ChangeValue(val);
+			return;
 		}
-		else
-		{
-			PLATEFORM_BREAK
-		}
-
-		if (WallList.size() <= 0)
-		{
-			IsGenerationDone.exchange(true, std::memory_order_relaxed);
-			std::cout << "Generation Done" << std::endl;
-		}
+		AlgoLabyrinthe();
 	}
+}
 
-	PathFinderAlgo::AStarPathfinding pathfinding(this);
-	pathfinding.SetStart(std::get_if<Unit<Path>>(GetCellByPos({ 1, 1 })));
-	pathfinding.SetEnd(std::get_if<Unit<Path>>(GetCellByPos({ MazeSize.x - 2, MazeSize.y - 2 })));
-	CHECK_PERF(pathfinding());
+void MazeTerrain::GenerateLabyrinthe()
+{
+	RegenerateLabyrinthe();
+	while (!IsGenerationDone.load(std::memory_order_relaxed))
+	{
+		AlgoLabyrinthe();
+	}
 }
 
 void MazeTerrain::ClearLabyrinthe()
 {
+	IsGenerationDone.exchange(true, std::memory_order_relaxed);
 	Maze.clear();
 	WallList.clear();
 	GetVertexArray().Resize(0);
@@ -136,36 +129,13 @@ void MazeTerrain::ClearLabyrinthe()
 
 void MazeTerrain::RemoveWall(Wall* target)
 {
-	//size_t index = (WallList.size() - 1) * 0.5;
-
-	//if (GetWallPos(target->pos, index))
-	//{
-	//	WallList.erase(WallList.begin() + index);
-	//}
-
 	auto it = std::find(WallList.begin(), WallList.end(), target->pos);
 	if (it != WallList.end())
 	{
 		WallList.erase(it);
 	}
 	return;
-
 }
-
-//Cell* MazeTerrain::GetCellByPos(const IVec2& pos)
-//{
-//	for (auto& cell : Maze)
-//	{
-//		if (std::visit([pos](auto&& tmp)
-//			{
-//				return tmp.pos == pos;
-//			}, cell))
-//		{
-//			return &cell;
-//		}
-//	}
-//	return nullptr;
-//}
 
 Cell* MazeTerrain::GetCellByPos(const IVec2& pos)
 {
@@ -185,30 +155,41 @@ Cell* MazeTerrain::GetCellByPos(const IVec2& pos)
 	return nullptr;
 }
 
-bool MazeTerrain::GetWallPos(const IVec2& pos, size_t& index)
-{
-	if(index >= WallList.size() - 1 || (pos.x % 2 == 0 && pos.y % 2 == 0) || (pos.x >= MazeSize.x - 1 || pos.y >= MazeSize.y - 1) || (pos.x <= 0 || pos.y <= 0)) { return false; }
-
-	if (WallList[index] < pos)
-	{
-		index *= 1.5;
-	}
-	else if (pos < WallList[index])
-	{
-		index *= 0.5;
-	}
-	else if (WallList[index] == pos)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-	return GetWallPos(pos, index);
-}
-
 VertexArray2D& MazeTerrain::GetVertexArray()
 {
 	return std::get<VertexArray2D>(drawables.at("VertArray"));
+}
+
+void MazeTerrain::AlgoLabyrinthe()
+{
+	size_t index = intRand(0, (int)WallList.size() - 1)(rGen);
+	IVec2 pos = WallList[index];
+
+	Unit<Wall>* wallPath = std::get_if<Unit<Wall>>(GetCellByPos(pos));
+	ensure(wallPath);
+	uint64_t val = wallPath->value;
+
+	GetVertexArray()[val].FillColor({ 0,0,0 });
+
+	// Transform the wall to a path
+
+	Cell* CurrentCellPtr = ChangeCellAt<Path>(pos);
+	WallList.erase(WallList.begin() + index);
+
+	if (Unit<Path>* currPath = std::get_if<Unit<Path>>(CurrentCellPtr))
+	{
+		ensure(currPath);
+		currPath->parent = this;
+		currPath->pos = pos;
+		currPath->ChangeValue(val);
+	}
+	else
+	{
+		PLATEFORM_BREAK
+	}
+
+	if (WallList.size() <= 0)
+	{
+		IsGenerationDone.exchange(true, std::memory_order_relaxed);
+	}
 }

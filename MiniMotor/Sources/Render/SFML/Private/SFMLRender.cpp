@@ -124,6 +124,16 @@ namespace
 				ImGui::SameLine();
 				ImGui::Text("Time elapsed : %.00f s", GenClock.count());
 			}
+			else if (SEditableText* obj = dynamic_cast<SEditableText*>(child))
+			{
+				ImGui::InputInt(obj->m_Text.c_str(), &obj->value);
+				ImGui::SameLine();
+				if(ImGui::Button("Send"))
+				{
+					
+					obj->OnPressed(IVec2{obj->value, obj->value});
+				}
+			}
 		}
 	}
 
@@ -290,7 +300,7 @@ void SFMLRender::HandleEvents()
 			}
 			else
 			{
-				if (currZoom < 1.5)
+				if (currZoom < 2.0)
 				{
 					view.zoom(1.05);
 					currZoom += 0.05;

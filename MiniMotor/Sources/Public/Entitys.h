@@ -9,6 +9,8 @@ public:
 	Entity();
 	virtual ~Entity();
 
+	virtual void Update(float deltaTime);
+
 	void GetDrawablesList(MVectorDrawable& drawList);
 
 	MDrawableList drawables;

@@ -24,4 +24,23 @@ namespace PathFinderAlgo
 
 		MazeTerrain* parent;
 	};
+
+	struct DijkstraPathfinding
+	{
+		DijkstraPathfinding(MazeTerrain* _parent);
+		~DijkstraPathfinding() = default;
+
+		void SetStart(Unit<Path>* start);
+		void SetEnd(Unit<Path>* end);
+
+		void operator()();
+
+	private:
+		// Todo create a priority queue
+
+		Unit<Path>* Start;
+		Unit<Path>* End;
+
+		MazeTerrain* parent;
+	};
 };

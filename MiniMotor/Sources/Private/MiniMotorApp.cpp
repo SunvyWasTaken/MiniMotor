@@ -26,6 +26,7 @@ void MiniMotorApp::Run()
 	{
 		m_Render->Update();
 		m_Render->HandleEvents();
+		m_World->Update();
 		for (auto& slate : m_SlateContainer)
 		{
 			m_Render->DrawSlate(slate);

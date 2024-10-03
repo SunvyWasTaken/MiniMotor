@@ -13,19 +13,21 @@ public:
 	MazeTerrain();
 	virtual ~MazeTerrain();
 
+	virtual void Update(float delta) override;
+
 	void SetMazeSize(const IVec2& size);
 
 	void GenerateTerrain(const IVec2& size);
+
+	void RegenerateLabyrinthe();
+
+	void ConstructLabyrinthe();
 
 	void GenerateLabyrinthe();
 
 	void ClearLabyrinthe();
 
 	void RemoveWall(Wall* target);
-
-	IVec2 MazeSize;
-
-	std::vector<Cell> Maze;
 
 	Cell* GetCellByPos(const IVec2& pos);
 
@@ -44,7 +46,17 @@ public:
 
 private:
 
-	bool GetWallPos(const IVec2& pos, size_t& index);
+	void AlgoLabyrinthe();
+
+public:
+
+	IVec2 MazeSize;
+
+	std::vector<Cell> Maze;
+
+private:
+
+	std::atomic<bool> IsGenerationDone = true;
 
 	std::vector<IVec2> WallList;
 

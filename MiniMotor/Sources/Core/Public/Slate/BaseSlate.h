@@ -116,9 +116,26 @@ public:
 	SEditableText()
 		: Slate()
 		, m_Text("")
+		, value(0)
 	{}
 	std::string m_Text;
-	char m_Buffer[32];
+	int value;
+
+	template <typename type, typename ...Args>
+	Slate& BindOnPressed(type* target, void(type::* func)(Args...))
+	{
+		m_OnPressed = std::bind(func, target, std::placeholders::_1);
+		return *this;
+	}
+
+	template <typename ...Args>
+	void OnPressed(Args... args)
+	{
+		m_OnPressed(std::forward<Args>(args)...);
+	}
+
+private:
+	std::function<void(const IVec2&)> m_OnPressed;
 };
 
 class MM_EXPORT SContainer : public Slate

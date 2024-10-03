@@ -28,6 +28,11 @@ namespace PathFinderAlgo
 
 	void AStarPathfinding::operator()()
 	{
+		SetStart(std::get_if<Unit<Path>>(parent->GetCellByPos({ 1, 1 })));
+		SetEnd(std::get_if<Unit<Path>>(parent->GetCellByPos({ parent->MazeSize.x - 2, parent->MazeSize.y - 2 })));
+		OpenList.clear();
+		CloseList.clear();
+
 		if (!Start || !End)
 		{
 			std::cout << "Start or End is nullptr" << std::endl;
@@ -53,6 +58,10 @@ namespace PathFinderAlgo
 			if (current == End)
 			{
 				std::cout << "Path found" << std::endl;
+				for (auto& curr : CloseList)
+				{
+					parent->GetVertexArray()[curr->pos.x * parent->MazeSize.x + curr->pos.y].FillColor({ 255, 0, 0 });
+				}
 				while (current != Start)
 				{
 					parent->GetVertexArray()[current->pos.x * parent->MazeSize.x + current->pos.y].FillColor({0, 255, 0});
@@ -82,6 +91,33 @@ namespace PathFinderAlgo
 				}
 			}
 		}
+	}
+
+	DijkstraPathfinding::DijkstraPathfinding(MazeTerrain* _parent)
+		: Start(nullptr)
+		, End(nullptr)
+		, parent(_parent)
+	{
+	}
+
+	void DijkstraPathfinding::SetStart(Unit<Path>* start)
+	{
+		Start = start;
+	}
+
+	void DijkstraPathfinding::SetEnd(Unit<Path>* end)
+	{
+		End = end;
+	}
+
+	void DijkstraPathfinding::operator()()
+	{
+		// Dijkstra algorithm
+		SetStart(std::get_if<Unit<Path>>(parent->GetCellByPos({ 1, 1 })));
+		SetEnd(std::get_if<Unit<Path>>(parent->GetCellByPos({ parent->MazeSize.x - 2, parent->MazeSize.y - 2 })));
+
+
+
 	}
 
 };
