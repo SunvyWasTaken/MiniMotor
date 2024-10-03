@@ -119,10 +119,9 @@ namespace
 					obj->OnPressed();
 					auto end = std::chrono::high_resolution_clock::now();
 					GenClock = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
-					std::cout << "It takes : " << GenClock.count() << "secondes." << std::endl;
 				}
 				ImGui::SameLine();
-				ImGui::Text("Time elapsed : %.00f s", GenClock.count());
+				ImGui::Text("Time elapsed : %f s", GenClock.count());
 			}
 			else if (SEditableText* obj = dynamic_cast<SEditableText*>(child))
 			{
@@ -213,32 +212,6 @@ void SFMLRender::HandleEvents()
 			{
 				if(EventCall(MEvents::OnKeyPressed(currEvent.key.code + 65)))
 					return;
-
-				// Todo : revoir le Bind à la zub
-				if (currEvent.key.code == sf::Keyboard::Key::Q)
-				{
-					sf::View view = Window.getView();
-					view.move(-1, 0);
-					Window.setView(view);
-				}
-				else if (currEvent.key.code == sf::Keyboard::Key::D)
-				{
-					sf::View view = Window.getView();
-					view.move(1, 0);
-					Window.setView(view);
-				}
-				else if (currEvent.key.code == sf::Keyboard::Key::Z)
-				{
-					sf::View view = Window.getView();
-					view.move(0, -1);
-					Window.setView(view);
-				}
-				else if (currEvent.key.code == sf::Keyboard::Key::S)
-				{
-					sf::View view = Window.getView();
-					view.move(0, 1);
-					Window.setView(view);
-				}
 			}
 		}
 		else if (currEvent.type == sf::Event::KeyReleased)
