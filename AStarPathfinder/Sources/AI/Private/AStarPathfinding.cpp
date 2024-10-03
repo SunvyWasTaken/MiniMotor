@@ -2,11 +2,6 @@
 #include "MazeTerrain.h"
 #include <iostream>
 
-namespace
-{
-	IVec2 Sides[4] = { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };
-}
-
 namespace PathFinderAlgo
 {
 	AStarPathfinding::AStarPathfinding(MazeTerrain*	_parent)
@@ -91,6 +86,10 @@ namespace PathFinderAlgo
 			}
 		}
 	}
+
+	/************************************************************************/
+	/* Dijkstra																*/
+	/************************************************************************/
 
 	DijkstraPathfinding::DijkstraPathfinding(MazeTerrain* _parent)
 		: Start(nullptr)
