@@ -25,6 +25,10 @@ namespace PathFinderAlgo
 		MazeTerrain* parent;
 	};
 
+	/************************************************************************/
+	/* Dijkstra																*/
+	/************************************************************************/
+
 	struct DijkstraPathfinding
 	{
 		DijkstraPathfinding(MazeTerrain* _parent);
