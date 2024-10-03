@@ -32,6 +32,25 @@ struct GetTypelistIndex<T, Typelist<First, Rest...>>
 };
 
 /************************************************************************/
+/* TypelistSize															*/
+/************************************************************************/
+
+template <typename Typelist>
+struct GetSizelist;
+
+template <>
+struct GetSizelist<Typelist<>>
+{
+	static const int value = 0;
+};
+
+template <typename T, typename... Types>
+struct GetSizelist<Typelist<T, Types...>>
+{
+	static const int value = 1 + GetSizelist<Typelist<Types...>>::value;
+};
+
+/************************************************************************/
 /* CheckIfTypeIsInList													*/
 /************************************************************************/
 
