@@ -3,7 +3,7 @@
 
 #include "MazeTerrain.h"
 
-#include "Debug/Debug.h"
+#include "MiniDebug/Debug.h"
 
 namespace
 {

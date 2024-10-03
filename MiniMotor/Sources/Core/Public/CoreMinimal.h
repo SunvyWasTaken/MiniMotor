@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "Debug/Debug.h"
+#include "MiniDebug/Debug.h"
 
 #include "Define/CRTP.h"
 #include "Define/ImportExportDLL.h"
