@@ -80,6 +80,10 @@ void OpenGLRender::Init()
 	ImGui_ImplOpenGL3_Init("#version 330");
 }
 
+void OpenGLRender::Update()
+{
+}
+
 void OpenGLRender::HandleEvents()
 {
 	//Create new imgui frame
@@ -137,4 +141,8 @@ void OpenGLRender::CloseWindow()
 
 	glfwDestroyWindow(m_windowOpenGL);
 	glfwTerminate();
+}
+
+void OpenGLRender::DrawSlate(SContainer* slate)
+{
 }

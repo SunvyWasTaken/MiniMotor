@@ -129,7 +129,6 @@ namespace
 				ImGui::SameLine();
 				if(ImGui::Button("Send"))
 				{
-					
 					obj->OnPressed(IVec2{obj->value, obj->value});
 				}
 			}
@@ -157,7 +156,7 @@ void SFMLRender::Update()
 void SFMLRender::Draw()
 {
 	ImGui::Begin("Performance", 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoInputs);
-	ImGui::SetWindowSize(ImVec2{ 200, 100 });
+	ImGui::SetWindowSize(ImVec2{ 200, 50 });
 	ImGui::SetWindowPos(ImVec2{ 0, 0 });
 	ImGui::Text("Framerate : %f", 1.f / DeltaClock.getElapsedTime().asSeconds());
 	DeltaClock.restart();

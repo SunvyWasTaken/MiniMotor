@@ -106,6 +106,29 @@ struct MM_EXPORT Vec2
 		return std::sqrt(squareLength());
 	}
 
+	double distance(const Vec2<type>& op) const
+	{
+		return (*this - op).length();
+	}
+
+	double dot(const Vec2<type>& op) const
+	{
+		return x * op.x + y * op.y;
+	}
+
+	Vec2<type> normalize() const
+	{
+		double len = length();
+		return Vec2<type>(x / len, y / len);
+	}
+
+	Vec2<type> rotate(double angle) const
+	{
+		double s = std::sin(angle);
+		double c = std::cos(angle);
+		return Vec2<type>(x * c - y * s, x * s + y * c);
+	}
+
 };
 
 using FVec2 = Vec2<double>;
