@@ -1,3 +1,5 @@
+// Copyright Shimmer Studios : All rights reserved.
+
 #pragma once
 
 #include "DrawableList.h"

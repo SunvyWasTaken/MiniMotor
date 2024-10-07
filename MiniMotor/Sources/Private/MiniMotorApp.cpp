@@ -1,4 +1,4 @@
-
+// Copyright Shimmer Studios : All rights reserved.
 
 #include "MiniMotorApp.h"
 #include "World.h"

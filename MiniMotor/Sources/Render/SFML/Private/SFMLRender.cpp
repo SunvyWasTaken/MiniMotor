@@ -1,9 +1,11 @@
+// Copyright Shimmer Studios : All rights reserved.
 
 #include "CoreMinimal.h"
 #include "Entitys.h"
 #include "SFMLRender.h"
 #include "Utils/StateMachine.h"
 #include "Slate/SlateContainer.h"
+#include "Textures/SFMLTextures.h"
 
 #include <SFML/Graphics.hpp>
 #include <imgui.h>
@@ -44,6 +46,8 @@ namespace
 
 	void DrawVertexArray(VertexArray2D& obj)
 	{
+		sf::Texture* texture = SFMLTextures::GetInstance()->GetTextures(obj.texture.filename);
+		IVec2 textureCoord = obj.texture.coord;
 		sf::VertexArray vertexArray(sf::Quads, 4);
 		vertexArray.resize(obj->size() * 4);
 		for (uint64_t index = 0; index < obj->size(); ++index)
@@ -55,12 +59,19 @@ namespace
 			vertexArray[i + 2].position = sf::Vector2f((float)obj[index].GetVerticePosition<Side::BottomRight>().x, (float)obj[index].GetVerticePosition<Side::BottomRight>().y);
 			vertexArray[i + 3].position = sf::Vector2f((float)obj[index].GetVerticePosition<Side::BottomLeft>().x, (float)obj[index].GetVerticePosition<Side::BottomLeft>().y);
 
+			vertexArray[i + 0].texCoords = sf::Vector2f((float)textureCoord.x, (float)textureCoord.y);
+			vertexArray[i + 1].texCoords = sf::Vector2f((float)textureCoord.x + 1753, (float)textureCoord.y);
+			vertexArray[i + 2].texCoords = sf::Vector2f((float)textureCoord.x + 1753, (float)textureCoord.y + 1753);
+			vertexArray[i + 3].texCoords = sf::Vector2f((float)textureCoord.x, (float)textureCoord.y + 1753);
+
 			vertexArray[i + 0].color = sf::Color(obj[index].GetVertice<Side::TopLeft>().color.r, obj[index].GetVertice<Side::TopLeft>().color.g, obj[index].GetVertice<Side::TopLeft>().color.b, obj[index].GetVertice<Side::TopLeft>().color.a);
 			vertexArray[i + 1].color = sf::Color(obj[index].GetVertice<Side::TopRight>().color.r, obj[index].GetVertice<Side::TopRight>().color.g, obj[index].GetVertice<Side::TopRight>().color.b, obj[index].GetVertice<Side::TopRight>().color.a);
 			vertexArray[i + 2].color = sf::Color(obj[index].GetVertice<Side::BottomRight>().color.r, obj[index].GetVertice<Side::BottomRight>().color.g, obj[index].GetVertice<Side::BottomRight>().color.b, obj[index].GetVertice<Side::BottomRight>().color.a);
 			vertexArray[i + 3].color = sf::Color(obj[index].GetVertice<Side::BottomLeft>().color.r, obj[index].GetVertice<Side::BottomLeft>().color.g, obj[index].GetVertice<Side::BottomLeft>().color.b, obj[index].GetVertice<Side::BottomLeft>().color.a);
 		}
-		Window.draw(vertexArray);
+		sf::RenderStates states;
+		states.texture = texture;
+		Window.draw(vertexArray, states);
 	}
 
 	void HandleAnchor(SContainer* slate)
@@ -277,6 +288,10 @@ void SFMLRender::HandleEvents()
 					view.zoom(1.05);
 					currZoom += 0.05;
 				}
+			}
+			if (currZoom == 0)
+			{
+				view.setSize(sf::VideoMode::getDesktopMode().height, sf::VideoMode::getDesktopMode().width);
 			}
 			Window.setView(view);
 		}

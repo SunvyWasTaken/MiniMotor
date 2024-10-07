@@ -1,3 +1,5 @@
+// Copyright Shimmer Studios : All rights reserved.
+
 #include "GenericRender.h"
 #include "MiniMotorApp.h"
 

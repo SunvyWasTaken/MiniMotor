@@ -1,8 +1,10 @@
+// Copyright Shimmer Studios : All rights reserved.
 
 #pragma once
 
 #include "BasicDrawable2D.h"
 #include "Vertex2D.h"
+#include "Textures/Textures.h"
 
 namespace Side
 {
@@ -23,6 +25,7 @@ struct MM_EXPORT Quad2D : public BasicDrawable2D
 public:
 
 	Quad2D()
+		:texture(nullptr)
 	{
 		vertices[0].position = Vec2<T>(0, 0);
 		vertices[1].position = Vec2<T>(1, 0);
@@ -60,9 +63,14 @@ public:
 		}
 	}
 
+	void SetTexture(Texture* texture)
+	{
+		this->texture = texture;
+	}
+
 public:
 	Vertex2DArray vertices;
-
+	Texture* texture;
 };
 
 using FQuad2D = Quad2D<double>;
