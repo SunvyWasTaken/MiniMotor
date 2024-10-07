@@ -3,6 +3,8 @@
 
 #include "MazeTerrain.h"
 
+#include "MiniDebug/Debug.h"
+
 namespace
 {
 	IVec2 Sides[4] = { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };
