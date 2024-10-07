@@ -1,3 +1,4 @@
+// Copyright Shimmer Studios : All rights reserved.
 
 #pragma once
 
@@ -16,3 +17,7 @@
 #define CRTP_CALL_Variadic(crtpType, func_name) \
 template <typename ...types> \
 void func_name(types... args) { crtpType* tmp = static_cast<crtpType*>(this); tmp->func_name(args...); }
+
+#define CRTP_CALL_Variadic_ret(crtpType, returnType, func_name) \
+template <typename ...types> \
+returnType func_name(types... args) { crtpType* tmp = static_cast<crtpType*>(this); return tmp->func_name(args...); }

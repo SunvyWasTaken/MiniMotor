@@ -49,7 +49,7 @@ int main()
 
 	MazeTerrain* Maze = new MazeTerrain();
 	CurrentWorld->Entities.push_back(Maze);
-	Maze->SetMazeSize({ 250, 250 });
+	Maze->SetMazeSize({ 50, 50 });
 
 	PathFinderAlgo::AStarPathfinding pathfinding(Maze);
 

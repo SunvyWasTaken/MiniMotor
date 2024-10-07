@@ -1,3 +1,5 @@
+// Copyright Shimmer Studios : All rights reserved.
+
 #include "ConsoleRender.h"
 
 #include "Entitys.h"

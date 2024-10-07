@@ -1,3 +1,4 @@
+// Copyright Shimmer Studios : All rights reserved.
 
 #pragma once
 

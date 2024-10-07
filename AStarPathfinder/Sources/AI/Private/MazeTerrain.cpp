@@ -17,6 +17,7 @@ MazeTerrain::MazeTerrain()
 	: MazeSize(0)
 {
 	drawables.insert({"VertArray", VertexArray2D()});
+	std::get<VertexArray2D>(drawables.at("VertArray")).SetTexture("Ressources/Brick_Block.png");
 }
 
 MazeTerrain::~MazeTerrain()
@@ -41,6 +42,7 @@ void MazeTerrain::SetMazeSize(const IVec2& size)
 	MazeSize = size + 1;
 	Maze.reserve(MazeSize.x * MazeSize.y);
 	GetVertexArray().Resize(MazeSize.x * MazeSize.y);
+	//std::get<VertexArray2D>(drawables.at("VertArray")).SetTexture("Ressources/Brick_Block.png");
 	NbrIteration = MazeSize.x;
 }
 
@@ -81,7 +83,7 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 				std::get<Unit<Path>>(Maze[it]).SetValue(it);
 				GetVertexArray()[it].FillColor({0,0,0});
 			}
-			GetVertexArray()[it].transform.scale = {4, 4};
+			GetVertexArray()[it].transform.scale = {50, 50};
 			GetVertexArray()[it].transform.pos = pos * GetVertexArray()[it].transform.scale;
 			++it;
 		}

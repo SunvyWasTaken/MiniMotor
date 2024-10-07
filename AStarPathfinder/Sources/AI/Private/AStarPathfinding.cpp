@@ -34,54 +34,59 @@ namespace PathFinderAlgo
 			return;
 		}
 
-		OpenList.push_back(Start);
+		// A* algorithm
 
-		while (!OpenList.empty())
-		{
-			Unit<Path>* current = OpenList[0];
-			for (auto& cell : OpenList)
+		// List ouvert std::vector OpenList
+
+		OpenList.emplace_back(Start);
+
+
+		while(!OpenList.empty()){
+
+			Unit<Path>* UnitCell = OpenList[0];
+
+			// Trouve le noeud avec le plus petit fCost (gCost +hCost)
+			for (Unit<Path>* curr : OpenList)
 			{
-				if (cell->hCost < current->hCost)
-				{
-					current = cell;
+				if (curr->hCost < UnitCell->hCost) {
+					UnitCell = curr;
 				}
 			}
 
-			OpenList.erase(std::remove(OpenList.begin(), OpenList.end(), current), OpenList.end());
-			CloseList.push_back(current);
-
-			if (current == End)
+			// Retire le noeud de la liste ouverte
+			auto it = std::find(OpenList.begin(), OpenList.end(), UnitCell);
+			if (it != OpenList.end())
 			{
-				for (auto& curr : CloseList)
-				{
-					parent->GetVertexArray()[curr->pos.x * parent->MazeSize.x + curr->pos.y].FillColor({ 255, 0, 0 });
-				}
-				while (current != Start)
-				{
-					parent->GetVertexArray()[current->pos.x * parent->MazeSize.x + current->pos.y].FillColor({0, 255, 0});
-					current = current->beforePath;
-				}
-				return;
+				OpenList.erase(it);
 			}
+			// CloseList
+			CloseList.emplace_back(UnitCell);
+			parent->GetVertexArray()[UnitCell->pos.x * parent->MazeSize.x + UnitCell->pos.y].FillColor({ 255, 0, 0 });
+			
 
-			for (auto& neighbour : current->GetNeighbours())
+			if (UnitCell == End)
 			{
-				if (std::find(CloseList.begin(), CloseList.end(), neighbour) != CloseList.end())
+				std::cout << "End found" << std::endl;
+				while (UnitCell != Start)
 				{
-					continue;
+					parent->GetVertexArray()[UnitCell->pos.x * parent->MazeSize.x + UnitCell->pos.y].FillColor({ 0, 255, 0 });
+					UnitCell = UnitCell->beforePath;
 				}
+				break;
+			}
+			//check neighbor
+			// GetNeighbours() return a std::vector<Unit<Path>*>
+			std::vector<Unit<Path>*> NeighborList = UnitCell->GetNeighbours();
 
-				uint64_t newCostToNeighbour = (neighbour->pos - current->pos).length() + current->gCost;
-				if (newCostToNeighbour < neighbour->gCost || std::find(OpenList.begin(), OpenList.end(), neighbour) == OpenList.end())
+			for (auto Neighbor : NeighborList) {
+
+				if (std::find(CloseList.begin(), CloseList.end(), Neighbor) == CloseList.end())
 				{
-					neighbour->gCost = newCostToNeighbour;
-					neighbour->hCost = (End->pos - neighbour->pos).length();
-					neighbour->beforePath = current;
-
-					if (std::find(OpenList.begin(), OpenList.end(), neighbour) == OpenList.end())
-					{
-						OpenList.push_back(neighbour);
-					}
+					// Update the gCost and hCost of the neighbor
+					Neighbor->gCost = UnitCell->gCost + (Neighbor->pos - UnitCell->pos).length();
+					Neighbor->hCost = (End->pos - Neighbor->pos).length();
+					Neighbor->beforePath = UnitCell;
+					OpenList.emplace_back(Neighbor);
 				}
 			}
 		}
