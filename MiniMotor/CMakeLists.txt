@@ -53,11 +53,6 @@ GroupSources(Sources)
 
 find_package(SFML CONFIG REQUIRED COMPONENTS system window graphics)
 find_package(ImGui-SFML CONFIG REQUIRED)
-find_package(OpenGL REQUIRED)
-find_package(imgui CONFIG REQUIRED)
-find_package(GLEW CONFIG REQUIRED)
-find_package(glfw3 CONFIG REQUIRED)
-find_package(glad CONFIG REQUIRED)
 
 add_Library(${PROJECT_NAME} SHARED ${Sources})
 
@@ -65,11 +60,6 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 target_link_libraries(MiniMotor PRIVATE
     sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML
-    OpenGL::GL
-	imgui::imgui
-	GLEW::GLEW
-	glfw
-	glad::glad
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:DEBUG>)
