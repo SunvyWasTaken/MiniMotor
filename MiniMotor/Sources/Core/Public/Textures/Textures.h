@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 
+using TextureCoord = std::array<IVec2, 4>;
+
 template <typename Derived>
 class MM_EXPORT TextureManager
 {
@@ -22,6 +24,14 @@ public:
 class Texture
 {
 public:
+
+	template <typename Sides>
+	IVec2& GetCoord()
+	{
+		static_assert(IsTypeInList<Sides, QuadSide>::value, "Not a valid Side");
+		return coord[GetTypelistIndex<Sides, QuadSide>::value];
+	}
+
 	std::string filename;
-	IVec2 coord;
+	TextureCoord coord;
 };

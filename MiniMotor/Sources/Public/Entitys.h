@@ -4,17 +4,17 @@
 
 #include "DrawableList.h"
 #include "CoreMinimal.h"
+#include "Textures/Textures.h"
 
 class MM_API Entity
 {
 public:
 	Entity();
+
 	virtual ~Entity();
 
 	virtual void Update(float deltaTime);
 
-	void GetDrawablesList(MVectorDrawable& drawList);
-
-	MDrawableList drawables;
-
+	FTrans2 transform;
+	Texture texture;
 };

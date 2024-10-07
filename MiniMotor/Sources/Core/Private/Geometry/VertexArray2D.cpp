@@ -14,11 +14,6 @@ void VertexArray2D::SetTexture(const std::string& filename)
 {
 	SFMLTextures::GetInstance()->LoadTexture(filename);
 	texture.filename = filename;
-
-	for (FQuad2D& quad : quads)
-	{
-		quad.SetTexture(&texture);
-	}
 }
 
 void VertexArray2D::Resize(const size_t size)
@@ -26,7 +21,17 @@ void VertexArray2D::Resize(const size_t size)
 	quads.resize(size);
 }
 
+size_t VertexArray2D::Size() const
+{
+	return quads.size();
+}
+
 FQuad2D& VertexArray2D::operator[](const size_t index)
+{
+	return quads[index];
+}
+
+const FQuad2D& VertexArray2D::operator[](const size_t index) const
 {
 	return quads[index];
 }

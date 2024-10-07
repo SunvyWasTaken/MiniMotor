@@ -21,7 +21,11 @@ public:
 
 	void Resize(const size_t size);
 
+	size_t Size() const;
+
 	FQuad2D& operator[](const size_t index);
+
+	const FQuad2D& operator[](const size_t index) const;
 
 	Quad2DLists* operator->();
 

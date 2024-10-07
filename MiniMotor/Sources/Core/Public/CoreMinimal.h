@@ -16,6 +16,7 @@
 
 #include "Utils/StateMachine.h"
 #include "Utils/Typelist.h"
+#include "Utils/TypedefList.h"
 
 #include <array>
 #include <atomic>

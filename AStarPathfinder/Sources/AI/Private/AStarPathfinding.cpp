@@ -61,7 +61,7 @@ namespace PathFinderAlgo
 			}
 			// CloseList
 			CloseList.emplace_back(UnitCell);
-			parent->GetVertexArray()[UnitCell->pos.x * parent->MazeSize.x + UnitCell->pos.y].FillColor({ 255, 0, 0 });
+			/*parent->GetVertexArray()[UnitCell->pos.x * parent->MazeSize.x + UnitCell->pos.y].FillColor({ 255, 0, 0 });*/
 			
 
 			if (UnitCell == End)
@@ -69,7 +69,7 @@ namespace PathFinderAlgo
 				std::cout << "End found" << std::endl;
 				while (UnitCell != Start)
 				{
-					parent->GetVertexArray()[UnitCell->pos.x * parent->MazeSize.x + UnitCell->pos.y].FillColor({ 0, 255, 0 });
+					/*parent->GetVertexArray()[UnitCell->pos.x * parent->MazeSize.x + UnitCell->pos.y].FillColor({ 0, 255, 0 });*/
 					UnitCell = UnitCell->beforePath;
 				}
 				break;

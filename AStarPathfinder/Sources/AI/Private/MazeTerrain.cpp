@@ -16,8 +16,7 @@ namespace
 MazeTerrain::MazeTerrain() 
 	: MazeSize(0)
 {
-	drawables.insert({"VertArray", VertexArray2D()});
-	std::get<VertexArray2D>(drawables.at("VertArray")).SetTexture("Ressources/Brick_Block.png");
+
 }
 
 MazeTerrain::~MazeTerrain()
@@ -41,8 +40,6 @@ void MazeTerrain::SetMazeSize(const IVec2& size)
 	// this need to not be even
 	MazeSize = size + 1;
 	Maze.reserve(MazeSize.x * MazeSize.y);
-	GetVertexArray().Resize(MazeSize.x * MazeSize.y);
-	//std::get<VertexArray2D>(drawables.at("VertArray")).SetTexture("Ressources/Brick_Block.png");
 	NbrIteration = MazeSize.x;
 }
 
@@ -73,7 +70,6 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 					std::get<Unit<Wall>>(Maze[it]).bCanBeOpen = true;
 				}
 
-				GetVertexArray()[it].FillColor({ 255, 102, 153 });
 			}
 			else
 			{
@@ -81,10 +77,7 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 				std::get<Unit<Path>>(Maze[it]).parent = this;
 				std::get<Unit<Path>>(Maze[it]).pos = pos;
 				std::get<Unit<Path>>(Maze[it]).SetValue(it);
-				GetVertexArray()[it].FillColor({0,0,0});
 			}
-			GetVertexArray()[it].transform.scale = {50, 50};
-			GetVertexArray()[it].transform.pos = pos * GetVertexArray()[it].transform.scale;
 			++it;
 		}
 	}
@@ -124,7 +117,6 @@ void MazeTerrain::ClearLabyrinthe()
 	IsGenerationDone.exchange(true, std::memory_order_relaxed);
 	Maze.clear();
 	WallList.clear();
-	GetVertexArray().Resize(0);
 
 	GenerateTerrain(MazeSize - 1);
 }
@@ -157,11 +149,6 @@ Cell* MazeTerrain::GetCellByPos(const IVec2& pos)
 	return nullptr;
 }
 
-VertexArray2D& MazeTerrain::GetVertexArray()
-{
-	return std::get<VertexArray2D>(drawables.at("VertArray"));
-}
-
 void MazeTerrain::AlgoLabyrinthe()
 {
 	size_t index = intRand(0, (int)WallList.size() - 1)(rGen);
@@ -170,8 +157,6 @@ void MazeTerrain::AlgoLabyrinthe()
 	Unit<Wall>* wallPath = std::get_if<Unit<Wall>>(GetCellByPos(pos));
 	ensure(wallPath);
 	uint64_t val = wallPath->value;
-
-	GetVertexArray()[val].FillColor({ 0,0,0 });
 
 	// Transform the wall to a path
 

@@ -33,7 +33,7 @@ namespace
 
 	sf::Vector2f OldMousePosition;
 
-	double currZoom = 1.0;
+	float currZoom = 1.0;
 
 	bool IsMousePressed = false;
 
@@ -44,13 +44,13 @@ namespace
 		Window.draw(rectangle);
 	}
 
-	void DrawVertexArray(VertexArray2D& obj)
+	void DrawVertexArray(const VertexArray2D& obj)
 	{
 		sf::Texture* texture = SFMLTextures::GetInstance()->GetTextures(obj.texture.filename);
-		IVec2 textureCoord = obj.texture.coord;
+
 		sf::VertexArray vertexArray(sf::Quads, 4);
-		vertexArray.resize(obj->size() * 4);
-		for (uint64_t index = 0; index < obj->size(); ++index)
+		vertexArray.resize(obj.Size() * 4);
+		for (uint64_t index = 0; index < obj.Size(); ++index)
 		{
 			uint64_t i = index * 4;
 
@@ -59,10 +59,10 @@ namespace
 			vertexArray[i + 2].position = sf::Vector2f((float)obj[index].GetVerticePosition<Side::BottomRight>().x, (float)obj[index].GetVerticePosition<Side::BottomRight>().y);
 			vertexArray[i + 3].position = sf::Vector2f((float)obj[index].GetVerticePosition<Side::BottomLeft>().x, (float)obj[index].GetVerticePosition<Side::BottomLeft>().y);
 
-			vertexArray[i + 0].texCoords = sf::Vector2f((float)textureCoord.x, (float)textureCoord.y);
-			vertexArray[i + 1].texCoords = sf::Vector2f((float)textureCoord.x + 1753, (float)textureCoord.y);
-			vertexArray[i + 2].texCoords = sf::Vector2f((float)textureCoord.x + 1753, (float)textureCoord.y + 1753);
-			vertexArray[i + 3].texCoords = sf::Vector2f((float)textureCoord.x, (float)textureCoord.y + 1753);
+			vertexArray[i + 0].texCoords = sf::Vector2f(obj[index].GetVertice<Side::TopLeft>().texCoords.x, obj[index].GetVertice<Side::TopLeft>().texCoords.y);
+			vertexArray[i + 1].texCoords = sf::Vector2f(obj[index].GetVertice<Side::TopRight>().texCoords.x, obj[index].GetVertice<Side::TopRight>().texCoords.y);
+			vertexArray[i + 2].texCoords = sf::Vector2f(obj[index].GetVertice<Side::BottomRight>().texCoords.x, obj[index].GetVertice<Side::BottomRight>().texCoords.y);
+			vertexArray[i + 3].texCoords = sf::Vector2f(obj[index].GetVertice<Side::BottomLeft>().texCoords.x, obj[index].GetVertice<Side::BottomLeft>().texCoords.y);
 
 			vertexArray[i + 0].color = sf::Color(obj[index].GetVertice<Side::TopLeft>().color.r, obj[index].GetVertice<Side::TopLeft>().color.g, obj[index].GetVertice<Side::TopLeft>().color.b, obj[index].GetVertice<Side::TopLeft>().color.a);
 			vertexArray[i + 1].color = sf::Color(obj[index].GetVertice<Side::TopRight>().color.r, obj[index].GetVertice<Side::TopRight>().color.g, obj[index].GetVertice<Side::TopRight>().color.b, obj[index].GetVertice<Side::TopRight>().color.a);
@@ -181,21 +181,9 @@ bool SFMLRender::IsWindowOpen()
 	return Window.isOpen();
 }
 
-void SFMLRender::BufferFrame(Entity* Entity)
+void SFMLRender::BufferFrame(const VertexArray2D& vertexArray)
 {
-	for (auto& [key, drawable] : Entity->drawables)
-	{
-		std::visit(overloaded(
-			[](FQuad2D obj)
-			{
-				DrawQuad2D(obj);
-			},
-			[](VertexArray2D obj)
-			{
-				DrawVertexArray(obj);
-			}
-			), drawable);
-	}
+	DrawVertexArray(vertexArray);
 }
 
 void SFMLRender::HandleEvents()
@@ -277,21 +265,17 @@ void SFMLRender::HandleEvents()
 			{
 				if (currZoom > 0.15)
 				{
-					view.zoom(0.95);
-					currZoom -= 0.05;
+					view.zoom(0.95f);
+					currZoom -= 0.05f;
 				}
 			}
 			else
 			{
 				if (currZoom < 2.0)
 				{
-					view.zoom(1.05);
-					currZoom += 0.05;
+					view.zoom(1.05f);
+					currZoom += 0.05f;
 				}
-			}
-			if (currZoom == 0)
-			{
-				view.setSize(sf::VideoMode::getDesktopMode().height, sf::VideoMode::getDesktopMode().width);
 			}
 			Window.setView(view);
 		}

@@ -6,16 +6,6 @@
 #include "Vertex2D.h"
 #include "Textures/Textures.h"
 
-namespace Side
-{
-	struct MM_API TopLeft {};
-	struct MM_API TopRight {};
-	struct MM_API BottomRight {};
-	struct MM_API BottomLeft {};
-}
-
-using QuadSide = Typelist<Side::TopLeft, Side::TopRight, Side::BottomRight, Side::BottomLeft>;
-
 template <typename T>
 struct MM_EXPORT Quad2D : public BasicDrawable2D
 {
@@ -25,7 +15,6 @@ struct MM_EXPORT Quad2D : public BasicDrawable2D
 public:
 
 	Quad2D()
-		:texture(nullptr)
 	{
 		vertices[0].position = Vec2<T>(0, 0);
 		vertices[1].position = Vec2<T>(1, 0);
@@ -63,14 +52,16 @@ public:
 		}
 	}
 
-	void SetTexture(Texture* texture)
+	void SetCoord(const TextureCoord& coord)
 	{
-		this->texture = texture;
+		for (unsigned int i = 0; i < GetSizelist<QuadSide>::value; ++i)
+		{
+			vertices[i].texCoord = coord[i];
+		}
 	}
 
 public:
 	Vertex2DArray vertices;
-	Texture* texture;
 };
 
 using FQuad2D = Quad2D<double>;

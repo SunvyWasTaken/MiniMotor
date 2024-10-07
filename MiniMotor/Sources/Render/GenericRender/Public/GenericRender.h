@@ -34,7 +34,7 @@ public:
 	CRTP_CALL(Update)
 	CRTP_CALL(Draw)
 	CRTP_CALL_ret(bool, IsWindowOpen)
-	CRTP_CALL_OneParam(BufferFrame, class Entity*)
+	CRTP_CALL_OneParam(BufferFrame, const VertexArray2D&)
 	CRTP_CALL(HandleEvents)
 	CRTP_CALL(ClearWindow)
 	CRTP_CALL(CloseWindow)

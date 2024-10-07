@@ -14,7 +14,7 @@ public:
 
 	bool IsWindowOpen();
 
-	void BufferFrame(class Entity* Entity);
+	void BufferFrame(const VertexArray2D& vertexArray);
 
 	void HandleEvents();
 

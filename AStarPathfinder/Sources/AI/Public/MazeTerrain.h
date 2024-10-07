@@ -42,8 +42,6 @@ public:
 		return nullptr;
 	}
 
-	VertexArray2D& GetVertexArray();
-
 private:
 
 	void AlgoLabyrinthe();

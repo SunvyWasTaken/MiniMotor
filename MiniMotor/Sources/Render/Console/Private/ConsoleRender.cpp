@@ -19,16 +19,16 @@ void ConsoleRender::HandleEvents()
 
 void ConsoleRender::Draw() const
 {
-	for (size_t y = 0; y < 41 + 1; ++y)
+	for (size_t y = 0; y < 40; ++y)
 	{
-		for (size_t x = 0; x < 81 + 1; ++x)
+		for (size_t x = 0; x < 80; ++x)
 		{
 			static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 			std::cout.flush();
 			COORD coord = { (SHORT)x, (SHORT)y };
 			SetConsoleCursorPosition(hOut, coord);
 
-			std::cout << (m_Image)[x][y];
+			std::cout << (m_Image)[x * 80 + y];
 		}
 		std::cout << std::endl;
 	}
@@ -43,16 +43,16 @@ bool ConsoleRender::IsWindowOpen()
 
 void ConsoleRender::ClearWindow()
 {
-	for (size_t y = 0; y < 41 + 1; ++y)
+	for (size_t y = 0; y < 40; ++y)
 	{
-		for (size_t x = 0; x < 81 + 1; ++x)
+		for (size_t x = 0; x < 80; ++x)
 		{
-			m_Image[x][y] = ' ';
+			m_Image[x* 80 + y] = ' ';
 		}
 	}
 }
 
-void ConsoleRender::BufferFrame(Entity* targetEntity)
+void ConsoleRender::BufferFrame(const VertexArray2D& targetEntity)
 {
 	//if (targetEntity)
 	//{

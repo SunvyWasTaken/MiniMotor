@@ -48,7 +48,6 @@ int main()
 	CurrApp->SetWorld(CurrentWorld.get());
 
 	MazeTerrain* Maze = new MazeTerrain();
-	CurrentWorld->Entities.push_back(Maze);
 	Maze->SetMazeSize({ 50, 50 });
 
 	PathFinderAlgo::AStarPathfinding pathfinding(Maze);
