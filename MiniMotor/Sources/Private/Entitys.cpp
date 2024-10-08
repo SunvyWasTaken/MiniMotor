@@ -1,8 +1,12 @@
 // Copyright Shimmer Studios : All rights reserved.
 
 #include "Entitys.h"
+#include "World.h"
 
-Entity::Entity()
+Entity::Entity(const FVec2& pos, const FRot3& size, const Texture& _texture, World*	world)
+	: transform(pos, size)
+	, texture(_texture)
+	, m_World(world)
 {
 }
 

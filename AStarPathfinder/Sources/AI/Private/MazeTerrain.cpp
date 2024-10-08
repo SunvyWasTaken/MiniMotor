@@ -14,7 +14,8 @@ namespace
 }
 
 MazeTerrain::MazeTerrain() 
-	: MazeSize(0)
+	: Entity({0, 0}, {0, 0, 0}, Texture(), nullptr)
+	, MazeSize(0)
 {
 
 }

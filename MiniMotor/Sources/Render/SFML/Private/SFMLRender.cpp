@@ -59,10 +59,10 @@ namespace
 			vertexArray[i + 2].position = sf::Vector2f((float)obj[index].GetVerticePosition<Side::BottomRight>().x, (float)obj[index].GetVerticePosition<Side::BottomRight>().y);
 			vertexArray[i + 3].position = sf::Vector2f((float)obj[index].GetVerticePosition<Side::BottomLeft>().x, (float)obj[index].GetVerticePosition<Side::BottomLeft>().y);
 
-			vertexArray[i + 0].texCoords = sf::Vector2f(obj[index].GetVertice<Side::TopLeft>().texCoords.x, obj[index].GetVertice<Side::TopLeft>().texCoords.y);
-			vertexArray[i + 1].texCoords = sf::Vector2f(obj[index].GetVertice<Side::TopRight>().texCoords.x, obj[index].GetVertice<Side::TopRight>().texCoords.y);
-			vertexArray[i + 2].texCoords = sf::Vector2f(obj[index].GetVertice<Side::BottomRight>().texCoords.x, obj[index].GetVertice<Side::BottomRight>().texCoords.y);
-			vertexArray[i + 3].texCoords = sf::Vector2f(obj[index].GetVertice<Side::BottomLeft>().texCoords.x, obj[index].GetVertice<Side::BottomLeft>().texCoords.y);
+			vertexArray[i + 0].texCoords = sf::Vector2f((float)obj[index].GetVertice<Side::TopLeft>().texCoords.x, (float)obj[index].GetVertice<Side::TopLeft>().texCoords.y);
+			vertexArray[i + 1].texCoords = sf::Vector2f((float)obj[index].GetVertice<Side::TopRight>().texCoords.x, (float)obj[index].GetVertice<Side::TopRight>().texCoords.y);
+			vertexArray[i + 2].texCoords = sf::Vector2f((float)obj[index].GetVertice<Side::BottomRight>().texCoords.x, (float)obj[index].GetVertice<Side::BottomRight>().texCoords.y);
+			vertexArray[i + 3].texCoords = sf::Vector2f((float)obj[index].GetVertice<Side::BottomLeft>().texCoords.x, (float)obj[index].GetVertice<Side::BottomLeft>().texCoords.y);
 
 			vertexArray[i + 0].color = sf::Color(obj[index].GetVertice<Side::TopLeft>().color.r, obj[index].GetVertice<Side::TopLeft>().color.g, obj[index].GetVertice<Side::TopLeft>().color.b, obj[index].GetVertice<Side::TopLeft>().color.a);
 			vertexArray[i + 1].color = sf::Color(obj[index].GetVertice<Side::TopRight>().color.r, obj[index].GetVertice<Side::TopRight>().color.g, obj[index].GetVertice<Side::TopRight>().color.b, obj[index].GetVertice<Side::TopRight>().color.a);

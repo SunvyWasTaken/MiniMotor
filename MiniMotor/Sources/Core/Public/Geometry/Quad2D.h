@@ -10,7 +10,7 @@ template <typename T>
 struct MM_EXPORT Quad2D : public BasicDrawable2D
 {
 	using vertice_type = Vertex2D<T>;
-	using Vertex2DArray = std::array<vertice_type, 4>;
+	using Vertex2DArray = std::array<vertice_type, GetSizelist<QuadSide>::value>;
 
 public:
 
@@ -56,7 +56,7 @@ public:
 	{
 		for (unsigned int i = 0; i < GetSizelist<QuadSide>::value; ++i)
 		{
-			vertices[i].texCoord = coord[i];
+			vertices[i].texCoords = coord[i];
 		}
 	}
 
