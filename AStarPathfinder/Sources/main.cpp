@@ -46,8 +46,8 @@ int main()
 	std::unique_ptr<World> CurrentWorld = std::make_unique<World>();
 	CurrApp->SetWorld(CurrentWorld.get());
 
-	MazeTerrain* Maze = new MazeTerrain();
-	Maze->SetMazeSize({ 50, 50 });
+	MazeTerrain* Maze = new MazeTerrain(CurrentWorld.get());
+	Maze->SetMazeSize({ 10, 10 });
 
 	PathFinderAlgo::AStarPathfinding pathfinding(Maze);
 

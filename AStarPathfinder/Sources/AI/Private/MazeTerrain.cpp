@@ -15,9 +15,9 @@ namespace
 	uint64_t NbrIteration = 0;
 }
 
-MazeTerrain::MazeTerrain()
+MazeTerrain::MazeTerrain(World* world)
 	: MazeSize(0)
-	, m_World(nullptr)
+	, m_World(world)
 {
 
 }
@@ -34,7 +34,12 @@ void MazeTerrain::SetMazeSize(const IVec2& size)
 
 	// this need to not be even
 	MazeSize = size + 1;
+	for (auto it : Maze)
+	{
+		m_World->RemoveEntity((Entity*)it);
+	}
 	Maze.reserve(MazeSize.x * MazeSize.y);
+	
 	NbrIteration = MazeSize.x;
 }
 
@@ -143,7 +148,8 @@ Unit<Path>* MazeTerrain::ChangeCellAt(const IVec2& pos)
 {
 	if (std::visit([&](auto&& tmp)->bool {return tmp.transform.pos == pos; }, *(Cell*)Maze[pos.x * MazeSize.x + pos.y]))
 	{
-		Maze[pos.x * MazeSize.x + pos.y] = m_World->SpawnEntity<Unit<Path>>(pos, m_World);
+		m_World->RemoveEntity((Entity*)Maze[pos.x * MazeSize.x + pos.y]);
+		Maze[pos.x * MazeSize.x + pos.y] = m_World->SpawnEntity<Path>(pos, m_World);
 		return (Unit<Path>*)Maze[pos.x * MazeSize.x + pos.y];
 	}
 	return nullptr;

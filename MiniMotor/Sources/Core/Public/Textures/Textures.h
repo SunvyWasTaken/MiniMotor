@@ -25,6 +25,15 @@ class Texture
 {
 public:
 
+	Texture() = default;
+
+	Texture(const std::string name, const TextureCoord& coords)
+		: filename(name)
+		, coord(coords)
+	{
+		
+	}
+
 	template <typename Sides>
 	IVec2& GetCoord()
 	{

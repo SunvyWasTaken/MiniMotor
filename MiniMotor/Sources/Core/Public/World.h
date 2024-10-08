@@ -19,6 +19,7 @@ public:
 	template <typename RendeType>
 	void BufferFrameEntitys(GenericRender<RendeType>& targetDraw)
 	{
+		DrawEntitys();
 		for (auto [Key, vertexArray] : m_VertexArrays)
 		{
 			targetDraw.BufferFrame(vertexArray);
@@ -31,19 +32,21 @@ public:
 		EntitySpawn* entity = new EntitySpawn(std::forward<Args>(args)...);
 		Texture texture = entity->texture;
 
-		if (m_VertexArrays.find(texture.filename) == m_VertexArrays.end())
+		if (m_VertexArrays.empty() || m_VertexArrays.find(texture.filename) == m_VertexArrays.end())
 		{
-			m_VertexArrays.emplace(texture.filename, VertexArray2D());
+			m_VertexArrays.emplace(texture.filename, VertexArray2D(texture.filename));
 			m_VertexArrays.at(texture.filename).SetTexture(texture.filename);
 
 			m_EntityGroups.emplace(texture.filename, std::make_shared<EntityLists>());
 		}
 		m_EntityGroups.at(texture.filename)->emplace_back(entity);
-		UpdateLastEntity(texture);
+		m_VertexArrays.at(texture.filename).Resize(m_EntityGroups.at(texture.filename).get()->size());
 
-		m_VertexArrays.at(texture.filename).Resize(m_EntityGroups.size());
+		UpdateLastEntity(texture);
 		return entity;
 	}
+
+	void RemoveEntity(Entity* entity);
 
 private:
 

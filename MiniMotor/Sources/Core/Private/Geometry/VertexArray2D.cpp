@@ -2,7 +2,8 @@
 
 #include "Textures/SFMLTextures.h"
 
-VertexArray2D::VertexArray2D()
+VertexArray2D::VertexArray2D(const std::string& textureName)
+	: texture(textureName, {0})
 {
 }
 

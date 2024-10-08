@@ -13,7 +13,7 @@ class MM_API VertexArray2D : public BasicDrawable2D
 {
 public:
 
-	VertexArray2D();
+	VertexArray2D(const std::string& textureName = "");
 
 	virtual ~VertexArray2D();
 

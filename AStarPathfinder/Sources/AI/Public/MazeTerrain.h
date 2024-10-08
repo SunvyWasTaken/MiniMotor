@@ -16,7 +16,7 @@ using Cell = std::variant<Unit<Wall>, Unit<Path>>;
 class MazeTerrain
 {
 public:
-	MazeTerrain();
+	MazeTerrain(World* world);
 
 	virtual ~MazeTerrain();
 

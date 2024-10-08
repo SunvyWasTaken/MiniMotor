@@ -13,11 +13,14 @@ class Unit : public Entity
 {
 public:
 
-	Unit(const IVec2& pos, class World* world)
-		: Entity(pos, FRot3(0), Texture(), world)
+	Unit(const IVec2& pos, const TextureCoord& texCoord, class World* world)
+		: Entity(pos, FRot3(0), Texture("Ressources/Brick_Block.png", texCoord), world)
 		, parent(nullptr)
 		, value(0)
 		, bCanBeOpen(false)
+		, beforePath(nullptr)
+		, gCost(0)
+		, hCost(0)
 	{}
 	
 	virtual ~Unit() = default;

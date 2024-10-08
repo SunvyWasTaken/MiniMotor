@@ -4,7 +4,7 @@
 #include "World.h"
 
 Entity::Entity(const FVec2& pos, const FRot3& size, const Texture& _texture, World*	world)
-	: transform(pos, size)
+	: transform(pos, size, {50})
 	, texture(_texture)
 	, m_World(world)
 {

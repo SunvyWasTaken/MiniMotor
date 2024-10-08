@@ -11,7 +11,7 @@ namespace
 }
 
 Wall::Wall(const IVec2& pos, class World* world)
-	: Unit<Wall>(pos, world)
+	: Unit<Wall>(pos, {IVec2{0, 0}, IVec2{438, 0}, IVec2{438, 438}, IVec2{0, 438} }, world)
 {
 }
 
@@ -36,7 +36,7 @@ void Wall::ChangeValue(const uint64_t val)
 }
 
 Path::Path(const IVec2& pos, class World* world)
-	: Unit<Path>(pos, world)
+	: Unit<Path>(pos, { IVec2{438, 0}, IVec2{876, 0}, IVec2{876, 438}, IVec2{438, 0} }, world)
 {
 }
 
