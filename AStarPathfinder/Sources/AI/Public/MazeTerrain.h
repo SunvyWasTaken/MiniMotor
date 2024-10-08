@@ -2,24 +2,27 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Cell.h"
-#include "Entitys.h"
 
 class Wall;
+class World;
 
-class MazeTerrain : public Entity
+template <typename Derived>
+class Unit;
+
+class Path;
+
+using Cell = std::variant<Unit<Wall>, Unit<Path>>;
+
+class MazeTerrain
 {
 public:
 	MazeTerrain();
-	virtual ~MazeTerrain();
 
-	virtual void Update(float delta) override;
+	virtual ~MazeTerrain();
 
 	void SetMazeSize(const IVec2& size);
 
 	void GenerateTerrain(const IVec2& size);
-
-	void RegenerateLabyrinthe();
 
 	void ConstructLabyrinthe();
 
@@ -31,16 +34,7 @@ public:
 
 	Cell* GetCellByPos(const IVec2& pos);
 
-	template <typename Type>
-	Cell* ChangeCellAt(const IVec2& pos)
-	{
-		if (std::visit([&](auto&& tmp)->bool{return tmp.pos == pos; }, Maze[pos.x * MazeSize.x + pos.y]))
-		{
-			Maze[pos.x * MazeSize.x + pos.y] = Type();
-			return &Maze[pos.x * MazeSize.x + pos.y];
-		}
-		return nullptr;
-	}
+	Unit<Path>* ChangeCellAt(const IVec2& pos);
 
 private:
 
@@ -50,12 +44,14 @@ public:
 
 	IVec2 MazeSize;
 
-	std::vector<Cell> Maze;
+	std::vector<void*> Maze;
 
 private:
 
 	std::atomic<bool> IsGenerationDone = true;
 
 	std::vector<IVec2> WallList;
+
+	World* m_World;
 
 };

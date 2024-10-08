@@ -83,8 +83,8 @@ namespace PathFinderAlgo
 				if (std::find(CloseList.begin(), CloseList.end(), Neighbor) == CloseList.end())
 				{
 					// Update the gCost and hCost of the neighbor
-					Neighbor->gCost = UnitCell->gCost + (Neighbor->pos - UnitCell->pos).length();
-					Neighbor->hCost = (End->pos - Neighbor->pos).length();
+					Neighbor->gCost = UnitCell->gCost + (Neighbor->transform.pos - UnitCell->transform.pos).length();
+					Neighbor->hCost = (End->transform.pos - Neighbor->transform.pos).length();
 					Neighbor->beforePath = UnitCell;
 					OpenList.emplace_back(Neighbor);
 				}

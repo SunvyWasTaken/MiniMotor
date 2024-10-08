@@ -11,6 +11,9 @@ class World;
 class MM_API Entity
 {
 public:
+
+	Entity() = default;
+
 	Entity(const FVec2& pos, const FRot3& size, const Texture& _texture, World* world);
 
 	virtual ~Entity();

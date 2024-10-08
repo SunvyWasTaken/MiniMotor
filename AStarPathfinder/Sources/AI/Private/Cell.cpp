@@ -10,8 +10,8 @@ namespace
 	IVec2 Sides[4] = { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };
 }
 
-Wall::Wall()
-	: Unit<Wall>()
+Wall::Wall(const IVec2& pos, class World* world)
+	: Unit<Wall>(pos, world)
 {
 }
 
@@ -22,7 +22,7 @@ void Wall::ChangeValue(const uint64_t val)
 
 	for (IVec2& side : Sides)
 	{
-		if (Cell* curr = parent->GetCellByPos(pos + side))
+		if (Cell* curr = parent->GetCellByPos(side + transform.pos))
 		{
 			if (Unit<Path>* path = std::get_if<Unit<Path>>(curr))
 			{
@@ -35,8 +35,8 @@ void Wall::ChangeValue(const uint64_t val)
 	bCanBeOpen = false;
 }
 
-Path::Path()
-	: Unit<Path>()
+Path::Path(const IVec2& pos, class World* world)
+	: Unit<Path>(pos, world)
 {
 }
 
@@ -48,7 +48,7 @@ void Path::ChangeValue(const uint64_t val)
 	value = val;
 	for (IVec2& side : Sides)
 	{
-		if (Cell* curr = parent->GetCellByPos(pos + side))
+		if (Cell* curr = parent->GetCellByPos(side + transform.pos))
 		{
 			std::visit([&](auto&& tmp)
 				{
@@ -63,7 +63,7 @@ std::vector<Unit<Path>*> Path::GetNeighbours()
 	std::vector<Unit<Path>*> Neighbours;
 	for (IVec2& side : Sides)
 	{
-		if (Cell* curr = parent->GetCellByPos(pos + side))
+		if (Cell* curr = parent->GetCellByPos(side + transform.pos))
 		{
 			if (Unit<Path>* path = std::get_if<Unit<Path>>(curr))
 			{

@@ -25,9 +25,12 @@ public:
 		}
 	}
 
-	template <typename EntitySpawn>
-	EntitySpawn* SpawnEntity(const IVec2& position, const IVec2& size, const Texture& texture = "")
+	template <typename EntitySpawn, typename ...Args>
+	EntitySpawn* SpawnEntity(Args... args)
 	{
+		EntitySpawn* entity = new EntitySpawn(std::forward<Args>(args)...);
+		Texture texture = entity->texture;
+
 		if (m_VertexArrays.find(texture.filename) == m_VertexArrays.end())
 		{
 			m_VertexArrays.emplace(texture.filename, VertexArray2D());
@@ -35,7 +38,6 @@ public:
 
 			m_EntityGroups.emplace(texture.filename, std::make_shared<EntityLists>());
 		}
-		EntitySpawn* entity = new EntitySpawn(position, size, texture, this);
 		m_EntityGroups.at(texture.filename)->emplace_back(entity);
 		UpdateLastEntity(texture);
 

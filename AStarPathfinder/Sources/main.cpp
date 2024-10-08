@@ -25,7 +25,7 @@ int main()
 	SButton MyAstarPath = SButton();
 	SEditableText MyEditableText = SEditableText();
 	
-	MyConstructButton.m_Text = "Construct Maze";
+
 	MyGenButton.m_Text = "Generate Maze";
 	MyClearTerrain.m_Text = "Clear Maze";
 	MyAstarPath.m_Text = "A* Pathfinding";
@@ -38,7 +38,6 @@ int main()
 		.SetSize({500, 1080})
 		;
 
-	UiMaze->AddChild(&MyConstructButton);
 	UiMaze->AddChild(&MyClearTerrain);
 	UiMaze->AddChild(&MyEditableText);
 	UiMaze->AddChild(&MyAstarPath);
@@ -52,7 +51,6 @@ int main()
 
 	PathFinderAlgo::AStarPathfinding pathfinding(Maze);
 
-	MyConstructButton.BindOnPressed(Maze, &MazeTerrain::RegenerateLabyrinthe);
 	MyGenButton.BindOnPressed(Maze, &MazeTerrain::GenerateLabyrinthe);
 	MyClearTerrain.BindOnPressed(Maze, &MazeTerrain::ClearLabyrinthe);
 	MyAstarPath.BindOnPressed(&pathfinding, &PathFinderAlgo::AStarPathfinding::operator());

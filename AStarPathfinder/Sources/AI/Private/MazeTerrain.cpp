@@ -1,6 +1,8 @@
 #include "MazeTerrain.h"
 
 #include "Geometry/VertexArray2D.h"
+#include "Cell.h"
+#include "World.h"
 
 #include <iostream>
 #include <random>
@@ -13,23 +15,15 @@ namespace
 	uint64_t NbrIteration = 0;
 }
 
-MazeTerrain::MazeTerrain() 
-	: Entity({0, 0}, {0, 0, 0}, Texture(), nullptr)
-	, MazeSize(0)
+MazeTerrain::MazeTerrain()
+	: MazeSize(0)
+	, m_World(nullptr)
 {
 
 }
 
 MazeTerrain::~MazeTerrain()
 {
-}
-
-void MazeTerrain::Update(float delta)
-{
-	if (!IsGenerationDone.load(std::memory_order_relaxed))
-	{
-		ConstructLabyrinthe();
-	}
 }
 
 void MazeTerrain::SetMazeSize(const IVec2& size)
@@ -60,34 +54,28 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 
 			if (xTrue || yTrue)
 			{
-				Maze.emplace_back(Wall());
-				std::get<Unit<Wall>>(Maze[it]).parent = this;
-				std::get<Unit<Wall>>(Maze[it]).pos = pos;
-				std::get<Unit<Wall>>(Maze[it]).SetValue(it);
+				Unit<Wall>* wall = m_World->SpawnEntity<Wall>(pos, m_World);
+				Maze.emplace_back(wall);
+				wall->parent = this;
+				wall->SetValue(it);
 
 				if ((x != 0 && x != MazeSize.x - 1) && (y != 0 && y != MazeSize.y - 1) && !(xTrue && yTrue))
 				{
 					WallList.push_back(pos);
-					std::get<Unit<Wall>>(Maze[it]).bCanBeOpen = true;
+					wall->bCanBeOpen = true;
 				}
 
 			}
 			else
 			{
-				Maze.emplace_back(Path());
-				std::get<Unit<Path>>(Maze[it]).parent = this;
-				std::get<Unit<Path>>(Maze[it]).pos = pos;
-				std::get<Unit<Path>>(Maze[it]).SetValue(it);
+				Unit<Path>* path = m_World->SpawnEntity<Path>(pos, m_World);
+				Maze.emplace_back(path);
+				path->parent = this;
+				path->SetValue(it);
 			}
 			++it;
 		}
 	}
-}
-
-void MazeTerrain::RegenerateLabyrinthe()
-{
-	ClearLabyrinthe();
-	IsGenerationDone.exchange(false, std::memory_order_relaxed);
 }
 
 void MazeTerrain::ConstructLabyrinthe()
@@ -106,7 +94,8 @@ void MazeTerrain::ConstructLabyrinthe()
 
 void MazeTerrain::GenerateLabyrinthe()
 {
-	RegenerateLabyrinthe();
+	ClearLabyrinthe();
+	IsGenerationDone.exchange(false, std::memory_order_relaxed);
 	while (!IsGenerationDone.load(std::memory_order_relaxed))
 	{
 		AlgoLabyrinthe();
@@ -124,7 +113,7 @@ void MazeTerrain::ClearLabyrinthe()
 
 void MazeTerrain::RemoveWall(Wall* target)
 {
-	auto it = std::find(WallList.begin(), WallList.end(), target->pos);
+	auto it = std::find(WallList.begin(), WallList.end(), target->transform.pos);
 	if (it != WallList.end())
 	{
 		WallList.erase(it);
@@ -139,13 +128,23 @@ Cell* MazeTerrain::GetCellByPos(const IVec2& pos)
 		return nullptr;
 	}
 
-	Cell& cell = Maze[pos.x * MazeSize.x + pos.y];
-	if (std::visit([pos](auto&& tmp)
+	Cell& cell = *static_cast<Cell*>(Maze[pos.x * MazeSize.x + pos.y]);
+	if (std::visit([pos](auto&& tmp)->bool
 		{
-			return tmp.pos == pos;
+			return tmp.transform.pos == pos;
 		}, cell))
 	{
 		return &cell;
+	}
+	return nullptr;
+}
+
+Unit<Path>* MazeTerrain::ChangeCellAt(const IVec2& pos)
+{
+	if (std::visit([&](auto&& tmp)->bool {return tmp.transform.pos == pos; }, *(Cell*)Maze[pos.x * MazeSize.x + pos.y]))
+	{
+		Maze[pos.x * MazeSize.x + pos.y] = m_World->SpawnEntity<Unit<Path>>(pos, m_World);
+		return (Unit<Path>*)Maze[pos.x * MazeSize.x + pos.y];
 	}
 	return nullptr;
 }
@@ -160,20 +159,12 @@ void MazeTerrain::AlgoLabyrinthe()
 	uint64_t val = wallPath->value;
 
 	// Transform the wall to a path
-
-	Cell* CurrentCellPtr = ChangeCellAt<Path>(pos);
-	WallList.erase(WallList.begin() + index);
-
-	if (Unit<Path>* currPath = std::get_if<Unit<Path>>(CurrentCellPtr))
+	if (Unit<Path>* currPath = ChangeCellAt(pos))
 	{
+		WallList.erase(WallList.begin() + index);
 		ensure(currPath);
 		currPath->parent = this;
-		currPath->pos = pos;
 		currPath->ChangeValue(val);
-	}
-	else
-	{
-		PLATEFORM_BREAK
 	}
 
 	if (WallList.size() <= 0)

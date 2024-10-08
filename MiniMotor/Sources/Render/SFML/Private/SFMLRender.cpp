@@ -172,6 +172,7 @@ void SFMLRender::Draw()
 	ImGui::Text("Framerate : %f", 1.f / DeltaClock.getElapsedTime().asSeconds());
 	DeltaClock.restart();
 	ImGui::End();
+
 	ImGui::SFML::Render(Window);
 	Window.display();
 }

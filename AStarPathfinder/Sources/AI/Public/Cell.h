@@ -1,23 +1,22 @@
 
 #pragma once
 
-#include "Define/CRTP.h"
-
 #include "CoreMinimal.h"
+#include "Entitys.h"
 
 class Path;
 class Wall;
 class MazeTerrain;
 
 template <typename Derived>
-class Unit
+class Unit : public Entity
 {
 public:
 
-	Unit()
-		: parent(nullptr)
+	Unit(const IVec2& pos, class World* world)
+		: Entity(pos, FRot3(0), Texture(), world)
+		, parent(nullptr)
 		, value(0)
-		, pos(0, 0)
 		, bCanBeOpen(false)
 	{}
 	
@@ -40,8 +39,6 @@ public:
 
 	uint64_t value;
 
-	IVec2 pos;
-
 	bool bCanBeOpen;
 
 	// A* Pathfinding
@@ -58,7 +55,7 @@ class Wall : public Unit<Wall>
 {
 public:
 
-	Wall();
+	Wall(const IVec2& pos, class World* world);
 
 	void ChangeValue(const uint64_t val);
 };
@@ -67,7 +64,7 @@ class Path : public Unit<Path>
 {
 public:
 
-	Path();
+	Path(const IVec2& pos, class World* world);
 
 	void ChangeValue(const uint64_t val);
 

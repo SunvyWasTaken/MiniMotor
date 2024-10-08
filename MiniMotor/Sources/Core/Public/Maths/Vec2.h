@@ -18,6 +18,9 @@ struct MM_EXPORT Vec2
 	Vec2(OtherType _x, OtherType _y) : x(static_cast<type>(_x)), y(static_cast<type>(_y)) {}
 
 	template <typename OtherType>
+	Vec2(const Vec2<OtherType>& op) : x(static_cast<type>(op.x)), y(static_cast<type>(op.y)) {}
+
+	template <typename OtherType>
 	void operator()(OtherType op) const
 	{
 		x = static_cast<type>(op.x);
@@ -47,6 +50,12 @@ struct MM_EXPORT Vec2
 	}
 
 	bool operator==(const Vec2<type>& op) const
+	{
+		return x == op.x && y == op.y;
+	}
+
+	template <typename operandType>
+	bool operator==(const Vec2<operandType>& op) const
 	{
 		return x == op.x && y == op.y;
 	}
