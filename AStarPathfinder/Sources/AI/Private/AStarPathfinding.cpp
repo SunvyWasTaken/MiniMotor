@@ -1,6 +1,6 @@
+
 #include "AStarPathfinding.h"
 #include "MazeTerrain.h"
-#include <iostream>
 
 namespace PathFinderAlgo
 {
@@ -34,18 +34,13 @@ namespace PathFinderAlgo
 			return;
 		}
 
-		// A* algorithm
-
-		// List ouvert std::vector OpenList
-
 		OpenList.emplace_back(Start);
 
-
-		while(!OpenList.empty()){
+		while(!OpenList.empty())
+		{
 
 			Unit<Path>* UnitCell = OpenList[0];
 
-			// Trouve le noeud avec le plus petit fCost (gCost +hCost)
 			for (Unit<Path>* curr : OpenList)
 			{
 				if (curr->hCost < UnitCell->hCost) {
@@ -53,36 +48,29 @@ namespace PathFinderAlgo
 				}
 			}
 
-			// Retire le noeud de la liste ouverte
 			auto it = std::find(OpenList.begin(), OpenList.end(), UnitCell);
 			if (it != OpenList.end())
 			{
 				OpenList.erase(it);
 			}
-			// CloseList
-			CloseList.emplace_back(UnitCell);
-			/*parent->GetVertexArray()[UnitCell->pos.x * parent->MazeSize.x + UnitCell->pos.y].FillColor({ 255, 0, 0 });*/
-			
+			CloseList.emplace_back(UnitCell);	
 
 			if (UnitCell == End)
 			{
 				std::cout << "End found" << std::endl;
 				while (UnitCell != Start)
 				{
-					/*parent->GetVertexArray()[UnitCell->pos.x * parent->MazeSize.x + UnitCell->pos.y].FillColor({ 0, 255, 0 });*/
 					UnitCell = UnitCell->beforePath;
 				}
 				break;
 			}
-			//check neighbor
-			// GetNeighbours() return a std::vector<Unit<Path>*>
 			std::vector<Unit<Path>*> NeighborList = UnitCell->GetNeighbours();
 
-			for (auto Neighbor : NeighborList) {
+			for (auto Neighbor : NeighborList)
+			{
 
 				if (std::find(CloseList.begin(), CloseList.end(), Neighbor) == CloseList.end())
 				{
-					// Update the gCost and hCost of the neighbor
 					Neighbor->gCost = UnitCell->gCost + (Neighbor->transform.pos - UnitCell->transform.pos).length();
 					Neighbor->hCost = (End->transform.pos - Neighbor->transform.pos).length();
 					Neighbor->beforePath = UnitCell;

@@ -12,12 +12,13 @@ cmd /c "cd vcpkg && bootstrap-vcpkg.bat -disableMetrics"
 ECHO Initializing vcpkg packages
 ECHO =============================
 cd vcpkg
-vcpkg install
+vcpkg install sfml
+vcpkg install imgui-sfml
 
 ECHO Initializing CMake project
 ECHO =============================
 cd %currentPath%
-cmake -DCMAKE_TOOLCHAIN_FILE=%currentPath%/vcpkg/scripts/buildsystems/vcpkg.cmake -S %currentPath% -B %currentPath%/build
+cmake -DCMAKE_TOOLCHAIN_FILE=%currentPath%/vcpkg/scripts/buildsystems/vcpkg.cmake  -S %currentPath% -B %currentPath%/build
 
 ECHO =============================
 ECHO Install done

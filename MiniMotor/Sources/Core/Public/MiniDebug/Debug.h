@@ -4,12 +4,6 @@
 
 #include "Define/ImportExportDLL.h"
 
-#include <intrin.h>
-#ifdef DO_CHECK
-	#include <chrono>
-	#include <iostream>
-#endif // DO_CHECK
-
 #ifdef DEBUG
 
 namespace std

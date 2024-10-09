@@ -1,36 +1,6 @@
-project(AStarPathfinder)
-
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo" CACHE STRING "" FORCE)
+project(AStarPathfinder VERSION 1.0)
 
 file(GLOB_RECURSE Sources "*.h" "*.cpp" ".txt")
-
-if(WIN32)
-    # Sous Windows, utiliser une commande PowerShell pour trouver les dossiers nommés "Public"
-    execute_process(
-        COMMAND powershell -Command "Get-ChildItem -Recurse -Directory | Where-Object { $_.Name -eq 'Public' } | ForEach-Object { $_.FullName }"
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE PUBLIC_DIRS
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-else()
-    # Sous Linux/macOS, utiliser la commande Unix `find`
-    execute_process(
-        COMMAND find ${CMAKE_SOURCE_DIR} -type d -name Public
-        OUTPUT_VARIABLE PUBLIC_DIRS
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-endif()
-
-# Remplacer les nouvelles lignes par des espaces pour garantir que les chemins sont bien séparés
-string(REPLACE "\n" " " PUBLIC_DIRS "${PUBLIC_DIRS}")
-
-# Transformer le résultat en une liste CMake
-separate_arguments(PUBLIC_DIRS)
-
-# Ajouter chaque dossier trouvé dans les includes
-foreach(DIR ${PUBLIC_DIRS})
-    include_directories(${DIR})
-endforeach()
 
 macro(GroupSources curdir)
     file(GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/${curdir}
@@ -51,16 +21,40 @@ endmacro()
 # Execute the macro
 GroupSources(Sources)
 
-add_executable(AStarPathfinder ${Sources})
+add_executable(${PROJECT_NAME} ${Sources})
+set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+if(WIN32)
+    # Sous Windows, utiliser une commande PowerShell pour trouver les dossiers nommés "Public"
+    execute_process(
+        COMMAND powershell -Command "Get-ChildItem -Recurse -Directory | Where-Object { $_.Name -eq 'Public' } | ForEach-Object { $_.FullName }"
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        OUTPUT_VARIABLE PUBLIC_DIRS
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+else()
+    # Sous Linux/macOS, utiliser la commande Unix `find`
+    execute_process(
+        COMMAND find ${CMAKE_SOURCE_DIR} -type d -name Public
+        OUTPUT_VARIABLE PUBLIC_DIRS
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+endif()
 
-target_link_libraries(AStarPathfinder PRIVATE
+# Remplacer les nouvelles lignes par des espaces pour garantir que les chemins sont bien séparés
+string(REPLACE "\n" " " PUBLIC_DIRS "${PUBLIC_DIRS}")
+
+# Transformer le résultat en une liste CMake
+separate_arguments(PUBLIC_DIRS)
+
+# Ajouter chaque dossier trouvé dans les includes
+foreach(DIR ${PUBLIC_DIRS})
+    target_include_directories(${PROJECT_NAME} PRIVATE ${DIR})
+endforeach()
+
+target_link_libraries(${PROJECT_NAME} PUBLIC
     MiniMotor
+    MiniMotor_compiler_flags
 )
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:DEBUG>)
-target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:RelWithDebInfo>:DO_CHECK>)
-
-
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
+target_precompile_headers(${PROJECT_NAME} REUSE_FROM MiniMotor)

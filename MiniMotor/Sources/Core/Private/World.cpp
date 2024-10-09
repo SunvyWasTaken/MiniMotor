@@ -22,6 +22,23 @@ void World::Update()
 	//}
 }
 
+void World::RegisterEntity(Entity* entity)
+{
+	Texture texture = entity->texture;
+
+	if (m_VertexArrays.empty() || m_VertexArrays.find(texture.filename) == m_VertexArrays.end())
+	{
+		m_VertexArrays.emplace(texture.filename, VertexArray2D(texture.filename));
+		m_VertexArrays.at(texture.filename).SetTexture(texture.filename);
+
+		m_EntityGroups.emplace(texture.filename, std::make_shared<EntityLists>());
+	}
+	m_EntityGroups.at(texture.filename)->emplace_back(std::make_unique<Entity>(entity));
+	m_VertexArrays.at(texture.filename).Resize(m_EntityGroups.at(texture.filename).get()->size());
+
+	UpdateLastEntity(texture);
+}
+
 void World::RemoveEntity(Entity* entity)
 {
 	for (auto& [Key, val] : m_EntityGroups)
@@ -46,9 +63,9 @@ void World::DrawEntitys()
 		EntityLists& entitys = *m_EntityGroups.at(Key).get();
 		for (uint64_t i = 0; i < entitys.size(); ++i)
 		{
-			val[i].transform.pos = entitys[i]->transform.pos * entitys[i]->transform.scale;
-			val[i].transform.rot = entitys[i]->transform.rot;
-			val[i].transform.scale = entitys[i]->transform.scale;
+			val[i].transform.pos = std::any_cast<Entity*>(entitys[i])->transform.pos * std::any_cast<Entity*>(entitys[i])->transform.scale;
+			val[i].transform.rot = std::any_cast<Entity*>(entitys[i])->transform.rot;
+			val[i].transform.scale = std::any_cast<Entity*>(entitys[i])->transform.scale;
 		}
 	}
 }

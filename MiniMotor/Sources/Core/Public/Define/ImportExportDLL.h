@@ -9,5 +9,3 @@
 	#define MM_API __declspec(dllimport)
 	#define MM_EXPORT
 #endif // MM_EXPORT
-
-#pragma warning(disable : 4251)

@@ -6,9 +6,11 @@
 #include "CoreMinimal.h"
 #include "Entitys.h"
 
+#include <any>
+
 class MM_API World
 {
-	using EntityLists = std::vector<std::unique_ptr<Entity>>;
+	using EntityLists = std::vector<std::any>;
 
 public:
 	World();
@@ -45,6 +47,8 @@ public:
 		UpdateLastEntity(texture);
 		return entity;
 	}
+
+	void RegisterEntity(Entity* entity);
 
 	void RemoveEntity(Entity* entity);
 

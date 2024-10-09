@@ -1,10 +1,11 @@
+
+
 #include "MazeTerrain.h"
 
 #include "Geometry/VertexArray2D.h"
 #include "Cell.h"
 #include "World.h"
 
-#include <iostream>
 #include <random>
 
 std::default_random_engine rGen;
@@ -24,6 +25,7 @@ MazeTerrain::MazeTerrain(World* world)
 
 MazeTerrain::~MazeTerrain()
 {
+
 }
 
 void MazeTerrain::SetMazeSize(const IVec2& size)
@@ -34,10 +36,14 @@ void MazeTerrain::SetMazeSize(const IVec2& size)
 
 	// this need to not be even
 	MazeSize = size + 1;
-	for (auto it : Maze)
+	for (auto& it : Maze)
 	{
-		m_World->RemoveEntity((Entity*)it);
+		std::visit([&](auto&& tmp)
+		{
+			m_World->RemoveEntity(&tmp);
+		}, it);
 	}
+	Maze.clear();
 	Maze.reserve(MazeSize.x * MazeSize.y);
 	
 	NbrIteration = MazeSize.x;
@@ -59,24 +65,26 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 
 			if (xTrue || yTrue)
 			{
-				Unit<Wall>* wall = m_World->SpawnEntity<Wall>(pos, m_World);
-				Maze.emplace_back(wall);
-				wall->parent = this;
-				wall->SetValue(it);
+				Maze.emplace_back(Wall(pos, m_World));
+				Cell* curr = &Maze[Maze.size() - 1];
+				m_World->RegisterEntity(std::get_if<Unit<Wall>>(curr));
+				std::get_if<Unit<Wall>>(curr)->parent = this;
+				std::get_if<Unit<Wall>>(curr)->SetValue(it);
 
 				if ((x != 0 && x != MazeSize.x - 1) && (y != 0 && y != MazeSize.y - 1) && !(xTrue && yTrue))
 				{
 					WallList.push_back(pos);
-					wall->bCanBeOpen = true;
+					std::get_if<Unit<Wall>>(curr)->bCanBeOpen = true;
 				}
 
 			}
 			else
 			{
-				Unit<Path>* path = m_World->SpawnEntity<Path>(pos, m_World);
-				Maze.emplace_back(path);
-				path->parent = this;
-				path->SetValue(it);
+				Maze.emplace_back(Path(pos, m_World));
+				Cell* curr = &Maze[Maze.size() - 1];
+				m_World->RegisterEntity(std::get_if<Unit<Path>>(curr));
+				std::get_if<Unit<Path>>(curr)->parent = this;
+				std::get_if<Unit<Path>>(curr)->SetValue(it);
 			}
 			++it;
 		}
@@ -110,7 +118,6 @@ void MazeTerrain::GenerateLabyrinthe()
 void MazeTerrain::ClearLabyrinthe()
 {
 	IsGenerationDone.exchange(true, std::memory_order_relaxed);
-	Maze.clear();
 	WallList.clear();
 
 	GenerateTerrain(MazeSize - 1);
@@ -133,24 +140,23 @@ Cell* MazeTerrain::GetCellByPos(const IVec2& pos)
 		return nullptr;
 	}
 
-	Cell& cell = *static_cast<Cell*>(Maze[pos.x * MazeSize.x + pos.y]);
+	Cell* cell = &Maze[pos.x * MazeSize.x + pos.y];
 	if (std::visit([pos](auto&& tmp)->bool
 		{
 			return tmp.transform.pos == pos;
-		}, cell))
+		}, *cell))
 	{
-		return &cell;
+		return cell;
 	}
 	return nullptr;
 }
 
 Unit<Path>* MazeTerrain::ChangeCellAt(const IVec2& pos)
 {
-	if (std::visit([&](auto&& tmp)->bool {return tmp.transform.pos == pos; }, *(Cell*)Maze[pos.x * MazeSize.x + pos.y]))
+	if (std::visit([&](auto&& tmp)->bool {return tmp.transform.pos == pos; }, Maze[pos.x * MazeSize.x + pos.y]))
 	{
-		m_World->RemoveEntity((Entity*)Maze[pos.x * MazeSize.x + pos.y]);
-		Maze[pos.x * MazeSize.x + pos.y] = m_World->SpawnEntity<Path>(pos, m_World);
-		return (Unit<Path>*)Maze[pos.x * MazeSize.x + pos.y];
+		*(&Maze[pos.x * MazeSize.x + pos.y]) = Path(pos, m_World);
+		return std::get_if<Unit<Path>>(&Maze[pos.x * MazeSize.x + pos.y]);
 	}
 	return nullptr;
 }

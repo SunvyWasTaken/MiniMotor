@@ -1,8 +1,0 @@
-{
-    "name": "minimotor",
-    "version": "0.1.0",
-    "dependencies": [
-	"sfml",
-	"imgui-sfml"
-    ]
-  }

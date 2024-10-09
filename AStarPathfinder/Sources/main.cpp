@@ -1,5 +1,3 @@
-// AStarPathfinder2.cpp : Ce fichier contient la fonction 'main'. L'exécution du programme commence et se termine à cet endroit.
-//
 
 #include "World.h"
 
@@ -9,8 +7,6 @@
 #include "MiniMotorApp.h"
 #include "UIMaze.h"
 
-
-#include <iostream>
 
 int main()
 {

@@ -4,8 +4,6 @@
 
 #include "Entitys.h"
 
-#include <iostream>
-#include <thread>
 #include <Windows.h>
 
 void ConsoleRender::Init()

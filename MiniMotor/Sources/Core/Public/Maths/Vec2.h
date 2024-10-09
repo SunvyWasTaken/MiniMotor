@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include <cmath>
-
 template <typename type>
 struct MM_EXPORT Vec2
 {

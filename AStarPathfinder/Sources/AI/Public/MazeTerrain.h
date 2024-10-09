@@ -44,7 +44,7 @@ public:
 
 	IVec2 MazeSize;
 
-	std::vector<void*> Maze;
+	std::vector<Cell> Maze;
 
 private:
 
