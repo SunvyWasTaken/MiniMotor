@@ -26,9 +26,9 @@ size_t VertexArray2D::Size() const
 	return quads.size();
 }
 
-void VertexArray2D::AddQuad(const FTrans2& trans)
+void VertexArray2D::AddQuad(const FTrans2& trans, const Texture& textu)
 {
-	quads.emplace_back(FQuad2D{trans});
+	quads.emplace_back(FQuad2D{trans, textu});
 }
 
 FQuad2D& VertexArray2D::operator[](const size_t index)

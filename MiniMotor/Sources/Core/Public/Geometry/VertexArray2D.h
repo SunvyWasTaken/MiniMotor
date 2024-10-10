@@ -23,7 +23,7 @@ public:
 
 	size_t Size() const;
 
-	void AddQuad(const FTrans2& trans);
+	void AddQuad(const FTrans2& trans, const Texture& textu);
 
 	FQuad2D& operator[](const size_t index);
 

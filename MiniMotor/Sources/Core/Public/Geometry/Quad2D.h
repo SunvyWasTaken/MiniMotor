@@ -14,13 +14,15 @@ struct MM_EXPORT Quad2D : public BasicDrawable2D
 
 public:
 
-	Quad2D(const FTrans2& trans = {FVec2{1, 1}, FRot3{0, 0, 0}, FVec2{10, 10}})
+	Quad2D(const FTrans2& trans = {FVec2{1, 1}, FRot3{0, 0, 0}, FVec2{10, 10}}, const Texture& textu = {"", SQUAREDTEXTURE(0)})
 		: BasicDrawable2D(trans)
 	{
 		vertices[0].position = Vec2<T>(0, 0);
 		vertices[1].position = Vec2<T>(1, 0);
 		vertices[2].position = Vec2<T>(1, 1);
 		vertices[3].position = Vec2<T>(0, 1);
+
+		SetCoord(textu.coord);
 	}
 
 	template <typename TargetSide>
@@ -42,7 +44,7 @@ public:
 	template <typename TargetSide>
 	Vec2<T> GetVerticePosition() const
 	{
-		return (GetVertice<TargetSide>().position * transform.scale) + transform.pos;
+		return (GetVertice<TargetSide>().position * transform.scale) + (transform.pos * transform.scale);
 	}
 
 	void FillColor(const FColor& color)

@@ -37,6 +37,21 @@ namespace
 
 	bool IsMousePressed = false;
 
+	using MTextures = std::map<std::string, sf::Texture>;
+
+	MTextures textures;
+
+	sf::Texture* GetTextures(const std::string& filename)
+	{
+		if (textures.find(filename) == textures.end())
+		{
+			sf::Texture texture;
+			texture.loadFromFile(filename);
+			textures.emplace(filename, texture);
+		}
+		return &textures.at(filename);
+	}
+
 	void DrawQuad2D(FQuad2D& obj)
 	{
 		sf::RectangleShape rectangle(sf::Vector2f(static_cast<float>(obj.transform.scale.x * CellSize), static_cast<float>(obj.transform.scale.y * CellSize)));
@@ -46,7 +61,7 @@ namespace
 
 	void DrawVertexArray(const VertexArray2D& obj)
 	{
-		sf::Texture* texture = SFMLTextures::GetInstance()->GetTextures(obj.texture.filename);
+		sf::Texture* texture = GetTextures(obj.texture.filename);
 
 		sf::VertexArray vertexArray(sf::Quads, 4);
 		vertexArray.resize(obj.Size() * 4);

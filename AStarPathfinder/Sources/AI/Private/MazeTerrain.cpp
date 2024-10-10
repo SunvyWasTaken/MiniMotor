@@ -63,7 +63,7 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 			{
 				Entity entity = SpawnEntity(TEXT("Wall {}", it));
 				entity.AddWorldOffset(pos);
-				entity.SetSize({50, 50});
+				entity.SetSize({25, 25});
 				entity.AddComponent<RendableComponent>(Texture{TEXT("Ressources/Brick_Block.png"), TextureCoord{IVec2{0, 0}, IVec2{438, 0}, IVec2{438, 438}, IVec2{0, 438}}});
 				entity.AddComponent<Cell>(Wall(pos, this));
 				Maze.push_back(entity);
@@ -81,7 +81,7 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 			{
 				Entity entity = SpawnEntity(TEXT("Path {}", it));
 				entity.AddWorldOffset(pos);
-				entity.SetSize({ 50, 50 });
+				entity.SetSize({ 25, 25 });
 				entity.AddComponent<RendableComponent>(Texture{TEXT("Ressources/Brick_Block.png"), TextureCoord{ IVec2{438, 0}, IVec2{876, 0}, IVec2{876, 438}, IVec2{438, 0}}});
 				entity.AddComponent<Cell>(Path(pos, this));
 				Maze.push_back(entity);

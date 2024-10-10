@@ -52,7 +52,7 @@ int main()
 	// End : Maze Generation
 
 	Entity ent = Maze->SpawnEntity(TEXT("Player"));
-	ent.AddComponent<RendableComponent>(Texture{TEXT("Ressources/SunsetIco.png"), TextureCoord{ SQUAREDTEXTURE(128) }});
+	ent.AddComponent<RendableComponent>(Texture{TEXT("Ressources/SunsetIco.png"), SQUAREDTEXTURE(128) });
 	ent.SetSize({100, 100});
 	ent.AddWorldOffset({10, 10});
 	CurrApp->Run();

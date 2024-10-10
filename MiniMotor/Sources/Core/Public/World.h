@@ -28,12 +28,13 @@ public:
 		std::map<std::string, VertexArray2D> mapVertexArray;
 		for (auto& entity : m_EntityRegistry.view<RendableComponent>())
 		{
-			const std::string& textureName = m_EntityRegistry.get<RendableComponent>(entity).texture.filename;
-			if (mapVertexArray.find(textureName) == mapVertexArray.end())
+			const Texture& texture = m_EntityRegistry.get<RendableComponent>(entity).texture;
+			if (mapVertexArray.find(texture.filename) == mapVertexArray.end())
 			{
-				mapVertexArray.emplace(textureName, VertexArray2D(textureName));
+				mapVertexArray.emplace(texture.filename, VertexArray2D(texture.filename));
 			}
-			mapVertexArray.at(textureName).AddQuad(m_EntityRegistry.get<TransformComponent>(entity).transform);
+			TransformComponent& transComp = m_EntityRegistry.get<TransformComponent>(entity);
+			mapVertexArray.at(texture.filename).AddQuad(transComp.transform, texture);
 		}
 		for (auto& [key, value] : mapVertexArray)
 		{
