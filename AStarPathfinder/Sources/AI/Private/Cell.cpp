@@ -22,7 +22,7 @@ void Wall::ChangeValue(const uint64_t val)
 
 	for (IVec2& side : Sides)
 	{
-		if (Cell* curr = parent->GetCellByPos(side + transform.pos))
+		if (Cell* curr = parent->GetCellByPos(side + GetWorldPosition()))
 		{
 			if (Unit<Path>* path = std::get_if<Unit<Path>>(curr))
 			{
@@ -48,7 +48,7 @@ void Path::ChangeValue(const uint64_t val)
 	value = val;
 	for (IVec2& side : Sides)
 	{
-		if (Cell* curr = parent->GetCellByPos(side + transform.pos))
+		if (Cell* curr = parent->GetCellByPos(side + GetWorldPosition()))
 		{
 			std::visit([&](auto&& tmp)
 				{
@@ -63,7 +63,7 @@ std::vector<Unit<Path>*> Path::GetNeighbours()
 	std::vector<Unit<Path>*> Neighbours;
 	for (IVec2& side : Sides)
 	{
-		if (Cell* curr = parent->GetCellByPos(side + transform.pos))
+		if (Cell* curr = parent->GetCellByPos(side + GetWorldPosition()))
 		{
 			if (Unit<Path>* path = std::get_if<Unit<Path>>(curr))
 			{

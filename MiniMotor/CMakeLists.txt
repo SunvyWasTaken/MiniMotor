@@ -4,12 +4,12 @@ configure_file(Config.h.in Config.h)
 
 file(GLOB_RECURSE SOURCES "*.h" "*.cpp" "*.txt")
 
+# Macro to group files in the IDE
 macro(GroupSources curdir)
     file(GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/${curdir}
     ${PROJECT_SOURCE_DIR}/${curdir}/* ${PROJECT_SOURCE_DIR}/${curdir}/${curdir}/*)
 
     foreach(child ${children})
-
         if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/${curdir}/${child})
             GroupSources(${curdir}/${child})
         else()
@@ -21,8 +21,9 @@ macro(GroupSources curdir)
 endmacro()
 
 # Execute the macro
-GroupSources(Sources)
+GroupSources("Sources")
 
+find_package(EnTT CONFIG REQUIRED)
 find_package(SFML CONFIG REQUIRED COMPONENTS system window graphics)
 find_package(ImGui-SFML CONFIG REQUIRED)
 
@@ -53,13 +54,16 @@ separate_arguments(PUBLIC_DIRS)
 
 # Ajouter chaque dossier trouvé dans les includes
 foreach(DIR ${PUBLIC_DIRS})
-    target_include_directories(${PROJECT_NAME} PUBLIC ${DIR})
+    if(NOT ${DIR} MATCHES "Sources/ECS/")
+        target_include_directories(${PROJECT_NAME} PUBLIC ${DIR})
+    endif()
 endforeach()
 
 # Permet d'aller chercher les fichiers générés par CMake
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
+    EnTT::EnTT
     sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML
     MiniMotor_compiler_flags
 )
@@ -84,7 +88,7 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE
     "Sources/Core/Public/CoreMinimal.h"
 )
 
-if($<OR:<$CONFIG:Debug>,$<CONFIG:RelWithDEbInfo>:$<CONFIG>>)
-	target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG)
-	target_compile_options(${PROJECT_NAME} PRIVATE DO_CHECK)
-endif()
+#if($<OR:<$CONFIG:Debug>,$<CONFIG:RelWithDEbInfo>:$<CONFIG>>)
+#	target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG)
+#	target_compile_options(${PROJECT_NAME} PRIVATE DO_CHECK)
+#endif()

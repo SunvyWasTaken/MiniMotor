@@ -2,66 +2,57 @@
 
 #pragma once
 
-#include "GenericRender.h"
 #include "CoreMinimal.h"
-#include "Entitys.h"
+#include "GenericRender.h"
+#include "ECS/Components/RendableComponent.h"
+#include "ECS/Components/TransformComponent.h"
 
-#include <any>
+#include "entt/entt.hpp"
 
 class MM_API World
 {
-	using EntityLists = std::vector<std::any>;
-
 public:
 	World();
 	virtual ~World();
 
 	void Update();
 
+	// Todo : Tmp solution for vertex array draw look for merging all texture in one
+	// Buffer all entitys with RendableComponent and TransformComponent
+	// Idk if it's optimise cause i wanted to use vertex array instead of simple object
+	// so i had to create a vertex array for each obj.
+	// or i think i could merge every texture in one so there will be only one vertex array
 	template <typename RendeType>
 	void BufferFrameEntitys(GenericRender<RendeType>& targetDraw)
 	{
-		DrawEntitys();
-		for (auto [Key, vertexArray] : m_VertexArrays)
+		std::map<std::string, VertexArray2D> mapVertexArray;
+		for (auto& entity : m_EntityRegistry.view<RendableComponent>())
 		{
-			targetDraw.BufferFrame(vertexArray);
+			const std::string& textureName = m_EntityRegistry.get<RendableComponent>(entity).texture.filename;
+			if (mapVertexArray.find(textureName) == mapVertexArray.end())
+			{
+				mapVertexArray.emplace(textureName, VertexArray2D(textureName));
+			}
+			mapVertexArray.at(textureName).AddQuad(m_EntityRegistry.get<TransformComponent>(entity).transform);
+		}
+		for (auto& [key, value] : mapVertexArray)
+		{
+			targetDraw.BufferFrame(value);
 		}
 	}
 
-	template <typename EntitySpawn, typename ...Args>
-	EntitySpawn* SpawnEntity(Args... args)
-	{
-		EntitySpawn* entity = new EntitySpawn(std::forward<Args>(args)...);
-		Texture texture = entity->texture;
+	Entity SpawnEntity(const std::string& name);
 
-		if (m_VertexArrays.empty() || m_VertexArrays.find(texture.filename) == m_VertexArrays.end())
-		{
-			m_VertexArrays.emplace(texture.filename, VertexArray2D(texture.filename));
-			m_VertexArrays.at(texture.filename).SetTexture(texture.filename);
-
-			m_EntityGroups.emplace(texture.filename, std::make_shared<EntityLists>());
-		}
-		m_EntityGroups.at(texture.filename)->emplace_back(entity);
-		m_VertexArrays.at(texture.filename).Resize(m_EntityGroups.at(texture.filename).get()->size());
-
-		UpdateLastEntity(texture);
-		return entity;
-	}
-
-	void RegisterEntity(Entity* entity);
-
-	void RemoveEntity(Entity* entity);
+	void RemoveEntity(const entt::entity& entity);
 
 private:
 
 	void DrawEntitys();
 
-	void UpdateLastEntity(const Texture& texture);
-
 private:
+	
+	entt::registry m_EntityRegistry;
 
-	std::map<std::string, std::shared_ptr<EntityLists>> m_EntityGroups;
-
-	std::map<std::string, VertexArray2D> m_VertexArrays;
+	friend class Entity;
 
 };

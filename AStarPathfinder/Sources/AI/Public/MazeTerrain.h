@@ -1,10 +1,12 @@
+// Copyright Shimmer Studios : All rights reserved.
+// Create with WillyBucket
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "World.h"
+#include "ECS/Entitys.h"
 
 class Wall;
-class World;
 
 template <typename Derived>
 class Unit;
@@ -13,10 +15,10 @@ class Path;
 
 using Cell = std::variant<Unit<Wall>, Unit<Path>>;
 
-class MazeTerrain
+class MazeTerrain : public World
 {
 public:
-	MazeTerrain(World* world);
+	MazeTerrain();
 
 	virtual ~MazeTerrain();
 
@@ -44,14 +46,12 @@ public:
 
 	IVec2 MazeSize;
 
-	std::vector<Cell> Maze;
+	std::vector<Entity> Maze;
 
 private:
 
 	std::atomic<bool> IsGenerationDone = true;
 
 	std::vector<IVec2> WallList;
-
-	World* m_World;
 
 };

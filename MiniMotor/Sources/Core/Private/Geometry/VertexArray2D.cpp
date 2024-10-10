@@ -27,6 +27,11 @@ size_t VertexArray2D::Size() const
 	return quads.size();
 }
 
+void VertexArray2D::AddQuad(const FTrans2& trans)
+{
+	quads.emplace_back(trans);
+}
+
 FQuad2D& VertexArray2D::operator[](const size_t index)
 {
 	return quads[index];

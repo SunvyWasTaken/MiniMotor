@@ -9,11 +9,11 @@
 
 using Quad2DLists = std::vector<FQuad2D>;
 
-class MM_API VertexArray2D : public BasicDrawable2D
+class MM_API VertexArray2D
 {
 public:
 
-	VertexArray2D(const std::string& textureName = "");
+	explicit VertexArray2D(const std::string& textureName = "");
 
 	virtual ~VertexArray2D();
 
@@ -22,6 +22,8 @@ public:
 	void Resize(const size_t size);
 
 	size_t Size() const;
+
+	void AddQuad(const FTrans2& trans);
 
 	FQuad2D& operator[](const size_t index);
 

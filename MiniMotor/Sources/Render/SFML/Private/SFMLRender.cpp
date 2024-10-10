@@ -1,7 +1,7 @@
 // Copyright Shimmer Studios : All rights reserved.
 
 #include "CoreMinimal.h"
-#include "Entitys.h"
+#include "ECS/Entitys.h"
 #include "SFMLRender.h"
 #include "Utils/StateMachine.h"
 #include "Slate/SlateContainer.h"
@@ -84,35 +84,35 @@ namespace
 			},
 			[&](const Left)
 			{
-				targetPosition = ImVec2{ (float)slate->GetPosition()->x, (float)slate->GetPosition()->y - (float)slate->GetSize()->y / 2 };
+				targetPosition = ImVec2{ (float)slate->GetPosition()->x, (float)(slate->GetPosition()->y - (slate->GetSize()->y / 2)) };
 			},
 			[&](const BottomLeft)
 			{
-				targetPosition = ImVec2{ (float)slate->GetPosition()->x, (float)slate->GetPosition()->y - (float)slate->GetSize()->y };
+				targetPosition = ImVec2{ (float)slate->GetPosition()->x, (float)(slate->GetPosition()->y - slate->GetSize()->y) };
 			},
 			[&](const TopRight)
 			{
-				targetPosition = ImVec2{ (float)slate->GetPosition()->x - (float)slate->GetSize()->x, (float)slate->GetPosition()->y };
+				targetPosition = ImVec2{ (float)(slate->GetPosition()->x - slate->GetSize()->x), (float)slate->GetPosition()->y };
 			},
 			[&](const Right)
 			{
-				targetPosition = ImVec2{ (float)slate->GetPosition()->x - (float)slate->GetSize()->x, (float)slate->GetPosition()->y - (float)slate->GetSize()->y / 2 };
+				targetPosition = ImVec2{ (float)(slate->GetPosition()->x - slate->GetSize()->x), (float)(slate->GetPosition()->y - (slate->GetSize()->y / 2)) };
 			},
 			[&](const BottomRight)
 			{
-				targetPosition = ImVec2{ (float)slate->GetPosition()->x - (float)slate->GetSize()->x, (float)slate->GetPosition()->y - (float)slate->GetSize()->y };
+				targetPosition = ImVec2{ (float)(slate->GetPosition()->x - slate->GetSize()->x), (float)(slate->GetPosition()->y - slate->GetSize()->y) };
 			},
 			[&](const Top)
 			{
-				targetPosition = ImVec2{ (float)slate->GetPosition()->x - (float)slate->GetSize()->x / 2, (float)slate->GetPosition()->y };
+				targetPosition = ImVec2{ (float)(slate->GetPosition()->x - (slate->GetSize()->x / 2)), (float)slate->GetPosition()->y };
 			},
 			[&](const Bottom)
 			{
-				targetPosition = ImVec2{ (float)slate->GetPosition()->x - (float)slate->GetSize()->x / 2, (float)slate->GetPosition()->y - (float)slate->GetSize()->y };
+				targetPosition = ImVec2{ (float)(slate->GetPosition()->x - (slate->GetSize()->x / 2)), (float)(slate->GetPosition()->y - slate->GetSize()->y) };
 			},
 			[&](const Center)
 			{
-				targetPosition = ImVec2{ (float)slate->GetPosition()->x - (float)slate->GetSize()->x / 2, (float)slate->GetPosition()->y - (float)slate->GetSize()->y / 2 };
+				targetPosition = ImVec2{ (float)(slate->GetPosition()->x - (slate->GetSize()->x / 2)), (float)(slate->GetPosition()->y - (slate->GetSize()->y / 2)) };
 			}
 		), slate->GetPadding());
 		ImGui::SetWindowPos(targetPosition);

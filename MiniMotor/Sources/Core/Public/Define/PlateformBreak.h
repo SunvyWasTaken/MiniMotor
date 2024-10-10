@@ -9,3 +9,5 @@
 #elif _MAC
 	#define PLATEFORM_BREAK __asm__("int $3");
 #endif
+
+#define TEXT(txt, ...) std::format(txt, ##__VA_ARGS__)

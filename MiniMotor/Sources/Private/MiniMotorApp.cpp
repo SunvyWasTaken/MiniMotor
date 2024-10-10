@@ -8,6 +8,8 @@ MiniMotorApp::MiniMotorApp()
 	, m_World(nullptr)
 	, m_Render(std::make_unique<CurrentRender>())
 {
+	m_Render->Init();
+	m_Render->EventCall.Bind(this, &MiniMotorApp::OnEvents);
 }
 
 MiniMotorApp::~MiniMotorApp()
@@ -16,8 +18,6 @@ MiniMotorApp::~MiniMotorApp()
 
 void MiniMotorApp::Init()
 {
-	m_Render->Init();
-	m_Render->EventCall.Bind(this, &MiniMotorApp::OnEvents);
 }
 
 void MiniMotorApp::Run()

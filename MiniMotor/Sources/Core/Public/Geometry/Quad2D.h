@@ -14,7 +14,8 @@ struct MM_EXPORT Quad2D : public BasicDrawable2D
 
 public:
 
-	Quad2D()
+	Quad2D(const FTrans2& trans = {0})
+		: BasicDrawable2D(trans)
 	{
 		vertices[0].position = Vec2<T>(0, 0);
 		vertices[1].position = Vec2<T>(1, 0);

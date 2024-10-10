@@ -12,6 +12,7 @@ cmd /c "cd vcpkg && bootstrap-vcpkg.bat -disableMetrics"
 ECHO Initializing vcpkg packages
 ECHO =============================
 cd vcpkg
+vcpkg install entt
 vcpkg install sfml
 vcpkg install imgui-sfml
 

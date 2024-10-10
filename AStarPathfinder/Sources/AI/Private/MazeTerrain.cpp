@@ -4,7 +4,6 @@
 
 #include "Geometry/VertexArray2D.h"
 #include "Cell.h"
-#include "World.h"
 
 #include <random>
 
@@ -16,9 +15,8 @@ namespace
 	uint64_t NbrIteration = 0;
 }
 
-MazeTerrain::MazeTerrain(World* world)
+MazeTerrain::MazeTerrain()
 	: MazeSize(0)
-	, m_World(world)
 {
 
 }
@@ -40,7 +38,7 @@ void MazeTerrain::SetMazeSize(const IVec2& size)
 	{
 		std::visit([&](auto&& tmp)
 		{
-			m_World->RemoveEntity(&tmp);
+			RemoveEntity(&tmp);
 		}, it);
 	}
 	Maze.clear();
@@ -65,9 +63,10 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 
 			if (xTrue || yTrue)
 			{
-				Maze.emplace_back(Wall(pos, m_World));
+				Entity& entity = SpawnEntity(TEXT("Wall {}", it));
+				Maze.emplace_back(Wall(pos, this));
 				Cell* curr = &Maze[Maze.size() - 1];
-				m_World->RegisterEntity(std::get_if<Unit<Wall>>(curr));
+				RegisterEntity(std::get_if<Unit<Wall>>(curr));
 				std::get_if<Unit<Wall>>(curr)->parent = this;
 				std::get_if<Unit<Wall>>(curr)->SetValue(it);
 
@@ -80,9 +79,9 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 			}
 			else
 			{
-				Maze.emplace_back(Path(pos, m_World));
+				Maze.emplace_back(Path(pos, this));
 				Cell* curr = &Maze[Maze.size() - 1];
-				m_World->RegisterEntity(std::get_if<Unit<Path>>(curr));
+				RegisterEntity(std::get_if<Unit<Path>>(curr));
 				std::get_if<Unit<Path>>(curr)->parent = this;
 				std::get_if<Unit<Path>>(curr)->SetValue(it);
 			}
@@ -125,7 +124,7 @@ void MazeTerrain::ClearLabyrinthe()
 
 void MazeTerrain::RemoveWall(Wall* target)
 {
-	auto it = std::find(WallList.begin(), WallList.end(), target->transform.pos);
+	auto it = std::find(WallList.begin(), WallList.end(), target->GetWorldPosition());
 	if (it != WallList.end())
 	{
 		WallList.erase(it);
@@ -143,7 +142,7 @@ Cell* MazeTerrain::GetCellByPos(const IVec2& pos)
 	Cell* cell = &Maze[pos.x * MazeSize.x + pos.y];
 	if (std::visit([pos](auto&& tmp)->bool
 		{
-			return tmp.transform.pos == pos;
+			return tmp.GetWorldPosition() == pos;
 		}, *cell))
 	{
 		return cell;
@@ -153,9 +152,9 @@ Cell* MazeTerrain::GetCellByPos(const IVec2& pos)
 
 Unit<Path>* MazeTerrain::ChangeCellAt(const IVec2& pos)
 {
-	if (std::visit([&](auto&& tmp)->bool {return tmp.transform.pos == pos; }, Maze[pos.x * MazeSize.x + pos.y]))
+	if (std::visit([&](auto&& tmp)->bool {return tmp.GetWorldPosition() == pos; }, Maze[pos.x * MazeSize.x + pos.y]))
 	{
-		*(&Maze[pos.x * MazeSize.x + pos.y]) = Path(pos, m_World);
+		*(&Maze[pos.x * MazeSize.x + pos.y]) = Path(pos, this);
 		return std::get_if<Unit<Path>>(&Maze[pos.x * MazeSize.x + pos.y]);
 	}
 	return nullptr;

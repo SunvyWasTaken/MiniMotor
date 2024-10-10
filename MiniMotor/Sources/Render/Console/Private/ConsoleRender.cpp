@@ -2,7 +2,7 @@
 
 #include "ConsoleRender.h"
 
-#include "Entitys.h"
+#include "ECS/Entitys.h"
 
 #include <Windows.h>
 

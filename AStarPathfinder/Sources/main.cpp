@@ -2,7 +2,6 @@
 #include "World.h"
 
 #include "AStarPathfinding.h"
-#include "Entitys.h"
 #include "MazeTerrain.h"
 #include "MiniMotorApp.h"
 #include "UIMaze.h"
@@ -39,25 +38,20 @@ int main()
 	UiMaze->AddChild(&MyAstarPath);
 
 	CurrApp->PushLayer(UiMaze);
-	std::unique_ptr<World> CurrentWorld = std::make_unique<World>();
-	CurrApp->SetWorld(CurrentWorld.get());
+	std::unique_ptr<MazeTerrain> Maze = std::make_unique<MazeTerrain>();
+	CurrApp->SetWorld(Maze.get());
 
-	MazeTerrain* Maze = new MazeTerrain(CurrentWorld.get());
 	Maze->SetMazeSize({ 10, 10 });
 
-	PathFinderAlgo::AStarPathfinding pathfinding(Maze);
+	PathFinderAlgo::AStarPathfinding pathfinding(Maze.get());
 
-	MyGenButton.BindOnPressed(Maze, &MazeTerrain::GenerateLabyrinthe);
-	MyClearTerrain.BindOnPressed(Maze, &MazeTerrain::ClearLabyrinthe);
+	MyGenButton.BindOnPressed(Maze.get(), &MazeTerrain::GenerateLabyrinthe);
+	MyClearTerrain.BindOnPressed(Maze.get(), &MazeTerrain::ClearLabyrinthe);
 	MyAstarPath.BindOnPressed(&pathfinding, &PathFinderAlgo::AStarPathfinding::operator());
-	MyEditableText.BindOnPressed(Maze, &MazeTerrain::SetMazeSize);
+	MyEditableText.BindOnPressed(Maze.get(), &MazeTerrain::SetMazeSize);
 	// End : Maze Generation
 
 	CurrApp->Run();
-
-	// Clean up
-	delete Maze;
-
 	CurrApp->Shutdown();
 
 	return 0;

@@ -2,14 +2,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Entitys.h"
+#include "ECS/Entitys.h"
 
 class Path;
 class Wall;
 class MazeTerrain;
 
 template <typename Derived>
-class Unit : public Entity
+class Unit
 {
 public:
 
