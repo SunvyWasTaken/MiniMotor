@@ -4,6 +4,7 @@
 
 #include "Geometry/VertexArray2D.h"
 #include "Cell.h"
+#include "ECS/Components/RendableComponent.h"
 
 #include <random>
 
@@ -36,10 +37,7 @@ void MazeTerrain::SetMazeSize(const IVec2& size)
 	MazeSize = size + 1;
 	for (auto& it : Maze)
 	{
-		std::visit([&](auto&& tmp)
-		{
-			RemoveEntity(&tmp);
-		}, it);
+		RemoveEntity(it);
 	}
 	Maze.clear();
 	Maze.reserve(MazeSize.x * MazeSize.y);
@@ -63,44 +61,36 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 
 			if (xTrue || yTrue)
 			{
-				Entity& entity = SpawnEntity(TEXT("Wall {}", it));
-				Maze.emplace_back(Wall(pos, this));
-				Cell* curr = &Maze[Maze.size() - 1];
-				RegisterEntity(std::get_if<Unit<Wall>>(curr));
-				std::get_if<Unit<Wall>>(curr)->parent = this;
-				std::get_if<Unit<Wall>>(curr)->SetValue(it);
+				Entity entity = SpawnEntity(TEXT("Wall {}", it));
+				entity.AddWorldOffset(pos);
+				entity.SetSize({50, 50});
+				entity.AddComponent<RendableComponent>(Texture{TEXT("Ressources/Brick_Block.png"), TextureCoord{IVec2{0, 0}, IVec2{438, 0}, IVec2{438, 438}, IVec2{0, 438}}});
+				entity.AddComponent<Cell>(Wall(pos, this));
+				Maze.push_back(entity);
+				Cell& curr = entity.GetComponent<Cell>();
+				std::get<Unit<Wall>>(curr).parent = this;
+				std::get<Unit<Wall>>(curr).SetValue(it);
 
 				if ((x != 0 && x != MazeSize.x - 1) && (y != 0 && y != MazeSize.y - 1) && !(xTrue && yTrue))
 				{
 					WallList.push_back(pos);
-					std::get_if<Unit<Wall>>(curr)->bCanBeOpen = true;
+					std::get<Unit<Wall>>(curr).bCanBeOpen = true;
 				}
-
 			}
 			else
 			{
-				Maze.emplace_back(Path(pos, this));
-				Cell* curr = &Maze[Maze.size() - 1];
-				RegisterEntity(std::get_if<Unit<Path>>(curr));
-				std::get_if<Unit<Path>>(curr)->parent = this;
-				std::get_if<Unit<Path>>(curr)->SetValue(it);
+				Entity entity = SpawnEntity(TEXT("Path {}", it));
+				entity.AddWorldOffset(pos);
+				entity.SetSize({ 50, 50 });
+				entity.AddComponent<RendableComponent>(Texture{TEXT("Ressources/Brick_Block.png"), TextureCoord{ IVec2{438, 0}, IVec2{876, 0}, IVec2{876, 438}, IVec2{438, 0}}});
+				entity.AddComponent<Cell>(Path(pos, this));
+				Maze.push_back(entity);
+				Cell& curr = entity.GetComponent<Cell>();
+				std::get<Unit<Path>>(curr).parent = this;
+				std::get<Unit<Path>>(curr).SetValue(it);
 			}
 			++it;
 		}
-	}
-}
-
-void MazeTerrain::ConstructLabyrinthe()
-{
-	uint64_t it = 0;
-	while (!IsGenerationDone.load(std::memory_order_relaxed))
-	{
-		++it;
-		if (it >= 1000)
-		{
-			return;
-		}
-		AlgoLabyrinthe();
 	}
 }
 
@@ -122,9 +112,9 @@ void MazeTerrain::ClearLabyrinthe()
 	GenerateTerrain(MazeSize - 1);
 }
 
-void MazeTerrain::RemoveWall(Wall* target)
+void MazeTerrain::RemoveWall(const Entity& target)
 {
-	auto it = std::find(WallList.begin(), WallList.end(), target->GetWorldPosition());
+	auto it = std::find(WallList.begin(), WallList.end(), target.GetWorldPosition());
 	if (it != WallList.end())
 	{
 		WallList.erase(it);
@@ -138,26 +128,14 @@ Cell* MazeTerrain::GetCellByPos(const IVec2& pos)
 	{
 		return nullptr;
 	}
-
-	Cell* cell = &Maze[pos.x * MazeSize.x + pos.y];
-	if (std::visit([pos](auto&& tmp)->bool
-		{
-			return tmp.GetWorldPosition() == pos;
-		}, *cell))
-	{
-		return cell;
-	}
-	return nullptr;
+	return &Maze[pos.x * MazeSize.x + pos.y].GetComponent<Cell>();
 }
 
 Unit<Path>* MazeTerrain::ChangeCellAt(const IVec2& pos)
 {
-	if (std::visit([&](auto&& tmp)->bool {return tmp.GetWorldPosition() == pos; }, Maze[pos.x * MazeSize.x + pos.y]))
-	{
-		*(&Maze[pos.x * MazeSize.x + pos.y]) = Path(pos, this);
-		return std::get_if<Unit<Path>>(&Maze[pos.x * MazeSize.x + pos.y]);
-	}
-	return nullptr;
+	Maze[pos.x * MazeSize.x + pos.y].GetComponent<Cell>() = Path(pos, this);
+	return std::get_if<Unit<Path>>(&Maze[pos.x * MazeSize.x + pos.y].GetComponent<Cell>());
+
 }
 
 void MazeTerrain::AlgoLabyrinthe()
@@ -165,9 +143,9 @@ void MazeTerrain::AlgoLabyrinthe()
 	size_t index = intRand(0, (int)WallList.size() - 1)(rGen);
 	IVec2 pos = WallList[index];
 
-	Unit<Wall>* wallPath = std::get_if<Unit<Wall>>(GetCellByPos(pos));
+	Cell* wallPath = GetCellByPos(pos);
 	ensure(wallPath);
-	uint64_t val = wallPath->value;
+	uint64_t val = std::get_if<Unit<Wall>>(wallPath)->value;
 
 	// Transform the wall to a path
 	if (Unit<Path>* currPath = ChangeCellAt(pos))
@@ -175,7 +153,7 @@ void MazeTerrain::AlgoLabyrinthe()
 		WallList.erase(WallList.begin() + index);
 		ensure(currPath);
 		currPath->parent = this;
-		currPath->ChangeValue(val);
+		currPath->ChangeValue(val, Maze[pos.x * MazeSize.x + pos.y]);
 	}
 
 	if (WallList.size() <= 0)

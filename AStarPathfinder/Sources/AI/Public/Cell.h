@@ -3,19 +3,18 @@
 
 #include "CoreMinimal.h"
 #include "ECS/Entitys.h"
+#include "MazeTerrain.h"
 
 class Path;
 class Wall;
-class MazeTerrain;
 
 template <typename Derived>
 class Unit
 {
 public:
 
-	Unit(const IVec2& pos, const TextureCoord& texCoord, class World* world)
-		: Entity(pos, FRot3(0), Texture("Ressources/Brick_Block.png", texCoord), world)
-		, parent(nullptr)
+	Unit(const IVec2& pos, class MazeTerrain* world)
+		: parent(world)
 		, value(0)
 		, bCanBeOpen(false)
 		, beforePath(nullptr)
@@ -36,7 +35,7 @@ public:
 		return derived->GetNeighbours();
 	}
 
-	CRTP_CALL_OneParam(ChangeValue, const uint64_t)
+	CRTP_CALL_Variadic(Derived, ChangeValue)
 
 	MazeTerrain* parent;
 
@@ -58,18 +57,18 @@ class Wall : public Unit<Wall>
 {
 public:
 
-	Wall(const IVec2& pos, class World* world);
+	Wall(const IVec2& pos, class MazeTerrain* world);
 
-	void ChangeValue(const uint64_t val);
+	void ChangeValue(const uint64_t val, const Entity& entity);
 };
 
 class Path : public Unit<Path>
 {
 public:
 
-	Path(const IVec2& pos, class World* world);
+	Path(const IVec2& pos, class MazeTerrain* world);
 
-	void ChangeValue(const uint64_t val);
+	void ChangeValue(const uint64_t val, const Entity& entity);
 
 	std::vector<Unit<Path>*> GetNeighbours();
 };

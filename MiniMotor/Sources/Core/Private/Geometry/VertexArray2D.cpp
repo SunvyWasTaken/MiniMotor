@@ -13,7 +13,6 @@ VertexArray2D::~VertexArray2D()
 
 void VertexArray2D::SetTexture(const std::string& filename)
 {
-	SFMLTextures::GetInstance()->LoadTexture(filename);
 	texture.filename = filename;
 }
 
@@ -29,7 +28,7 @@ size_t VertexArray2D::Size() const
 
 void VertexArray2D::AddQuad(const FTrans2& trans)
 {
-	quads.emplace_back(trans);
+	quads.emplace_back(FQuad2D{trans});
 }
 
 FQuad2D& VertexArray2D::operator[](const size_t index)

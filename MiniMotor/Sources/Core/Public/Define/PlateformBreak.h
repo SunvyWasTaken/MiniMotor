@@ -11,3 +11,5 @@
 #endif
 
 #define TEXT(txt, ...) std::format(txt, ##__VA_ARGS__)
+
+#define SQUAREDTEXTURE(nbr) IVec2{0, 0}, IVec2{nbr, 0}, IVec2{nbr, nbr}, IVec2{0, nbr}

@@ -9,10 +9,23 @@ Entity::Entity()
 {
 }
 
+Entity::Entity(const Entity& other)
+	: m_Entity(other.m_Entity)
+	, m_World(other.m_World)
+{
+}
+
 Entity::Entity(const entt::entity& entity, World* world)
 	: m_Entity(entity)
 	, m_World(world)
 {
+}
+
+Entity& Entity::operator=(const Entity& other)
+{
+	m_Entity = other.m_Entity;
+	m_World = other.m_World;
+	return *this;
 }
 
 Entity::~Entity()
@@ -33,4 +46,10 @@ void Entity::AddWorldOffset(const FVec2& offset)
 const FVec2& Entity::GetWorldPosition() const
 {
 	return GetComponent<TransformComponent>().transform.pos;
+}
+
+void Entity::SetSize(const FVec2& size)
+{
+	TransformComponent& transform = GetComponent<TransformComponent>();
+	transform.transform.scale = size;
 }

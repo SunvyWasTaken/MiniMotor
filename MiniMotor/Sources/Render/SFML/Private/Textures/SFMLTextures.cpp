@@ -8,18 +8,13 @@ namespace
 	MTextures textures;
 }
 
-void SFMLTextures::LoadTexture(const std::string& filename)
-{
-	if (textures.find(filename) != textures.end())
-	{
-		return;
-	}
-	sf::Texture texture;
-	texture.loadFromFile(filename);
-	textures.emplace(filename, texture);
-}
-
 sf::Texture* SFMLTextures::GetTextures(const std::string& filename)
 {
+	if (textures.find(filename) == textures.end())
+	{
+		sf::Texture texture;
+		texture.loadFromFile(filename);
+		textures.emplace(filename, texture);
+	}
 	return &textures.at(filename);
 }

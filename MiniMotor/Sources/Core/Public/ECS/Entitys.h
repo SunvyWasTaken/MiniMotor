@@ -13,7 +13,11 @@ public:
 
 	Entity();
 
+	Entity(const Entity& other);
+
 	Entity(const entt::entity& entity, World* world);
+
+	Entity& operator=(const Entity& other);
 
 	virtual ~Entity();
 
@@ -24,6 +28,8 @@ public:
 	void AddWorldOffset(const FVec2& offset);
 
 	const FVec2& GetWorldPosition() const;
+
+	void SetSize(const FVec2& size);
 
 	template <typename ComponentType, typename ...Args>
 	ComponentType& AddComponent(Args&&... args)

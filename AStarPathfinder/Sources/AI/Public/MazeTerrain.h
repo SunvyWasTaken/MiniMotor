@@ -26,13 +26,11 @@ public:
 
 	void GenerateTerrain(const IVec2& size);
 
-	void ConstructLabyrinthe();
-
 	void GenerateLabyrinthe();
 
 	void ClearLabyrinthe();
 
-	void RemoveWall(Wall* target);
+	void RemoveWall(const Entity& target);
 
 	Cell* GetCellByPos(const IVec2& pos);
 

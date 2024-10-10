@@ -62,8 +62,11 @@ endforeach()
 # Permet d'aller chercher les fichiers générés par CMake
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE
+target_link_libraries(${PROJECT_NAME} PUBLIC 
     EnTT::EnTT
+)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
     sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML
     MiniMotor_compiler_flags
 )

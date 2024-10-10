@@ -17,7 +17,6 @@ public:
 		return &instance;
 	}
 
-	CRTP_CALL_Variadic(Derived, LoadTexture)
 	CRTP_CALL_Variadic_ret(Derived, decltype(auto), GetTextures)
 };
 

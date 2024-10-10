@@ -14,7 +14,7 @@ struct MM_EXPORT Quad2D : public BasicDrawable2D
 
 public:
 
-	Quad2D(const FTrans2& trans = {0})
+	Quad2D(const FTrans2& trans = {FVec2{1, 1}, FRot3{0, 0, 0}, FVec2{10, 10}})
 		: BasicDrawable2D(trans)
 	{
 		vertices[0].position = Vec2<T>(0, 0);
@@ -66,5 +66,3 @@ public:
 };
 
 using FQuad2D = Quad2D<double>;
-
-//#include "../../Private/Geometry/Quad2D.hxx"
