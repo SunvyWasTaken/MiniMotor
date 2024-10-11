@@ -2,8 +2,13 @@ cmake_minimum_required (VERSION 3.29.2)
 
 set(CMAKE_DEBUG_POSTFIX "-d")
 
+if (Emscripten)
+	set(${CMAKE_EXECUTABLE_SUFFIX} ".html")
+endif()
+
 add_library(MiniMotor_compiler_flags INTERFACE)
 target_compile_features(MiniMotor_compiler_flags INTERFACE cxx_std_20)
+
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo" CACHE STRING "" FORCE)
 

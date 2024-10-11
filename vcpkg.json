@@ -1,0 +1,8 @@
+{
+  "name": "minimotorapp",
+  "dependencies": [
+    "entt",
+    "raylib",
+    "imgui"
+  ]
+}

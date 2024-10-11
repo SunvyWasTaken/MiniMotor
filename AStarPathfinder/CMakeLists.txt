@@ -35,7 +35,7 @@ if(WIN32)
 else()
     # Sous Linux/macOS, utiliser la commande Unix `find`
     execute_process(
-        COMMAND find ${CMAKE_SOURCE_DIR} -type d -name Public
+        COMMAND find ${CMAKE_CURRENT_SOURCE_DIR} -type d -name Public
         OUTPUT_VARIABLE PUBLIC_DIRS
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
@@ -58,3 +58,4 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 )
 
 target_precompile_headers(${PROJECT_NAME} REUSE_FROM MiniMotor)
+

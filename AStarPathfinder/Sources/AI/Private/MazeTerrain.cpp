@@ -133,8 +133,10 @@ Cell* MazeTerrain::GetCellByPos(const IVec2& pos)
 
 Unit<Path>* MazeTerrain::ChangeCellAt(const IVec2& pos)
 {
-	Maze[pos.x * MazeSize.x + pos.y].GetComponent<Cell>() = Path(pos, this);
-	return std::get_if<Unit<Path>>(&Maze[pos.x * MazeSize.x + pos.y].GetComponent<Cell>());
+	Entity entity = Maze[pos.x * MazeSize.x + pos.y];
+	entity.GetComponent<Cell>() = Path(pos, this);
+	entity.GetComponent<RendableComponent>().texture = Texture{ TEXT("Ressources/Brick_Block.png"), TextureCoord{IVec2{438, 0}, IVec2{876, 0}, IVec2{876, 438}, IVec2{438, 0}} };
+	return std::get_if<Unit<Path>>(&entity.GetComponent<Cell>());
 
 }
 

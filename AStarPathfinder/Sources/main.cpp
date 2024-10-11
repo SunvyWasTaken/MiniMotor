@@ -1,6 +1,3 @@
-
-#include "World.h"
-
 #include "AStarPathfinding.h"
 #include "MazeTerrain.h"
 #include "MiniMotorApp.h"
