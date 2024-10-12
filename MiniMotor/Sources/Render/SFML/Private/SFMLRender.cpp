@@ -13,10 +13,7 @@
 
 #include <iostream>
 
-#define CellSize 100
-
-#define WindowSizeX 850
-#define WindowSizeY 850
+#if RENDERTYPE == 1
 
 // This is a private
 namespace
@@ -50,13 +47,6 @@ namespace
 			textures.emplace(filename, texture);
 		}
 		return &textures.at(filename);
-	}
-
-	void DrawQuad2D(FQuad2D& obj)
-	{
-		sf::RectangleShape rectangle(sf::Vector2f(static_cast<float>(obj.transform.scale.x * CellSize), static_cast<float>(obj.transform.scale.y * CellSize)));
-		rectangle.setPosition(static_cast<float>(obj.transform.pos.x * CellSize), static_cast<float>(obj.transform.pos.y * CellSize));
-		Window.draw(rectangle);
 	}
 
 	void DrawVertexArray(const VertexArray2D& obj)
@@ -192,7 +182,7 @@ void SFMLRender::Draw()
 	Window.display();
 }
 
-bool SFMLRender::IsWindowOpen()
+bool SFMLRender::IsWindowOpen() const
 {
 	return Window.isOpen();
 }
@@ -211,14 +201,6 @@ void SFMLRender::HandleEvents()
 		{
 			if(EventCall(MEvents::OnWindowClose()))
 				return;
-		}
-		else if (currEvent.type == sf::Event::Resized)
-		{
-			float ratio = (float)currEvent.size.width / (float)currEvent.size.height;
-			sf::View view = Window.getView();
-			view.setSize(WindowSizeY * ratio, WindowSizeX);
-			Window.setView(view);
-			return;
 		}
 		else if (currEvent.type == sf::Event::KeyPressed)
 		{
@@ -320,3 +302,5 @@ void SFMLRender::DrawSlate(SContainer* slate)
 
 	ImGui::End();
 }
+
+#endif

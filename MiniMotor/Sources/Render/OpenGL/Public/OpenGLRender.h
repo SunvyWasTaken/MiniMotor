@@ -14,9 +14,9 @@ public:
 
 	void Draw();
 
-	bool IsWindowOpen();
+	bool IsWindowOpen() const;
 
-	void BufferFrame(class Entity* Entity);
+	void BufferFrame(const VertexArray2D& Entity);
 
 	void HandleEvents();
 

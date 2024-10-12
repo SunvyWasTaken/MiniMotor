@@ -3,6 +3,7 @@ cmake_minimum_required (VERSION 3.29.2)
 set(CMAKE_DEBUG_POSTFIX "-d")
 
 if (Emscripten)
+	set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 	set(${CMAKE_EXECUTABLE_SUFFIX} ".html")
 endif()
 

@@ -1,9 +1,14 @@
 @echo off
 set currentPath=%cd%
 
+if exist %currentPath%/vcpkg (
+ECHO Update vcpkg
+cmd /c "cd vcpkg && git pull"
+) else (
 ECHO Clone vcpkg
 ECHO =============================
 cmd /c git clone https://github.com/Microsoft/vcpkg.git
+)
 
 ECHO Initializing vcpkg
 ECHO =============================

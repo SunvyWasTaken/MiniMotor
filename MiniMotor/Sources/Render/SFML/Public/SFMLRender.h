@@ -2,6 +2,8 @@
 
 #include "GenericRender.h"
 
+#if RENDERTYPE == 1
+
 class MM_EXPORT SFMLRender : public GenericRender<SFMLRender>
 {
 public:
@@ -12,7 +14,7 @@ public:
 
 	void Draw();
 
-	bool IsWindowOpen();
+	bool IsWindowOpen() const;
 
 	void BufferFrame(const VertexArray2D& vertexArray);
 
@@ -24,3 +26,5 @@ public:
 
 	void DrawSlate(class SContainer* slate);
 };
+
+#endif

@@ -2,16 +2,12 @@
 
 #include "OpenGLRender.h"
 
-#include "Entitys.h"
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-
-#include <iostream>
 
 namespace
 {
@@ -92,44 +88,52 @@ void OpenGLRender::HandleEvents()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-
 	glfwPollEvents();
 }
 
 void OpenGLRender::Draw()
 {
+	glBegin(GL_TRIANGLES);
+	glVertex2f(-0.5f, -0.5f);
+	glVertex2f(0.0f, 0.5f);
+	glVertex2f(0.5f, -0.5f);
+
+	glEnd();
+
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	glfwSwapBuffers(m_windowOpenGL);
 }
 
-bool OpenGLRender::IsWindowOpen()
+bool OpenGLRender::IsWindowOpen() const
 {
 	return !glfwWindowShouldClose(m_windowOpenGL);;
 }
 
-void OpenGLRender::BufferFrame(Entity* Entity)
+void OpenGLRender::BufferFrame(const VertexArray2D& Entity)
 {
-	for (auto& [key, drawable] : Entity->drawables)
-	{
-		std::visit(overloaded(
-		[](FQuad2D obj)
-		{
-			/*DrawQuad(obj);*/
-		},
-		[](VertexArray2D obj)
-		{
-			DrawVertexArray(obj);
-		}), drawable);
-	}
+	//for (auto& [key, drawable] : Entity->drawables)
+	//{
+	//	std::visit(overloaded(
+	//	[](FQuad2D obj)
+	//	{
+	//		/*DrawQuad(obj);*/
+	//	},
+	//	[](VertexArray2D obj)
+	//	{
+	//		DrawVertexArray(obj);
+	//	}), drawable);
+	//}
 }
 
 void OpenGLRender::ClearWindow()
 {
-	//Clear background color
-	glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+	
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	//Clear the back buffer and assign the new color to it
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
 
 	ImGui::EndFrame();
 }

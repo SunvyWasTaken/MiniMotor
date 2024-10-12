@@ -27,7 +27,7 @@ void MiniMotorApp::Run()
 {
 	#ifdef __EMSCRIPTEN__
 	emscripten_set_main_loop(MainLoop, 60, 1);
-	#else
+	#endif
 	while (IsRunning())
 	{
 		MainLoop();
@@ -129,5 +129,5 @@ void MiniMotorApp::MainLoop()
 
 bool MiniMotorApp::IsRunning() const
 {
-	return m_IsRunning;
+	return m_IsRunning && m_Render->IsWindowOpen();
 }

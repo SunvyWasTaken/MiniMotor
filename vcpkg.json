@@ -1,12 +1,25 @@
 {
-  "name": "minimotorapp",
-  "dependencies": [
-    "entt",
-    "glew",
-    "imgui",
-    {
-      "name": "imgui-sfml",
-      "platform": "windows"
-    }
-  ]
+	"name": "minimotorapp",
+	"dependencies": [
+   		"entt",
+		"opengl",
+		{
+			"name": "glfw3",
+			"platform": "(!android) & (!emscripten)"
+		},
+		"glad",
+		{
+			"name": "glew",
+			"platform": "!emscripten"
+		},
+		{
+			"name": "imgui",
+			"features": ["glfw-binding", "opengl3-binding"]
+		},
+		{
+			"name": "imgui-sfml",
+			"platform": "(!android) & (!emscripten)"
+		},
+		"stb"
+  	]
 }
