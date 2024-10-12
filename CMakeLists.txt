@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.29.2)
+cmake_minimum_required (VERSION 3.30.1)
 
 set(CMAKE_DEBUG_POSTFIX "-d")
 

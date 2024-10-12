@@ -2,8 +2,6 @@
 
 #include "GenericRender.h"
 
-#if RENDERTYPE == 1
-
 class MM_EXPORT SFMLRender : public GenericRender<SFMLRender>
 {
 public:
@@ -26,5 +24,3 @@ public:
 
 	void DrawSlate(class SContainer* slate);
 };
-
-#endif

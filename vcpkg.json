@@ -14,7 +14,8 @@
 		},
 		{
 			"name": "imgui",
-			"features": ["glfw-binding", "opengl3-binding"]
+			"features": ["glfw-binding", "opengl3-binding"],
+			"platform": "!emscripten"
 		},
 		{
 			"name": "imgui-sfml",

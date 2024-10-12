@@ -13,12 +13,10 @@
 
 #include <iostream>
 
-#if RENDERTYPE == 1
-
 // This is a private
 namespace
 {
-	sf::RenderWindow Window;
+	std::unique_ptr<sf::RenderWindow> Window;
 
 	sf::Font font;
 
@@ -76,7 +74,7 @@ namespace
 		}
 		sf::RenderStates states;
 		states.texture = texture;
-		Window.draw(vertexArray, states);
+		Window->draw(vertexArray, states);
 	}
 
 	void HandleAnchor(SContainer* slate)
@@ -155,18 +153,18 @@ namespace
 
 void SFMLRender::Init()
 {
-	Window.create(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style::Fullscreen);
-	ensure(&Window);
-	Window.setFramerateLimit(0);
-	Window.setVerticalSyncEnabled(false);
+	Window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style::Fullscreen);
+	ensure(Window);
+	Window->setFramerateLimit(0);
+	Window->setVerticalSyncEnabled(false);
 	bool loaded = font.loadFromFile("Ressources/PoiretOne-Regular.ttf");
 	ensure(loaded);
-	ImGui::SFML::Init(Window);
+	ImGui::SFML::Init(*Window);
 }
 
 void SFMLRender::Update()
 {
-	ImGui::SFML::Update(Window, CurrClock.restart());
+	ImGui::SFML::Update(*Window, CurrClock.restart());
 }
 
 void SFMLRender::Draw()
@@ -178,13 +176,13 @@ void SFMLRender::Draw()
 	DeltaClock.restart();
 	ImGui::End();
 
-	ImGui::SFML::Render(Window);
-	Window.display();
+	ImGui::SFML::Render(*Window);
+	Window->display();
 }
 
 bool SFMLRender::IsWindowOpen() const
 {
-	return Window.isOpen();
+	return Window->isOpen();
 }
 
 void SFMLRender::BufferFrame(const VertexArray2D& vertexArray)
@@ -195,7 +193,7 @@ void SFMLRender::BufferFrame(const VertexArray2D& vertexArray)
 void SFMLRender::HandleEvents()
 {
 	sf::Event currEvent;
-	while (Window.pollEvent(currEvent))
+	while (Window->pollEvent(currEvent))
 	{
 		if (currEvent.type == sf::Event::Closed)
 		{
@@ -246,11 +244,11 @@ void SFMLRender::HandleEvents()
 
 			if (IsMousePressed)
 			{
-				sf::View view = Window.getView();
+				sf::View view = Window->getView();
 				sf::Vector2f diff = sf::Vector2f{(float)currEvent.mouseMove.x, (float)currEvent.mouseMove.y} - OldMousePosition;
 				view.move(diff.x*-(currZoom), diff.y*-(currZoom));
 				OldMousePosition = sf::Vector2f{ (float)currEvent.mouseMove.x, (float)currEvent.mouseMove.y };
-				Window.setView(view);
+				Window->setView(view);
 			}
 		}
 		else if (currEvent.type == sf::Event::MouseWheelScrolled)
@@ -258,7 +256,7 @@ void SFMLRender::HandleEvents()
 			if (EventCall(MEvents::OnMouseScrolled(currEvent.mouseWheelScroll.delta)))
 				return;
 
-			sf::View view = Window.getView();
+			sf::View view = Window->getView();
 			if (currEvent.mouseWheelScroll.delta > 0)
 			{
 				if (currZoom > 0.15)
@@ -275,7 +273,7 @@ void SFMLRender::HandleEvents()
 					currZoom += 0.05f;
 				}
 			}
-			Window.setView(view);
+			Window->setView(view);
 		}
 		ImGui::SFML::ProcessEvent(currEvent);
 	}
@@ -283,12 +281,12 @@ void SFMLRender::HandleEvents()
 
 void SFMLRender::ClearWindow()
 {
-	Window.clear();
+	Window->clear();
 }
 
 void SFMLRender::CloseWindow()
 {
-	Window.close();
+	Window->close();
 	ImGui::SFML::Shutdown();
 }
 
@@ -302,5 +300,3 @@ void SFMLRender::DrawSlate(SContainer* slate)
 
 	ImGui::End();
 }
-
-#endif

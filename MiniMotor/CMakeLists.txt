@@ -28,7 +28,6 @@ find_package(OpenGL REQUIRED)
 
 if (EMSCRIPTEN)
     find_package(EnTT CONFIG REQUIRED)
-    find_package(glad CONFIG REQUIRED)
 else()
     find_package(glad CONFIG REQUIRED)
     find_package(EnTT CONFIG REQUIRED)
