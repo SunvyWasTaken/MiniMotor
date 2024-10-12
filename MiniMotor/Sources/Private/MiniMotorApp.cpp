@@ -2,6 +2,9 @@
 
 #include "MiniMotorApp.h"
 #include "World.h"
+#ifdef __EMSCRIPTEN__
+#include <emscripten/emscripten.h>
+#endif
 
 MiniMotorApp::MiniMotorApp()
 	: m_IsRunning(true)
@@ -22,18 +25,12 @@ void MiniMotorApp::Init()
 
 void MiniMotorApp::Run()
 {
-	while (m_IsRunning)
+	#ifdef __EMSCRIPTEN__
+	emscripten_set_main_loop(MainLoop, 60, 1);
+	#else
+	while (IsRunning())
 	{
-		m_Render->Update();
-		m_Render->HandleEvents();
-		m_World->Update();
-		for (auto& slate : m_SlateContainer)
-		{
-			m_Render->DrawSlate(slate);
-		}
-		m_World->BufferFrameEntitys(*m_Render);
-		m_Render->Draw();
-		m_Render->ClearWindow();
+		MainLoop();
 	}
 }
 
@@ -114,4 +111,23 @@ bool MiniMotorApp::OnEvents(const Events& event)
 void MiniMotorApp::PushLayer(SContainer* slate)
 {
 	m_SlateContainer.PushLayer(slate);
+}
+
+void MiniMotorApp::MainLoop()
+{
+	m_Render->Update();
+	m_Render->HandleEvents();
+	m_World->Update();
+	for (auto& slate : m_SlateContainer)
+	{
+		m_Render->DrawSlate(slate);
+	}
+	m_World->BufferFrameEntitys(*m_Render);
+	m_Render->Draw();
+	m_Render->ClearWindow();
+}
+
+bool MiniMotorApp::IsRunning() const
+{
+	return m_IsRunning;
 }

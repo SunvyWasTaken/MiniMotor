@@ -24,8 +24,12 @@ endmacro()
 GroupSources("Sources")
 
 find_package(EnTT CONFIG REQUIRED)
+find_package(glew CONFIG REQUIRED)
+if (EMSCRIPTEN)
+else()
 find_package(SFML CONFIG REQUIRED COMPONENTS system window graphics)
 find_package(ImGui-SFML CONFIG REQUIRED)
+endif()
 
 add_Library(${PROJECT_NAME} SHARED ${SOURCES})
 
@@ -67,9 +71,19 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML
     MiniMotor_compiler_flags
 )
+
+if(EMSCRIPTEN)
+target_link_libraries(${PROJECT_NAME} PRIVATE
+	${GLEW_INCLUDE}
+)
+else()
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML
+    GLEW::GLEW
+)
+endif()
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE
     <array>

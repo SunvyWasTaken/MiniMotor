@@ -2,7 +2,11 @@
   "name": "minimotorapp",
   "dependencies": [
     "entt",
-    "raylib",
-    "imgui"
+    "glew",
+    "imgui",
+    {
+      "name": "imgui-sfml",
+      "platform": "windows"
+    }
   ]
 }

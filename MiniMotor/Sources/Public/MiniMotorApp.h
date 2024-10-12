@@ -2,7 +2,7 @@
 
 #pragma once
 
-#define RENDERTYPE 1 // 0 = Console, 1 = SFML
+#define RENDERTYPE 2 // 0 = Console, 1 = SFML
 
 #if RENDERTYPE == 0
 #include "ConsoleRender.h"
@@ -42,6 +42,8 @@ public:
 
 private:
 
+	// Send event through all slates
+
 	template <typename eventType>
 	bool SendEventThroughSlate(const eventType& event)
 	{
@@ -54,6 +56,10 @@ private:
 		}
 		return false;
 	}
+
+	void MainLoop();
+
+	bool IsRunning() const;
 
 private:
 	
