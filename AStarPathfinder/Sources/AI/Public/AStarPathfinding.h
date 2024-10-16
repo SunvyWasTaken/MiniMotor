@@ -40,7 +40,7 @@ namespace PathFinderAlgo
 		void operator()();
 
 	private:
-		// Todo create a priority queue
+		// Todo : create a priority queue
 
 		Unit<Path>* Start;
 		Unit<Path>* End;

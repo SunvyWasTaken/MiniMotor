@@ -9,7 +9,7 @@ class Entity;
 class MM_API BasicDrawable2D
 {
 public:
-	BasicDrawable2D();
+	explicit BasicDrawable2D(const FTrans2& trans);
 	virtual ~BasicDrawable2D();
 
 	FTrans2 transform;

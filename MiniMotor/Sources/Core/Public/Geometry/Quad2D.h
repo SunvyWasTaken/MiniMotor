@@ -6,31 +6,23 @@
 #include "Vertex2D.h"
 #include "Textures/Textures.h"
 
-namespace Side
-{
-	struct MM_API TopLeft {};
-	struct MM_API TopRight {};
-	struct MM_API BottomRight {};
-	struct MM_API BottomLeft {};
-}
-
-using QuadSide = Typelist<Side::TopLeft, Side::TopRight, Side::BottomRight, Side::BottomLeft>;
-
 template <typename T>
 struct MM_EXPORT Quad2D : public BasicDrawable2D
 {
 	using vertice_type = Vertex2D<T>;
-	using Vertex2DArray = std::array<vertice_type, 4>;
+	using Vertex2DArray = std::array<vertice_type, GetSizelist<QuadSide>::value>;
 
 public:
 
-	Quad2D()
-		:texture(nullptr)
+	Quad2D(const FTrans2& trans = {FVec2{1, 1}, FRot3{0, 0, 0}, FVec2{10, 10}}, const Texture& textu = {"", SQUAREDTEXTURE(0)})
+		: BasicDrawable2D(trans)
 	{
 		vertices[0].position = Vec2<T>(0, 0);
 		vertices[1].position = Vec2<T>(1, 0);
 		vertices[2].position = Vec2<T>(1, 1);
 		vertices[3].position = Vec2<T>(0, 1);
+
+		SetCoord(textu.coord);
 	}
 
 	template <typename TargetSide>
@@ -63,16 +55,16 @@ public:
 		}
 	}
 
-	void SetTexture(Texture* texture)
+	void SetCoord(const TextureCoord& coord)
 	{
-		this->texture = texture;
+		for (unsigned int i = 0; i < GetSizelist<QuadSide>::value; ++i)
+		{
+			vertices[i].texCoords = coord[i];
+		}
 	}
 
 public:
 	Vertex2DArray vertices;
-	Texture* texture;
 };
 
 using FQuad2D = Quad2D<double>;
-
-//#include "../../Private/Geometry/Quad2D.hxx"

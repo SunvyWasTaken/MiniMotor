@@ -1,14 +1,47 @@
-project(MiniMotor)
+project(MiniMotor VERSION 0.1)
 
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo" CACHE STRING "" FORCE)
+configure_file(Config.h.in Config.h)
 
-file(GLOB_RECURSE Sources "*.h" "*.cpp" "*.txt")
+file(GLOB_RECURSE SOURCES "*.h" "*.cpp" "*.txt")
+
+# Macro to group files in the IDE
+macro(GroupSources curdir)
+    file(GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/${curdir}
+    ${PROJECT_SOURCE_DIR}/${curdir}/* ${PROJECT_SOURCE_DIR}/${curdir}/${curdir}/*)
+
+    foreach(child ${children})
+        if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/${curdir}/${child})
+            GroupSources(${curdir}/${child})
+        else()
+            string(REPLACE "/" "\\" groupname ${curdir})
+            source_group(${groupname} FILES
+            ${PROJECT_SOURCE_DIR}/${curdir}/${child})
+        endif()
+    endforeach()
+endmacro()
+
+# Execute the macro
+GroupSources("Sources")
+
+if (NOT EMSCRIPTEN)
+    find_package(OpenGL REQUIRED)
+    find_package(EnTT CONFIG REQUIRED)
+    find_package(glad CONFIG REQUIRED)
+    find_package(glfw3 CONFIG REQUIRED)
+    find_package(SFML CONFIG REQUIRED COMPONENTS system window graphics)
+    find_package(ImGui-SFML CONFIG REQUIRED)
+else ()
+    set(EMSCRIPTEN_LIB_DIR ${CMAKE_SOURCE_DIR}/vcpkg_installed/wasm32-emscripten/lib)
+    set(EMSCRIPTEN_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/vcpkg_installed/wasm32-emscripten/include)   
+endif ()
+
+add_Library(${PROJECT_NAME} SHARED ${SOURCES})
 
 if(WIN32)
     # Sous Windows, utiliser une commande PowerShell pour trouver les dossiers nommés "Public"
     execute_process(
         COMMAND powershell -Command "Get-ChildItem -Recurse -Directory | Where-Object { $_.Name -eq 'Public' } | ForEach-Object { $_.FullName }"
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         OUTPUT_VARIABLE PUBLIC_DIRS
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
@@ -29,52 +62,59 @@ separate_arguments(PUBLIC_DIRS)
 
 # Ajouter chaque dossier trouvé dans les includes
 foreach(DIR ${PUBLIC_DIRS})
-    include_directories(${DIR})
+    target_include_directories(${PROJECT_NAME} PUBLIC ${DIR})
 endforeach()
 
-macro(GroupSources curdir)
-    file(GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/${curdir}
-    ${PROJECT_SOURCE_DIR}/${curdir}/* ${PROJECT_SOURCE_DIR}/${curdir}/${curdir}/*)
+# Permet d'aller chercher les fichiers générés par CMake
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-    foreach(child ${children})
+if(EMSCRIPTEN)
+	message("emscripten")
+	set(VCPKG_TARGET_ARCHITECTURE wasm32-emscripten)
+	set(CMAKE_TOOLCHAIN_FILE $ENV{EMSDK_HOME}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake)
+	set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
 
-        if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/${curdir}/${child})
-            GroupSources(${curdir}/${child})
-        else()
-            string(REPLACE "/" "\\" groupname ${curdir})
-            source_group(${groupname} FILES
-            ${PROJECT_SOURCE_DIR}/${curdir}/${child})
-        endif()
-    endforeach()
-endmacro()
+	set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-sUSE_GLFW=3 -sFULL_ES3=1 -sWASM=1 -sUSE_SDL=2 -sUSE_SDL_MIXER=2 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sNO_DISABLE_EXCEPTION_CATCHING --preload-file shader")
+	
+	target_link_libraries(${PROJECT_NAME} PRIVATE ${EMSCRIPTEN_LIB_DIR})
+    target_include_directories(${PROJECT_NAME} PRIVATE ${EMSCRIPTEN_INCLUDE_DIR})
+else()
 
-# Execute the macro
-GroupSources(Sources)
+    target_link_libraries(${PROJECT_NAME} PUBLIC 
+        EnTT::EnTT
+    )
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        MiniMotor_compiler_flags
+        sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML
+	OpenGL::GL
+        glad::glad
+        glfw
+    )
+endif()
 
-find_package(SFML CONFIG REQUIRED COMPONENTS system window graphics)
-find_package(ImGui-SFML CONFIG REQUIRED)
-find_package(OpenGL REQUIRED)
-find_package(imgui CONFIG REQUIRED)
-find_package(GLEW CONFIG REQUIRED)
-find_package(glfw3 CONFIG REQUIRED)
-find_package(glad CONFIG REQUIRED)
 
-add_Library(${PROJECT_NAME} SHARED ${Sources})
 
-set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
-
-target_link_libraries(MiniMotor PRIVATE
-    sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML
-    OpenGL::GL
-	imgui::imgui
-	GLEW::GLEW
-	glfw
-	glad::glad
+target_precompile_headers(${PROJECT_NAME} PRIVATE
+    <array>
+    <atomic>
+    <chrono>
+    <cmath>
+    <functional>
+    <intrin.h>
+    <iostream>
+    <map>
+    <memory>
+    <string>
+    <thread>
+    <variant>
+    <vector>
+    #====================================================
+    #Need to be last cause they need the standard library
+    #====================================================
+    "Sources/Core/Public/CoreMinimal.h"
 )
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:DEBUG>)
-target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:RelWithDebInfo>:DO_CHECK>)
-
-target_precompile_headers(MiniMotor PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/Sources/Core/Public/CoreMinimal.h")
-
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
+#if($<OR:<$CONFIG:Debug>,$<CONFIG:RelWithDEbInfo>:$<CONFIG>>)
+#	target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG)
+#	target_compile_options(${PROJECT_NAME} PRIVATE DO_CHECK)
+#endif()

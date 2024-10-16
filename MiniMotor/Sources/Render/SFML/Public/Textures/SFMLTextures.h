@@ -13,6 +13,5 @@ namespace sf
 class MM_EXPORT SFMLTextures : public TextureManager<SFMLTextures>
 {
 public:
-	void LoadTexture(const std::string& filename);
 	sf::Texture* GetTextures(const std::string& filename);
 };

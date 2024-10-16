@@ -19,11 +19,11 @@ using CurrentRender = OpenGLRender;
 
 class World;
 
-class MM_API MiniMotorApp
+class MM_API MiniMotorApp final
 {
 public:
-	MiniMotorApp();
-	~MiniMotorApp();
+
+	static MiniMotorApp* GetInstance();
 
 	// Initialize the application
 	void Init();
@@ -40,7 +40,17 @@ public:
 
 	void PushLayer(SContainer* slate);
 
+	void DrawLine(const FVec2& start, const FVec2& end, const FColor& color);
+
+	void DrawQuad(const FVec2& position, const FVec2& size, const FColor& color);
+
 private:
+
+	MiniMotorApp();
+
+	~MiniMotorApp();
+
+	// Send event through all slates
 
 	template <typename eventType>
 	bool SendEventThroughSlate(const eventType& event)
@@ -55,6 +65,10 @@ private:
 		return false;
 	}
 
+	void MainLoop();
+
+	bool IsRunning() const;
+
 private:
 	
 	bool m_IsRunning;
@@ -64,4 +78,6 @@ private:
 	SlateContainer m_SlateContainer;
 
 	std::unique_ptr<GenericRender<CurrentRender>> m_Render;
+
+	static MiniMotorApp* m_Instance;
 };

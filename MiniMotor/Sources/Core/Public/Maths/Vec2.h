@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include <cmath>
-
 template <typename type>
 struct MM_EXPORT Vec2
 {
@@ -16,6 +14,9 @@ struct MM_EXPORT Vec2
 
 	template <typename OtherType>
 	Vec2(OtherType _x, OtherType _y) : x(static_cast<type>(_x)), y(static_cast<type>(_y)) {}
+
+	template <typename OtherType>
+	Vec2(const Vec2<OtherType>& op) : x(static_cast<type>(op.x)), y(static_cast<type>(op.y)) {}
 
 	template <typename OtherType>
 	void operator()(OtherType op) const
@@ -47,6 +48,12 @@ struct MM_EXPORT Vec2
 	}
 
 	bool operator==(const Vec2<type>& op) const
+	{
+		return x == op.x && y == op.y;
+	}
+
+	template <typename operandType>
+	bool operator==(const Vec2<operandType>& op) const
 	{
 		return x == op.x && y == op.y;
 	}
@@ -98,6 +105,12 @@ struct MM_EXPORT Vec2
 		x += static_cast<type>(op.x); y += static_cast<type>(op.y);
 	}
 
+	template <typename operantType>
+	Vec2<type> operator/(const operantType& op) const
+	{
+		return Vec2<type>(x / static_cast<type>(op), y / static_cast<type>(op));
+	}
+
 	double squareLength() const
 	{
 		return x * x + y * y;
@@ -108,7 +121,7 @@ struct MM_EXPORT Vec2
 		return std::sqrt(squareLength());
 	}
 
-	double distance(const Vec2<type>& op) const
+	double Distance(const Vec2<type>& op) const
 	{
 		return (*this - op).length();
 	}
@@ -118,7 +131,7 @@ struct MM_EXPORT Vec2
 		return x * op.x + y * op.y;
 	}
 
-	Vec2<type> normalize() const
+	Vec2<type> Normalize() const
 	{
 		double len = length();
 		return Vec2<type>(x / len, y / len);
@@ -129,6 +142,11 @@ struct MM_EXPORT Vec2
 		double s = std::sin(angle);
 		double c = std::cos(angle);
 		return Vec2<type>(x * c - y * s, x * s + y * c);
+	}
+
+	bool Contain(const Vec2<type>& position, const Vec2<type>& size) const
+	{
+		return (x >= position.x - size.x && x <= position.x + size.x) && (y >= position.y - size.x && y <= position.y + size.y);
 	}
 
 };

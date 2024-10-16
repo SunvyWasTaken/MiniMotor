@@ -1,24 +1,25 @@
 
 #pragma once
 
-#include "Define/CRTP.h"
-
 #include "CoreMinimal.h"
+#include "ECS/Entitys.h"
+#include "MazeTerrain.h"
 
 class Path;
 class Wall;
-class MazeTerrain;
 
 template <typename Derived>
 class Unit
 {
 public:
 
-	Unit()
-		: parent(nullptr)
+	Unit(const IVec2& pos, class MazeTerrain* world)
+		: parent(world)
 		, value(0)
-		, pos(0, 0)
 		, bCanBeOpen(false)
+		, beforePath(nullptr)
+		, gCost(0)
+		, hCost(0)
 	{}
 	
 	virtual ~Unit() = default;
@@ -34,13 +35,11 @@ public:
 		return derived->GetNeighbours();
 	}
 
-	CRTP_CALL_OneParam(ChangeValue, const uint64_t)
+	CRTP_CALL_Variadic(Derived, ChangeValue)
 
 	MazeTerrain* parent;
 
 	uint64_t value;
-
-	IVec2 pos;
 
 	bool bCanBeOpen;
 
@@ -58,18 +57,18 @@ class Wall : public Unit<Wall>
 {
 public:
 
-	Wall();
+	Wall(const IVec2& pos, class MazeTerrain* world);
 
-	void ChangeValue(const uint64_t val);
+	void ChangeValue(const uint64_t val, const Entity& entity);
 };
 
 class Path : public Unit<Path>
 {
 public:
 
-	Path();
+	Path(const IVec2& pos, class MazeTerrain* world);
 
-	void ChangeValue(const uint64_t val);
+	void ChangeValue(const uint64_t val, const Entity& entity);
 
 	std::vector<Unit<Path>*> GetNeighbours();
 };

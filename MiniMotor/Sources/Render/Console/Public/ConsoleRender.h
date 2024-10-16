@@ -7,7 +7,7 @@
 
 class ConsoleRender : public GenericRender<ConsoleRender>
 {
-	using type = std::string[81][41];
+	using type = std::array<std::string, 80*40>;
 
 public:
 
@@ -21,7 +21,7 @@ public:
 
 	void ClearWindow();
 
-	void BufferFrame(class Entity* targetEntity);
+	void BufferFrame(const VertexArray2D& targetEntity);
 
 	void CloseWindow();
 

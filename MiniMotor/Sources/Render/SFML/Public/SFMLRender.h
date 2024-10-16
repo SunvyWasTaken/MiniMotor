@@ -12,9 +12,9 @@ public:
 
 	void Draw();
 
-	bool IsWindowOpen();
+	bool IsWindowOpen() const;
 
-	void BufferFrame(class Entity* Entity);
+	void BufferFrame(const VertexArray2D& vertexArray);
 
 	void HandleEvents();
 
@@ -23,4 +23,8 @@ public:
 	void CloseWindow();
 
 	void DrawSlate(class SContainer* slate);
+
+	void DrawLine(const FVec2& start, const FVec2& end, const FColor& color);
+
+	void DrawQuad(const FVec2& position, const FVec2& size, const FColor& color);
 };

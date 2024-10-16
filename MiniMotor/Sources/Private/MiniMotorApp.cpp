@@ -2,12 +2,17 @@
 
 #include "MiniMotorApp.h"
 #include "World.h"
+#ifdef __EMSCRIPTEN__
+#include <emscripten/emscripten.h>
+#endif
 
 MiniMotorApp::MiniMotorApp()
 	: m_IsRunning(true)
 	, m_World(nullptr)
 	, m_Render(std::make_unique<CurrentRender>())
 {
+	m_Render->Init();
+	m_Render->EventCall.Bind(this, &MiniMotorApp::OnEvents);
 }
 
 MiniMotorApp::~MiniMotorApp()
@@ -16,30 +21,23 @@ MiniMotorApp::~MiniMotorApp()
 
 void MiniMotorApp::Init()
 {
-	m_Render->Init();
-	m_Render->EventCall.Bind(this, &MiniMotorApp::OnEvents);
 }
 
 void MiniMotorApp::Run()
 {
-	while (m_IsRunning)
+	#ifdef __EMSCRIPTEN__
+	emscripten_set_main_loop(MainLoop, 60, 1);
+	#endif
+	while (IsRunning())
 	{
-		m_Render->Update();
-		m_Render->HandleEvents();
-		m_World->Update();
-		for (auto& slate : m_SlateContainer)
-		{
-			m_Render->DrawSlate(slate);
-		}
-		m_World->BufferFrameEntitys(*m_Render);
-		m_Render->Draw();
-		m_Render->ClearWindow();
+		MainLoop();
 	}
 }
 
 void MiniMotorApp::Shutdown()
 {
 	m_Render->CloseWindow();
+	delete m_Instance;
 }
 
 void MiniMotorApp::SetWorld(World* world)
@@ -115,3 +113,43 @@ void MiniMotorApp::PushLayer(SContainer* slate)
 {
 	m_SlateContainer.PushLayer(slate);
 }
+
+void MiniMotorApp::DrawLine(const FVec2& start, const FVec2& end, const FColor& color)
+{
+	m_Render->DrawLine(start, end, color);
+}
+
+void MiniMotorApp::DrawQuad(const FVec2& position, const FVec2& size, const FColor& color)
+{
+	m_Render->DrawQuad(position, size, color);
+}
+
+MiniMotorApp* MiniMotorApp::GetInstance()
+{
+	if (!m_Instance)
+	{
+		m_Instance = new MiniMotorApp();
+	}
+	return m_Instance;
+}
+
+void MiniMotorApp::MainLoop()
+{
+	m_Render->ClearWindow();
+	m_Render->Update();
+	m_Render->HandleEvents();
+	m_World->Update();
+	for (auto& slate : m_SlateContainer)
+	{
+		m_Render->DrawSlate(slate);
+	}
+	m_World->BufferFrameEntitys(*m_Render);
+	m_Render->Draw();
+}
+
+bool MiniMotorApp::IsRunning() const
+{
+	return m_IsRunning && m_Render->IsWindowOpen();
+}
+
+MiniMotorApp* MiniMotorApp::m_Instance = nullptr;

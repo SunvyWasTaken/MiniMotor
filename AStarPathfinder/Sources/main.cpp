@@ -1,16 +1,8 @@
-// AStarPathfinder2.cpp : Ce fichier contient la fonction 'main'. L'exécution du programme commence et se termine à cet endroit.
-//
-
-#include "World.h"
-
 #include "AStarPathfinding.h"
-#include "Entitys.h"
 #include "MazeTerrain.h"
 #include "MiniMotorApp.h"
 #include "UIMaze.h"
 
-
-#include <iostream>
 
 int main()
 {
@@ -25,7 +17,7 @@ int main()
 	SButton MyAstarPath = SButton();
 	SEditableText MyEditableText = SEditableText();
 	
-	MyConstructButton.m_Text = "Construct Maze";
+
 	MyGenButton.m_Text = "Generate Maze";
 	MyClearTerrain.m_Text = "Clear Maze";
 	MyAstarPath.m_Text = "A* Pathfinding";
@@ -38,33 +30,29 @@ int main()
 		.SetSize({500, 1080})
 		;
 
-	UiMaze->AddChild(&MyConstructButton);
 	UiMaze->AddChild(&MyClearTerrain);
 	UiMaze->AddChild(&MyEditableText);
 	UiMaze->AddChild(&MyAstarPath);
 
 	CurrApp->PushLayer(UiMaze);
-	std::unique_ptr<World> CurrentWorld = std::make_unique<World>();
-	CurrApp->SetWorld(CurrentWorld.get());
+	std::unique_ptr<MazeTerrain> Maze = std::make_unique<MazeTerrain>();
+	CurrApp->SetWorld(Maze.get());
 
-	MazeTerrain* Maze = new MazeTerrain();
-	CurrentWorld->Entities.push_back(Maze);
-	Maze->SetMazeSize({ 50, 50 });
+	Maze->SetMazeSize({ 10, 10 });
 
-	PathFinderAlgo::AStarPathfinding pathfinding(Maze);
+	PathFinderAlgo::AStarPathfinding pathfinding(Maze.get());
 
-	MyConstructButton.BindOnPressed(Maze, &MazeTerrain::RegenerateLabyrinthe);
-	MyGenButton.BindOnPressed(Maze, &MazeTerrain::GenerateLabyrinthe);
-	MyClearTerrain.BindOnPressed(Maze, &MazeTerrain::ClearLabyrinthe);
+	MyGenButton.BindOnPressed(Maze.get(), &MazeTerrain::GenerateLabyrinthe);
+	MyClearTerrain.BindOnPressed(Maze.get(), &MazeTerrain::ClearLabyrinthe);
 	MyAstarPath.BindOnPressed(&pathfinding, &PathFinderAlgo::AStarPathfinding::operator());
-	MyEditableText.BindOnPressed(Maze, &MazeTerrain::SetMazeSize);
+	MyEditableText.BindOnPressed(Maze.get(), &MazeTerrain::SetMazeSize);
 	// End : Maze Generation
 
+	Entity ent = Maze->SpawnEntity(TEXT("Player"));
+	ent.AddComponent<RendableComponent>(Texture{TEXT("Ressources/SunsetIco.png"), SQUAREDTEXTURE(128) });
+	ent.SetSize({100, 100});
+	ent.AddWorldOffset({10, 10});
 	CurrApp->Run();
-
-	// Clean up
-	delete Maze;
-
 	CurrApp->Shutdown();
 
 	return 0;

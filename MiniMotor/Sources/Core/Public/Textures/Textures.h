@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 
+using TextureCoord = std::array<IVec2, 4>;
+
 template <typename Derived>
 class MM_EXPORT TextureManager
 {
@@ -15,13 +17,29 @@ public:
 		return &instance;
 	}
 
-	CRTP_CALL_Variadic(Derived, LoadTexture)
 	CRTP_CALL_Variadic_ret(Derived, decltype(auto), GetTextures)
 };
 
 class Texture
 {
 public:
+
+	Texture() = default;
+
+	Texture(const std::string name, const TextureCoord& coords)
+		: filename(name)
+		, coord(coords)
+	{
+		
+	}
+
+	template <typename Sides>
+	IVec2& GetCoord()
+	{
+		static_assert(IsTypeInList<Sides, QuadSide>::value, "Not a valid Side");
+		return coord[GetTypelistIndex<Sides, QuadSide>::value];
+	}
+
 	std::string filename;
-	IVec2 coord;
+	TextureCoord coord;
 };
