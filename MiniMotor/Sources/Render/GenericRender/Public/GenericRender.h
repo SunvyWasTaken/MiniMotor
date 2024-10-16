@@ -41,6 +41,8 @@ public:
 
 	// Todo : Tmp solution change for the Slate
 	CRTP_CALL_OneParam(DrawSlate, class SContainer*)
+	CRTP_CALL_Variadic(Derived, DrawLine)
+	CRTP_CALL_Variadic(Derived, DrawQuad)
 
 	EventsCallback EventCall;
 };

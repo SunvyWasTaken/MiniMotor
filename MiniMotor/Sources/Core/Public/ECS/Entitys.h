@@ -13,57 +13,63 @@ public:
 
 	Entity();
 
-	Entity(const Entity& other);
-
-	Entity(const entt::entity& entity, World* world);
-
-	Entity& operator=(const Entity& other);
-
 	virtual ~Entity();
 
-	// Get world will always return a valid world.
-	// other wise it will assert by itself.
+	virtual void BeginPlay();
+
+	virtual void Update(float deltaTime);
+
+	void Destroy();
+
 	World* GetWorld();
+
+/************************************************************************/
+/* WorldPosition														*/
+/************************************************************************/
+
+	const FVec2& GetWorldPosition() const;
+
+	void SetWorldPosition(const FVec2& pos);
 
 	void AddWorldOffset(const FVec2& offset);
 
-	const FVec2& GetWorldPosition() const;
+/************************************************************************/
+/* Transform															*/
+/************************************************************************/
 
 	void SetSize(const FVec2& size);
 
 	template <typename ComponentType, typename ...Args>
 	ComponentType& AddComponent(Args&&... args)
 	{
-		//assert(world->m_EntityRegistry.has<ComponentType>(m_Entity));
-		return m_World->m_EntityRegistry.emplace<ComponentType>(m_Entity, std::forward<Args>(args)...);
+		return m_EntityId.m_World->m_EntityRegistry.emplace<ComponentType>(m_EntityId.m_Id, std::forward<Args>(args)...);
 	}
 
 	template <typename ComponentType>
 	ComponentType& GetComponent() const
 	{
-		return m_World->m_EntityRegistry.get<ComponentType>(m_Entity);
+		return  m_EntityId.m_World->m_EntityRegistry.get<ComponentType>(m_EntityId.m_Id);
 	}
 
 	template <typename ...ComponentTypes>
 	bool HasComponent() const
 	{
-		return m_World->m_EntityRegistry.any_of<ComponentTypes...>(m_Entity);
+		return  m_EntityId.m_World->m_EntityRegistry.any_of<ComponentTypes...>(m_EntityId.m_Id);
 	}
 
 	template <typename ComponentType>
 	void RemoveComponent()
 	{
-		m_World->m_EntityRegistry.remove<ComponentType>(m_Entity);
+		m_EntityId.m_World->m_EntityRegistry.remove<ComponentType>(m_EntityId.m_Id);
 	}
 
-	operator const entt::entity& () const { return m_Entity; }
+	operator const entt::entity& () const { return m_EntityId; }
 
-	operator bool () const { return m_Entity != entt::null; }
+	operator bool () const { return m_EntityId; }
 
 private:
 
-	entt::entity m_Entity;
+	EntityId m_EntityId;
 
-	World* m_World;
-
+	friend class World;
 };

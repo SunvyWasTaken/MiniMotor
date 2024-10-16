@@ -37,6 +37,7 @@ void MiniMotorApp::Run()
 void MiniMotorApp::Shutdown()
 {
 	m_Render->CloseWindow();
+	delete m_Instance;
 }
 
 void MiniMotorApp::SetWorld(World* world)
@@ -113,8 +114,28 @@ void MiniMotorApp::PushLayer(SContainer* slate)
 	m_SlateContainer.PushLayer(slate);
 }
 
+void MiniMotorApp::DrawLine(const FVec2& start, const FVec2& end, const FColor& color)
+{
+	m_Render->DrawLine(start, end, color);
+}
+
+void MiniMotorApp::DrawQuad(const FVec2& position, const FVec2& size, const FColor& color)
+{
+	m_Render->DrawQuad(position, size, color);
+}
+
+MiniMotorApp* MiniMotorApp::GetInstance()
+{
+	if (!m_Instance)
+	{
+		m_Instance = new MiniMotorApp();
+	}
+	return m_Instance;
+}
+
 void MiniMotorApp::MainLoop()
 {
+	m_Render->ClearWindow();
 	m_Render->Update();
 	m_Render->HandleEvents();
 	m_World->Update();
@@ -124,10 +145,11 @@ void MiniMotorApp::MainLoop()
 	}
 	m_World->BufferFrameEntitys(*m_Render);
 	m_Render->Draw();
-	m_Render->ClearWindow();
 }
 
 bool MiniMotorApp::IsRunning() const
 {
 	return m_IsRunning && m_Render->IsWindowOpen();
 }
+
+MiniMotorApp* MiniMotorApp::m_Instance = nullptr;

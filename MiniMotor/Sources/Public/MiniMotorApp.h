@@ -2,7 +2,7 @@
 
 #pragma once
 
-#define RENDERTYPE 2 // 0 = Console, 1 = SFML
+#define RENDERTYPE 1 // 0 = Console, 1 = SFML
 
 #if RENDERTYPE == 0
 #include "ConsoleRender.h"
@@ -19,11 +19,11 @@ using CurrentRender = OpenGLRender;
 
 class World;
 
-class MM_API MiniMotorApp
+class MM_API MiniMotorApp final
 {
 public:
-	MiniMotorApp();
-	~MiniMotorApp();
+
+	static MiniMotorApp* GetInstance();
 
 	// Initialize the application
 	void Init();
@@ -40,7 +40,15 @@ public:
 
 	void PushLayer(SContainer* slate);
 
+	void DrawLine(const FVec2& start, const FVec2& end, const FColor& color);
+
+	void DrawQuad(const FVec2& position, const FVec2& size, const FColor& color);
+
 private:
+
+	MiniMotorApp();
+
+	~MiniMotorApp();
 
 	// Send event through all slates
 
@@ -70,4 +78,6 @@ private:
 	SlateContainer m_SlateContainer;
 
 	std::unique_ptr<GenericRender<CurrentRender>> m_Render;
+
+	static MiniMotorApp* m_Instance;
 };

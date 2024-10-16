@@ -105,6 +105,12 @@ struct MM_EXPORT Vec2
 		x += static_cast<type>(op.x); y += static_cast<type>(op.y);
 	}
 
+	template <typename operantType>
+	Vec2<type> operator/(const operantType& op) const
+	{
+		return Vec2<type>(x / static_cast<type>(op), y / static_cast<type>(op));
+	}
+
 	double squareLength() const
 	{
 		return x * x + y * y;
@@ -115,7 +121,7 @@ struct MM_EXPORT Vec2
 		return std::sqrt(squareLength());
 	}
 
-	double distance(const Vec2<type>& op) const
+	double Distance(const Vec2<type>& op) const
 	{
 		return (*this - op).length();
 	}
@@ -125,7 +131,7 @@ struct MM_EXPORT Vec2
 		return x * op.x + y * op.y;
 	}
 
-	Vec2<type> normalize() const
+	Vec2<type> Normalize() const
 	{
 		double len = length();
 		return Vec2<type>(x / len, y / len);
@@ -136,6 +142,11 @@ struct MM_EXPORT Vec2
 		double s = std::sin(angle);
 		double c = std::cos(angle);
 		return Vec2<type>(x * c - y * s, x * s + y * c);
+	}
+
+	bool Contain(const Vec2<type>& position, const Vec2<type>& size) const
+	{
+		return (x >= position.x - size.x && x <= position.x + size.x) && (y >= position.y - size.x && y <= position.y + size.y);
 	}
 
 };

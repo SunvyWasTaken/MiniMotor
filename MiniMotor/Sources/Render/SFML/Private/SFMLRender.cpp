@@ -72,6 +72,7 @@ namespace
 			vertexArray[i + 2].color = sf::Color(obj[index].GetVertice<Side::BottomRight>().color.r, obj[index].GetVertice<Side::BottomRight>().color.g, obj[index].GetVertice<Side::BottomRight>().color.b, obj[index].GetVertice<Side::BottomRight>().color.a);
 			vertexArray[i + 3].color = sf::Color(obj[index].GetVertice<Side::BottomLeft>().color.r, obj[index].GetVertice<Side::BottomLeft>().color.g, obj[index].GetVertice<Side::BottomLeft>().color.b, obj[index].GetVertice<Side::BottomLeft>().color.a);
 		}
+
 		sf::RenderStates states;
 		states.texture = texture;
 		Window->draw(vertexArray, states);
@@ -157,8 +158,6 @@ void SFMLRender::Init()
 	ensure(Window);
 	Window->setFramerateLimit(0);
 	Window->setVerticalSyncEnabled(false);
-	bool loaded = font.loadFromFile("Ressources/PoiretOne-Regular.ttf");
-	ensure(loaded);
 	ImGui::SFML::Init(*Window);
 }
 
@@ -299,4 +298,25 @@ void SFMLRender::DrawSlate(SContainer* slate)
 	DrawChild(slate);
 
 	ImGui::End();
+}
+
+void SFMLRender::DrawLine(const FVec2& start, const FVec2& end, const FColor& color)
+{
+	sf::Vertex line[] =
+	{
+		sf::Vertex(sf::Vector2f((float)start.x, (float)start.y), sf::Color(color.r, color.g, color.b, color.a)),
+		sf::Vertex(sf::Vector2f((float)end.x, (float)end.y), sf::Color(color.r, color.g, color.b, color.a))
+	};
+	Window->draw(line, 2, sf::Lines);
+}
+
+void SFMLRender::DrawQuad(const FVec2& position, const FVec2& size, const FColor& color)
+{
+	sf::RectangleShape rectangle;
+	rectangle.setSize(sf::Vector2f((float)size.x, (float)size.y));
+	rectangle.setOutlineColor(sf::Color(color.r, color.g, color.b, color.a));
+	rectangle.setOutlineThickness(2);
+	rectangle.setFillColor(sf::Color::Transparent);
+	rectangle.setPosition((float)position.x, (float)position.y);
+	Window->draw(rectangle);
 }

@@ -23,19 +23,17 @@ endmacro()
 # Execute the macro
 GroupSources("Sources")
 
-
-find_package(OpenGL REQUIRED)
-
-if (EMSCRIPTEN)
+if (NOT EMSCRIPTEN)
+    find_package(OpenGL REQUIRED)
     find_package(EnTT CONFIG REQUIRED)
-else()
     find_package(glad CONFIG REQUIRED)
-    find_package(EnTT CONFIG REQUIRED)
-    find_package(glew CONFIG REQUIRED)
     find_package(glfw3 CONFIG REQUIRED)
     find_package(SFML CONFIG REQUIRED COMPONENTS system window graphics)
     find_package(ImGui-SFML CONFIG REQUIRED)
-endif()
+else ()
+    set(EMSCRIPTEN_LIB_DIR ${CMAKE_SOURCE_DIR}/vcpkg_installed/wasm32-emscripten/lib)
+    set(EMSCRIPTEN_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/vcpkg_installed/wasm32-emscripten/include)   
+endif ()
 
 add_Library(${PROJECT_NAME} SHARED ${SOURCES})
 
@@ -64,35 +62,37 @@ separate_arguments(PUBLIC_DIRS)
 
 # Ajouter chaque dossier trouvé dans les includes
 foreach(DIR ${PUBLIC_DIRS})
-    if(NOT ${DIR} MATCHES "Sources/ECS/")
-        target_include_directories(${PROJECT_NAME} PUBLIC ${DIR})
-    endif()
+    target_include_directories(${PROJECT_NAME} PUBLIC ${DIR})
 endforeach()
 
 # Permet d'aller chercher les fichiers générés par CMake
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-target_link_libraries(${PROJECT_NAME} PUBLIC 
-    EnTT::EnTT
-)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE
-	OpenGL::GL
-    imgui::imgui
-    glad::glad
-    MiniMotor_compiler_flags
-)
-
 if(EMSCRIPTEN)
-#target_link_libraries(${PROJECT_NAME} PRIVATE
-#)
+	message("emscripten")
+	set(VCPKG_TARGET_ARCHITECTURE wasm32-emscripten)
+	set(CMAKE_TOOLCHAIN_FILE $ENV{EMSDK_HOME}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake)
+	set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
+
+	set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-sUSE_GLFW=3 -sFULL_ES3=1 -sWASM=1 -sUSE_SDL=2 -sUSE_SDL_MIXER=2 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sNO_DISABLE_EXCEPTION_CATCHING --preload-file shader")
+	
+	target_link_libraries(${PROJECT_NAME} PRIVATE ${EMSCRIPTEN_LIB_DIR})
+    target_include_directories(${PROJECT_NAME} PRIVATE ${EMSCRIPTEN_INCLUDE_DIR})
 else()
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML
-    GLEW::GLEW
-    glfw
-)
+
+    target_link_libraries(${PROJECT_NAME} PUBLIC 
+        EnTT::EnTT
+    )
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        MiniMotor_compiler_flags
+        sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML
+	OpenGL::GL
+        glad::glad
+        glfw
+    )
 endif()
+
+
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE
     <array>

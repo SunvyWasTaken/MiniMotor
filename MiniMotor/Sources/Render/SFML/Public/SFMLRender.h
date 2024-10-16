@@ -23,4 +23,8 @@ public:
 	void CloseWindow();
 
 	void DrawSlate(class SContainer* slate);
+
+	void DrawLine(const FVec2& start, const FVec2& end, const FColor& color);
+
+	void DrawQuad(const FVec2& position, const FVec2& size, const FColor& color);
 };

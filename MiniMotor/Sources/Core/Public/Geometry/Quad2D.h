@@ -44,7 +44,7 @@ public:
 	template <typename TargetSide>
 	Vec2<T> GetVerticePosition() const
 	{
-		return (GetVertice<TargetSide>().position * transform.scale) + (transform.pos * transform.scale);
+		return (GetVertice<TargetSide>().position * transform.scale) + transform.pos;
 	}
 
 	void FillColor(const FColor& color)

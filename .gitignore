@@ -401,6 +401,7 @@ FodyWeavers.xsd
 *.vcxproj
 *.filters
 *.sln
+/build
 /build-win
 /build-web
 /vcpkg_installed

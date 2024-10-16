@@ -4,7 +4,7 @@
 
 #include "BaseComponent.h"
 
-class TagComponent : public BaseComponent
+class MM_API TagComponent : public BaseComponent
 {
 public:
 

@@ -1,51 +1,49 @@
 // Copyright Shimmer Studios : All rights reserved.
 
 #include "ECS/Entitys.h"
-#include "World.h"
 
 Entity::Entity()
-	: m_Entity(entt::null)
-	, m_World(nullptr)
+	: m_EntityId()
 {
-}
-
-Entity::Entity(const Entity& other)
-	: m_Entity(other.m_Entity)
-	, m_World(other.m_World)
-{
-}
-
-Entity::Entity(const entt::entity& entity, World* world)
-	: m_Entity(entity)
-	, m_World(world)
-{
-}
-
-Entity& Entity::operator=(const Entity& other)
-{
-	m_Entity = other.m_Entity;
-	m_World = other.m_World;
-	return *this;
 }
 
 Entity::~Entity()
 {
 }
 
+void Entity::BeginPlay()
+{
+}
+
+void Entity::Update(float deltaTime)
+{
+}
+
+void Entity::Destroy()
+{
+	m_EntityId.m_World->RemoveEntity(*this);
+}
+
 World* Entity::GetWorld()
 {
-	return m_World;
+	return m_EntityId.m_World;
+}
+
+const FVec2& Entity::GetWorldPosition() const
+{
+	return GetComponent<TransformComponent>().transform.pos;
+}
+
+void Entity::SetWorldPosition(const FVec2& pos)
+{
+	TransformComponent& transform = GetComponent<TransformComponent>();
+	transform.transform.pos = pos;
 }
 
 void Entity::AddWorldOffset(const FVec2& offset)
 {
 	TransformComponent& transform = GetComponent<TransformComponent>();
 	transform.transform.pos += offset;
-}
-
-const FVec2& Entity::GetWorldPosition() const
-{
-	return GetComponent<TransformComponent>().transform.pos;
 }
 
 void Entity::SetSize(const FVec2& size)

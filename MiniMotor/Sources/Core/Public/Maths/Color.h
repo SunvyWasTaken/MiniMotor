@@ -10,6 +10,10 @@ struct MM_EXPORT Color
 	Color(T r, T g, T b, T a = 255) : r(r), g(g), b(b), a(a) {}
 
 	T r, g, b, a;
+
+	static Color<T> Red;
 };
 
 using FColor = Color<unsigned char>;
+
+FColor FColor::Red{255, 0, 0};
