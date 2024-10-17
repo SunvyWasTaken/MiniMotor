@@ -20,6 +20,10 @@ namespace
 
 	using QueueFamily = Typelist<GraphicFamily, PresentFamily>;
 
+	/************************************************************************/
+	/* Parameters															*/
+	/************************************************************************/
+
 	GLFWwindow* window = nullptr;
 	const uint32_t m_width = 800;
 	const uint32_t m_height = 600;
@@ -36,6 +40,12 @@ namespace
 	VkQueue graphicsQueue;
 
 	VkQueue presentQueue;
+
+	const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
+	/************************************************************************/
+	/* Functions															*/
+	/************************************************************************/
 
 	template <typename QueueType>
 	class QueueFamillyIndices_T
@@ -83,6 +93,39 @@ namespace
 
 	using QueueFamillyIndices = QueueFamillyIndices_T<uint32_t>;
 
+	struct SwapChainSupportDetails
+	{
+		VkSurfaceCapabilitiesKHR capabilities;
+		std::vector<VkSurfaceFormatKHR> formats;
+		std::vector<VkPresentModeKHR> presentModes;
+	};
+
+	// Populate the swapchain struct
+	SwapChainSupportDetails QuerySwapChainSupport(const VkPhysicalDevice& device)
+	{
+		SwapChainSupportDetails details;
+
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
+		
+		uint32_t formatCount;
+		vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
+
+		if (formatCount > 0)
+		{
+			details.formats.resize(formatCount);
+			vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.formats.data());
+		}
+		uint32_t presentModeCount;
+		vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
+		if (presentModeCount > 0)
+		{
+			details.presentModes.resize(presentModeCount);
+			vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.presentModes.data());
+		}
+		return details;
+	}
+
+	// Create the instance of the vulkan
 	void CreateInstance()
 	{
 		// Init with {} init list for the struct to be nullptr
@@ -166,11 +209,43 @@ namespace
 		return indices;
 	}
 
+	bool CheckDeviceExtentionSupported(const VkPhysicalDevice& device)
+	{
+		uint32_t extensionCount;
+		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
+
+		std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
+
+		std::vector<std::string> RequiredExtensions;
+
+		for (auto extension : deviceExtensions)
+		{
+			RequiredExtensions.emplace_back(extension);
+		}
+
+		for (const auto& extension : availableExtensions)
+		{
+			std::cout << extension.extensionName << std::endl;
+			std::erase_if(RequiredExtensions, [&](const std::string& str) { return str == extension.extensionName; });
+		}
+
+		return RequiredExtensions.empty();
+	}
+
 	bool isDeviceSuitable(const VkPhysicalDevice& device)
 	{
 		QueueFamillyIndices indices = FindQueueFamillies(device);
+		bool extentionSupported = CheckDeviceExtentionSupported(device);
 
-		return indices;
+		bool swapChainAdequate = false;
+		if (extentionSupported)
+		{
+			SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(device);
+			swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+		}
+
+		return indices && extentionSupported && swapChainAdequate;
 	}
 
 	// Cuz Vulk need to select manually a target device.
@@ -233,7 +308,8 @@ namespace
 
 		createInfo.pEnabledFeatures = &deviceFeatures;
 
-		createInfo.enabledExtensionCount = 0;
+		createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
 		createInfo.enabledLayerCount = 0;
 
