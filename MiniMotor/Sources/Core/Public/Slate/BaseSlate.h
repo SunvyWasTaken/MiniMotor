@@ -58,7 +58,7 @@ public:
 	template <typename paddingType>
 	Slate& SetPadding()
 	{
-		static_assert(IsTypeInVariant<paddingType, PaddingType>::value, "Padding type not supported");
+		static_assert(IsTypeInList<paddingType, PaddingType>::value, "Padding type not supported");
 		m_Padding = paddingType();
 		return *this;
 	}

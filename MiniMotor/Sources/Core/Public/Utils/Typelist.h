@@ -74,23 +74,20 @@ struct IsTypeInList<T, Typelist<First, Rest...>>
 	static const bool value = IsTypeInList<T, Typelist<Rest...>>::value;
 };
 
-template <typename T, typename Typelist>
-struct IsTypeInVariant;
-
 template <typename T>
-struct IsTypeInVariant<T, std::variant<>>
+struct IsTypeInList<T, std::variant<>>
 {
 	static const bool value = false;
 };
 
 template <typename T, typename... Types>
-struct IsTypeInVariant<T, std::variant<T, Types...>>
+struct IsTypeInList<T, std::variant<T, Types...>>
 {
 	static const bool value = true;
 };
 
 template <typename T, typename First, typename... Rest>
-struct IsTypeInVariant<T, std::variant<First, Rest...>>
+struct IsTypeInList<T, std::variant<First, Rest...>>
 {
-	static const bool value = IsTypeInVariant<T, std::variant<Rest...>>::value;
+	static const bool value = IsTypeInList<T, std::variant<Rest...>>::value;
 };

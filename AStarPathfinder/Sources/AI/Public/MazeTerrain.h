@@ -4,16 +4,8 @@
 #pragma once
 
 #include "World.h"
-#include "ECS/Entitys.h"
 
-class Wall;
-
-template <typename Derived>
-class Unit;
-
-class Path;
-
-using Cell = std::variant<Unit<Wall>, Unit<Path>>;
+class Cell;
 
 class MazeTerrain : public World
 {
@@ -30,13 +22,12 @@ public:
 
 	void ClearLabyrinthe();
 
-	void RemoveWall(const Entity& target);
+	void RemoveWall(const IVec2& pos);
 
 	Cell* GetCellByPos(const IVec2& pos);
 
-	Unit<Path>* ChangeCellAt(const IVec2& pos);
-
-private:
+	// Transform a wall to a path
+	void ChangeCellAt(const IVec2& pos);
 
 	void AlgoLabyrinthe();
 
@@ -44,7 +35,7 @@ public:
 
 	IVec2 MazeSize;
 
-	std::vector<Entity> Maze;
+	std::vector<Cell*> Maze;
 
 private:
 

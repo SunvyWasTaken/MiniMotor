@@ -15,5 +15,7 @@ public:
 
 	virtual ~RendableComponent() = default;
 
+	void SetTextureCoord(const TextureCoord& coord);
+
 	Texture texture;
 };

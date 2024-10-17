@@ -46,6 +46,11 @@ void Entity::AddWorldOffset(const FVec2& offset)
 	transform.transform.pos += offset;
 }
 
+const FVec2& Entity::GetSize() const
+{
+	return GetComponent<TransformComponent>().transform.scale;
+}
+
 void Entity::SetSize(const FVec2& size)
 {
 	TransformComponent& transform = GetComponent<TransformComponent>();

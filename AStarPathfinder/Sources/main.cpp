@@ -6,7 +6,7 @@
 
 int main()
 {
-	std::unique_ptr<MiniMotorApp> CurrApp = std::make_unique<MiniMotorApp>();
+	MiniMotorApp* CurrApp = MiniMotorApp::GetInstance();
 	CurrApp->Init();
 
 	// Start : Maze Generation
@@ -15,6 +15,7 @@ int main()
 	SButton MyGenButton = SButton();
 	SButton MyClearTerrain = SButton();
 	SButton MyAstarPath = SButton();
+	SButton MyAstarPath2 = SButton();
 	SEditableText MyEditableText = SEditableText();
 	
 
@@ -22,6 +23,7 @@ int main()
 	MyClearTerrain.m_Text = "Clear Maze";
 	MyAstarPath.m_Text = "A* Pathfinding";
 	MyEditableText.m_Text = "Terrain Size";
+	MyAstarPath2.m_Text = "Step by step";
 
 	UiMaze->AddChild(
 		&MyGenButton)
@@ -33,12 +35,13 @@ int main()
 	UiMaze->AddChild(&MyClearTerrain);
 	UiMaze->AddChild(&MyEditableText);
 	UiMaze->AddChild(&MyAstarPath);
+	UiMaze->AddChild(&MyAstarPath2);
 
 	CurrApp->PushLayer(UiMaze);
 	std::unique_ptr<MazeTerrain> Maze = std::make_unique<MazeTerrain>();
 	CurrApp->SetWorld(Maze.get());
 
-	Maze->SetMazeSize({ 10, 10 });
+	Maze->SetMazeSize({ 6, 6 });
 
 	PathFinderAlgo::AStarPathfinding pathfinding(Maze.get());
 
@@ -46,12 +49,9 @@ int main()
 	MyClearTerrain.BindOnPressed(Maze.get(), &MazeTerrain::ClearLabyrinthe);
 	MyAstarPath.BindOnPressed(&pathfinding, &PathFinderAlgo::AStarPathfinding::operator());
 	MyEditableText.BindOnPressed(Maze.get(), &MazeTerrain::SetMazeSize);
+	MyAstarPath2.BindOnPressed(Maze.get(), &MazeTerrain::AlgoLabyrinthe);
 	// End : Maze Generation
 
-	Entity ent = Maze->SpawnEntity(TEXT("Player"));
-	ent.AddComponent<RendableComponent>(Texture{TEXT("Ressources/SunsetIco.png"), SQUAREDTEXTURE(128) });
-	ent.SetSize({100, 100});
-	ent.AddWorldOffset({10, 10});
 	CurrApp->Run();
 	CurrApp->Shutdown();
 

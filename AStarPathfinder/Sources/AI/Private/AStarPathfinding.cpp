@@ -11,20 +11,20 @@ namespace PathFinderAlgo
 	{
 	}
 
-	void AStarPathfinding::SetStart(Unit<Path>* start)
+	void AStarPathfinding::SetStart(Cell* start)
 	{
 		Start = start;
 	}
 
-	void AStarPathfinding::SetEnd(Unit<Path>* end)
+	void AStarPathfinding::SetEnd(Cell* end)
 	{
 		End = end;
 	}
 
 	void AStarPathfinding::operator()()
 	{
-		SetStart(std::get_if<Unit<Path>>(parent->GetCellByPos({ 1, 1 })));
-		SetEnd(std::get_if<Unit<Path>>(parent->GetCellByPos({ parent->MazeSize.x - 2, parent->MazeSize.y - 2 })));
+		SetStart(parent->GetCellByPos({ 1, 1 }));
+		SetEnd(parent->GetCellByPos({ parent->MazeSize.x - 2, parent->MazeSize.y - 2 }));
 		OpenList.clear();
 		CloseList.clear();
 
@@ -39,9 +39,9 @@ namespace PathFinderAlgo
 		while(!OpenList.empty())
 		{
 
-			Unit<Path>* UnitCell = OpenList[0];
+			Cell* UnitCell = OpenList[0];
 
-			for (Unit<Path>* curr : OpenList)
+			for (Cell* curr : OpenList)
 			{
 				if (curr->hCost < UnitCell->hCost) {
 					UnitCell = curr;
@@ -64,11 +64,10 @@ namespace PathFinderAlgo
 				}
 				break;
 			}
-			std::vector<Unit<Path>*> NeighborList = UnitCell->GetNeighbours();
+			NeighboursList NeighborList = UnitCell->GetNeighbours();
 
 			for (auto Neighbor : NeighborList)
 			{
-
 				if (std::find(CloseList.begin(), CloseList.end(), Neighbor) == CloseList.end())
 				{
 					//Neighbor->gCost = UnitCell->gCost + (Neighbor->transform.pos - UnitCell->transform.pos).length();
@@ -79,36 +78,4 @@ namespace PathFinderAlgo
 			}
 		}
 	}
-
-	/************************************************************************/
-	/* Dijkstra																*/
-	/************************************************************************/
-
-	DijkstraPathfinding::DijkstraPathfinding(MazeTerrain* _parent)
-		: Start(nullptr)
-		, End(nullptr)
-		, parent(_parent)
-	{
-	}
-
-	void DijkstraPathfinding::SetStart(Unit<Path>* start)
-	{
-		Start = start;
-	}
-
-	void DijkstraPathfinding::SetEnd(Unit<Path>* end)
-	{
-		End = end;
-	}
-
-	void DijkstraPathfinding::operator()()
-	{
-		// Dijkstra algorithm
-		SetStart(std::get_if<Unit<Path>>(parent->GetCellByPos({ 1, 1 })));
-		SetEnd(std::get_if<Unit<Path>>(parent->GetCellByPos({ parent->MazeSize.x - 2, parent->MazeSize.y - 2 })));
-
-
-
-	}
-
 };

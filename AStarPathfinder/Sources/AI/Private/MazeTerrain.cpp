@@ -8,7 +8,7 @@
 
 #include <random>
 
-std::default_random_engine rGen;
+std::default_random_engine rGen(42);
 using intRand = std::uniform_int_distribution<int>;
 
 namespace
@@ -35,9 +35,9 @@ void MazeTerrain::SetMazeSize(const IVec2& size)
 
 	// this need to not be even
 	MazeSize = size + 1;
-	for (auto& it : Maze)
+	for (Entity* it : Maze)
 	{
-		RemoveEntity(it);
+		RemoveEntity(*it);
 	}
 	Maze.clear();
 	Maze.reserve(MazeSize.x * MazeSize.y);
@@ -61,33 +61,23 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 
 			if (xTrue || yTrue)
 			{
-				Entity entity = SpawnEntity(TEXT("Wall {}", it));
-				entity.AddWorldOffset(pos);
-				entity.SetSize({25, 25});
-				entity.AddComponent<RendableComponent>(Texture{TEXT("Ressources/Brick_Block.png"), TextureCoord{IVec2{0, 0}, IVec2{438, 0}, IVec2{438, 438}, IVec2{0, 438}}});
-				entity.AddComponent<Cell>(Wall(pos, this));
+				Cell* entity = SpawnEntity<Cell>(TEXT("Wall {}", it), it, Wall(), pos);
+				entity->SetSize({25, 25});
+				entity->AddWorldOffset(pos * entity->GetSize());
 				Maze.push_back(entity);
-				Cell& curr = entity.GetComponent<Cell>();
-				std::get<Unit<Wall>>(curr).parent = this;
-				std::get<Unit<Wall>>(curr).SetValue(it);
 
 				if ((x != 0 && x != MazeSize.x - 1) && (y != 0 && y != MazeSize.y - 1) && !(xTrue && yTrue))
 				{
 					WallList.push_back(pos);
-					std::get<Unit<Wall>>(curr).bCanBeOpen = true;
+					entity->SetCanBeOpen(true);
 				}
 			}
 			else
 			{
-				Entity entity = SpawnEntity(TEXT("Path {}", it));
-				entity.AddWorldOffset(pos);
-				entity.SetSize({ 25, 25 });
-				entity.AddComponent<RendableComponent>(Texture{TEXT("Ressources/Brick_Block.png"), TextureCoord{ IVec2{438, 0}, IVec2{876, 0}, IVec2{876, 438}, IVec2{438, 0}}});
-				entity.AddComponent<Cell>(Path(pos, this));
-				Maze.push_back(entity);
-				Cell& curr = entity.GetComponent<Cell>();
-				std::get<Unit<Path>>(curr).parent = this;
-				std::get<Unit<Path>>(curr).SetValue(it);
+				Cell* entity = SpawnEntity<Cell>(TEXT("Path {}", it), it, Path(), pos);
+				entity->SetSize({ 25, 25 });
+				entity->AddWorldOffset(pos * entity->GetSize());
+				Maze.push_back(entity);		
 			}
 			++it;
 		}
@@ -112,9 +102,9 @@ void MazeTerrain::ClearLabyrinthe()
 	GenerateTerrain(MazeSize - 1);
 }
 
-void MazeTerrain::RemoveWall(const Entity& target)
+void MazeTerrain::RemoveWall(const IVec2& pos)
 {
-	auto it = std::find(WallList.begin(), WallList.end(), target.GetWorldPosition());
+	auto it = std::find(WallList.begin(), WallList.end(), pos);
 	if (it != WallList.end())
 	{
 		WallList.erase(it);
@@ -128,35 +118,40 @@ Cell* MazeTerrain::GetCellByPos(const IVec2& pos)
 	{
 		return nullptr;
 	}
-	return &Maze[pos.x * MazeSize.x + pos.y].GetComponent<Cell>();
+	return Maze[pos.x * MazeSize.x + pos.y];
 }
 
-Unit<Path>* MazeTerrain::ChangeCellAt(const IVec2& pos)
+void MazeTerrain::ChangeCellAt(const IVec2& pos)
 {
-	Entity entity = Maze[pos.x * MazeSize.x + pos.y];
-	entity.GetComponent<Cell>() = Path(pos, this);
-	entity.GetComponent<RendableComponent>().texture = Texture{ TEXT("Ressources/Brick_Block.png"), TextureCoord{IVec2{438, 0}, IVec2{876, 0}, IVec2{876, 438}, IVec2{438, 0}} };
-	return std::get_if<Unit<Path>>(&entity.GetComponent<Cell>());
-
+	Cell* entity = Maze[pos.x * MazeSize.x + pos.y];
+	entity->ChangeState(Path());
 }
 
 void MazeTerrain::AlgoLabyrinthe()
 {
+
+	if (WallList.size() <= 0)
+	{
+		return;
+	}
+
+	//size_t index = intRand(0, (int)WallList.size() - 1)(rGen);
 	size_t index = intRand(0, (int)WallList.size() - 1)(rGen);
 	IVec2 pos = WallList[index];
 
-	Cell* wallPath = GetCellByPos(pos);
-	ensure(wallPath);
-	uint64_t val = std::get_if<Unit<Wall>>(wallPath)->value;
+	Cell* currCell = GetCellByPos(pos);
+	uint64_t val = currCell->GetFirstValideValue();
 
-	// Transform the wall to a path
-	if (Unit<Path>* currPath = ChangeCellAt(pos))
+	ChangeCellAt(pos);
+	WallList.erase(WallList.begin() + index);
+
+	if (!currCell->IsState<Path>())
 	{
-		WallList.erase(WallList.begin() + index);
-		ensure(currPath);
-		currPath->parent = this;
-		currPath->ChangeValue(val, Maze[pos.x * MazeSize.x + pos.y]);
+		// early return here cuz something went wrong
+		return;
 	}
+
+	currCell->ChangeValue(val);
 
 	if (WallList.size() <= 0)
 	{

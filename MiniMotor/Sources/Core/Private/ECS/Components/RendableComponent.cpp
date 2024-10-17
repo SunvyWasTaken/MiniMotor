@@ -6,3 +6,8 @@ RendableComponent::RendableComponent(const Texture& textu)
 	: texture(textu)
 {
 }
+
+void RendableComponent::SetTextureCoord(const TextureCoord& coord)
+{
+	texture.coord = coord;
+}

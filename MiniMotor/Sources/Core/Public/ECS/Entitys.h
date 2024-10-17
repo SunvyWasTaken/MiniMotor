@@ -37,6 +37,8 @@ public:
 /* Transform															*/
 /************************************************************************/
 
+	const FVec2& GetSize() const;
+
 	void SetSize(const FVec2& size);
 
 	template <typename ComponentType, typename ...Args>
