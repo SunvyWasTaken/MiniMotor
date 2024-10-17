@@ -108,6 +108,7 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE
     <map>
     <memory>
     <optional>
+    <set>
     <string>
     <thread>
     <variant>

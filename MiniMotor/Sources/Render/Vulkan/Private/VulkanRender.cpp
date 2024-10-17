@@ -2,40 +2,86 @@
 
 #include "VulkanRender.h"
 
+// @WinSpec - Begin
+#define VK_USE_PLATFORM_WIN32_KHR
+// @WinSpec - End
 // This allow glfw to include it's requirement for vulkan
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
-
+// @WinSpec - Begin
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include "GLFW/glfw3native.h"
+// @WinSpec - End
 
 namespace
 {
+	MAKE_STATE(GraphicFamily)
+	MAKE_STATE(PresentFamily)
+
+	using QueueFamily = Typelist<GraphicFamily, PresentFamily>;
+
 	GLFWwindow* window = nullptr;
 	const uint32_t m_width = 800;
 	const uint32_t m_height = 600;
 
 	// A instance is a connection between the app and VulkLib
-	VkInstance instance{};
+	VkInstance instance;
+
+	VkSurfaceKHR surface;
 
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 
-	VkDevice device{};
+	VkDevice device;
 
-	VkQueue graphicsQueue{};
+	VkQueue graphicsQueue;
 
-	struct QueueFamillyIndices
+	VkQueue presentQueue;
+
+	template <typename QueueType>
+	class QueueFamillyIndices_T
 	{
-		std::optional<uint32_t> graphicsFamilly;
-
-		uint32_t operator()() const
+	public:
+		template <typename IndiceType>
+		const QueueType& GetIndice() const
 		{
-			return graphicsFamilly.value();
+			static_assert(IsTypeInList<IndiceType, QueueFamily>::value, "Indice type isn't in the list");
+			return Indices[GetTypelistIndex<IndiceType, QueueFamily>::value].value();
+		}
+
+		template <typename IndiceType>
+		void SetIndice(const QueueType& val)
+		{
+			static_assert(IsTypeInList<IndiceType, QueueFamily>::value, "Indice type isn't in the list");
+			Indices[GetTypelistIndex<IndiceType, QueueFamily>::value] = val;
+		}
+
+		auto begin() const
+		{
+			return Indices.begin();
+		}
+
+		auto end() const
+		{
+			return Indices.end();
 		}
 
 		operator bool() const
 		{
-			return graphicsFamilly.has_value();
+			for (auto& indice : Indices)
+			{
+				if (!indice.has_value())
+				{
+					return false;
+				}
+			}
+			return true;
 		}
+
+	private:
+		std::array<std::optional<QueueType>, GetSizelist<QueueFamily>::value>  Indices;
 	};
+
+	using QueueFamillyIndices = QueueFamillyIndices_T<uint32_t>;
 
 	void CreateInstance()
 	{
@@ -73,6 +119,19 @@ namespace
 		}
 	}
 
+	void CreateSurface()
+	{
+		VkWin32SurfaceCreateInfoKHR createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+		createInfo.hwnd = glfwGetWin32Window(window);
+		createInfo.hinstance = GetModuleHandle(nullptr);
+
+		if (vkCreateWin32SurfaceKHR(instance, &createInfo, nullptr, &surface) != VK_SUCCESS)
+		{
+			throw std::runtime_error("Bro the surface win is not here");
+		}
+	}
+
 	QueueFamillyIndices FindQueueFamillies(const VkPhysicalDevice& device)
 	{
 		QueueFamillyIndices indices;
@@ -81,18 +140,27 @@ namespace
 
 		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
 
+
 		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
 		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
 		for (int i = 0; i < queueFamilyCount; ++i)
 		{
+			VkBool32 presentSupport = false;
+			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+			if (presentSupport)
+			{
+				indices.SetIndice<PresentFamily>(i);
+			}
+
 			if (queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
 			{
-				indices.graphicsFamilly = i;
-				if (indices)
-					break;
-					
+				indices.SetIndice<GraphicFamily>(i);
 			}
+
+			// Break the search
+			if (indices)
+				break;
 		}
 
 		return indices;
@@ -140,14 +208,19 @@ namespace
 	{
 		QueueFamillyIndices indices = FindQueueFamillies(physicalDevice);
 
-		VkDeviceQueueCreateInfo queueCreateInfo{};
-		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queueCreateInfo.queueFamilyIndex = indices();
-		queueCreateInfo.queueCount = 1;
-
+		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+		
 		// Can assign priority btw 0.0 & 1.0
 		float queuePriority = 1.f;
-		queueCreateInfo.pQueuePriorities = &queuePriority;
+		for (auto& queueFamily : indices)
+		{
+			VkDeviceQueueCreateInfo queueCreateInfo{};
+			queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			queueCreateInfo.queueFamilyIndex = queueFamily.value();
+			queueCreateInfo.queueCount = 1;
+			queueCreateInfo.pQueuePriorities = &queuePriority;
+			queueCreateInfos.push_back(queueCreateInfo);
+		}
 
 		// Todo : we will come back later...
 		VkPhysicalDeviceFeatures deviceFeatures{};
@@ -155,8 +228,8 @@ namespace
 		VkDeviceCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
-		createInfo.pQueueCreateInfos = &queueCreateInfo;
-		createInfo.queueCreateInfoCount = 1;
+		createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+		createInfo.pQueueCreateInfos = queueCreateInfos.data();
 
 		createInfo.pEnabledFeatures = &deviceFeatures;
 
@@ -170,13 +243,15 @@ namespace
 		}
 
 		// Retrive the queue
-		vkGetDeviceQueue(device, indices(), 0, &graphicsQueue);
+		vkGetDeviceQueue(device, indices.GetIndice<PresentFamily>(), 0, &presentQueue);
+		vkGetDeviceQueue(device, indices.GetIndice<GraphicFamily>(), 0, &graphicsQueue);
 	}
 
 	void initVulkan()
 	{
 		CreateInstance();
 		// Here u can setup debug message and layer validation
+		CreateSurface();
 		PickPhysicalDevice();
 		CreateLogicalDevice();
 	}
@@ -230,6 +305,7 @@ void VulkanRender::ClearWindow()
 void VulkanRender::CloseWindow()
 {
 	vkDestroyDevice(device, nullptr);
+	vkDestroySurfaceKHR(instance, surface, nullptr);
 	vkDestroyInstance(instance, nullptr);
 
 	glfwDestroyWindow(window);
