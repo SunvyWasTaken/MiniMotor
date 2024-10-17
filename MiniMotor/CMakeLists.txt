@@ -24,12 +24,14 @@ endmacro()
 GroupSources("Sources")
 
 if (NOT EMSCRIPTEN)
-    find_package(OpenGL REQUIRED)
     find_package(EnTT CONFIG REQUIRED)
-    find_package(glad CONFIG REQUIRED)
-    find_package(glfw3 CONFIG REQUIRED)
+
     find_package(SFML CONFIG REQUIRED COMPONENTS system window graphics)
     find_package(ImGui-SFML CONFIG REQUIRED)
+
+    find_package(vulkan REQUIRED)
+    find_package(glfw3 CONFIG REQUIRED)
+    find_package(imgui CONFIG REQUIRED)
 else ()
     set(EMSCRIPTEN_LIB_DIR ${CMAKE_SOURCE_DIR}/vcpkg_installed/wasm32-emscripten/lib)
     set(EMSCRIPTEN_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/vcpkg_installed/wasm32-emscripten/include)   
@@ -70,11 +72,13 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 if(EMSCRIPTEN)
 	message("emscripten")
+
 	set(VCPKG_TARGET_ARCHITECTURE wasm32-emscripten)
 	set(CMAKE_TOOLCHAIN_FILE $ENV{EMSDK_HOME}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake)
-	set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
+	
+    set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
 
-	set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-sUSE_GLFW=3 -sFULL_ES3=1 -sWASM=1 -sUSE_SDL=2 -sUSE_SDL_MIXER=2 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sNO_DISABLE_EXCEPTION_CATCHING --preload-file shader")
+	#set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-sUSE_GLFW=3 -sFULL_ES3=1 -sWASM=1 -sUSE_SDL=2 -sUSE_SDL_MIXER=2 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sNO_DISABLE_EXCEPTION_CATCHING --preload-file shader")
 	
 	target_link_libraries(${PROJECT_NAME} PRIVATE ${EMSCRIPTEN_LIB_DIR})
     target_include_directories(${PROJECT_NAME} PRIVATE ${EMSCRIPTEN_INCLUDE_DIR})
@@ -86,8 +90,7 @@ else()
     target_link_libraries(${PROJECT_NAME} PRIVATE
         MiniMotor_compiler_flags
         sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML
-	OpenGL::GL
-        glad::glad
+        Vulkan::Vulkan
         glfw
     )
 endif()
@@ -104,6 +107,7 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE
     <iostream>
     <map>
     <memory>
+    <optional>
     <string>
     <thread>
     <variant>
@@ -113,8 +117,3 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE
     #====================================================
     "Sources/Core/Public/CoreMinimal.h"
 )
-
-#if($<OR:<$CONFIG:Debug>,$<CONFIG:RelWithDEbInfo>:$<CONFIG>>)
-#	target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG)
-#	target_compile_options(${PROJECT_NAME} PRIVATE DO_CHECK)
-#endif()

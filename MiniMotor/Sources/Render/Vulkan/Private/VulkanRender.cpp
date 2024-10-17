@@ -1,0 +1,249 @@
+// Copyright Shimmer Studios : All rights reserved.
+
+#include "VulkanRender.h"
+
+// This allow glfw to include it's requirement for vulkan
+#define GLFW_INCLUDE_VULKAN
+#include "GLFW/glfw3.h"
+
+
+namespace
+{
+	GLFWwindow* window = nullptr;
+	const uint32_t m_width = 800;
+	const uint32_t m_height = 600;
+
+	// A instance is a connection between the app and VulkLib
+	VkInstance instance{};
+
+	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+
+	VkDevice device{};
+
+	VkQueue graphicsQueue{};
+
+	struct QueueFamillyIndices
+	{
+		std::optional<uint32_t> graphicsFamilly;
+
+		uint32_t operator()() const
+		{
+			return graphicsFamilly.value();
+		}
+
+		operator bool() const
+		{
+			return graphicsFamilly.has_value();
+		}
+	};
+
+	void CreateInstance()
+	{
+		// Init with {} init list for the struct to be nullptr
+		VkApplicationInfo appInfo{};
+		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+		appInfo.pApplicationName = "Vulkan Test";
+		appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+		appInfo.pEngineName = "MiniMotor";
+		appInfo.engineVersion = VK_MAKE_VERSION(0, 1, 0);
+		appInfo.apiVersion = VK_API_VERSION_1_0;
+
+		VkInstanceCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+		createInfo.pApplicationInfo = &appInfo;
+
+		// @Detail - Begin : cuz vulkan is not win dependante it need to know the target win which was create by glfw for window in our case
+		uint32_t glfwExtensionCount = 0;
+		const char** glfwExtentions;
+
+		glfwExtentions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
+		createInfo.enabledExtensionCount = glfwExtensionCount;
+		createInfo.ppEnabledExtensionNames = glfwExtentions;
+		// @Detail - End : cuz vulkan is not win dependante it need to know the target win which was create by glfw for window in our case
+
+		createInfo.enabledLayerCount = 0;
+
+		//	Pointer to struct with creation info
+		//	Pointer to custom allocator callbacks, always nullptr in this tutorial
+		//	Pointer to the variable that stores the handle to the new object
+		if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS)
+		{
+			throw std::runtime_error("failed to create instance!");
+		}
+	}
+
+	QueueFamillyIndices FindQueueFamillies(const VkPhysicalDevice& device)
+	{
+		QueueFamillyIndices indices;
+
+		uint32_t queueFamilyCount = 0;
+
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+		for (int i = 0; i < queueFamilyCount; ++i)
+		{
+			if (queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+			{
+				indices.graphicsFamilly = i;
+				if (indices)
+					break;
+					
+			}
+		}
+
+		return indices;
+	}
+
+	bool isDeviceSuitable(const VkPhysicalDevice& device)
+	{
+		QueueFamillyIndices indices = FindQueueFamillies(device);
+
+		return indices;
+	}
+
+	// Cuz Vulk need to select manually a target device.
+	void PickPhysicalDevice()
+	{
+		uint32_t deviceCount = 0;
+
+		// First call to retrive the data size and check if there any.
+		vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+		if (deviceCount <= 0)
+		{
+			throw std::runtime_error("Bro go by a CG cause no display");
+		}
+
+		// Second call to create the vector data with the correct size so no need to resize at runtime.
+		std::vector<VkPhysicalDevice> devices(deviceCount);
+		vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+
+		for (const auto& device : devices)
+		{
+			if (isDeviceSuitable(device))
+			{
+				physicalDevice = device;
+				break;
+			}
+		}
+
+		if (physicalDevice == VK_NULL_HANDLE)
+		{
+			throw std::runtime_error("No suitable device found");
+		}
+	}
+
+	void CreateLogicalDevice()
+	{
+		QueueFamillyIndices indices = FindQueueFamillies(physicalDevice);
+
+		VkDeviceQueueCreateInfo queueCreateInfo{};
+		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queueCreateInfo.queueFamilyIndex = indices();
+		queueCreateInfo.queueCount = 1;
+
+		// Can assign priority btw 0.0 & 1.0
+		float queuePriority = 1.f;
+		queueCreateInfo.pQueuePriorities = &queuePriority;
+
+		// Todo : we will come back later...
+		VkPhysicalDeviceFeatures deviceFeatures{};
+
+		VkDeviceCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+
+		createInfo.pQueueCreateInfos = &queueCreateInfo;
+		createInfo.queueCreateInfoCount = 1;
+
+		createInfo.pEnabledFeatures = &deviceFeatures;
+
+		createInfo.enabledExtensionCount = 0;
+
+		createInfo.enabledLayerCount = 0;
+
+		if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS)
+		{
+			throw std::runtime_error("failed to create logical device");
+		}
+
+		// Retrive the queue
+		vkGetDeviceQueue(device, indices(), 0, &graphicsQueue);
+	}
+
+	void initVulkan()
+	{
+		CreateInstance();
+		// Here u can setup debug message and layer validation
+		PickPhysicalDevice();
+		CreateLogicalDevice();
+	}
+}
+
+void VulkanRender::Init()
+{
+	// initializes the GLFW library
+	glfwInit();
+
+	// Cuz it was create for openGl this tell to not create a openGLWin
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+
+	// Cuz Resize take a bit more work disable for now
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+	// This init the window the four parameter are for which monitor. Last only for openGl
+    window = glfwCreateWindow(m_width, m_height, "Vulkan window", nullptr, nullptr);
+
+	initVulkan();
+
+
+}
+
+void VulkanRender::Update()
+{
+	glfwPollEvents();
+}
+
+void VulkanRender::Draw()
+{
+}
+
+bool VulkanRender::IsWindowOpen() const
+{
+	return !glfwWindowShouldClose(window);
+}
+
+void VulkanRender::BufferFrame(const VertexArray2D& vertexArray)
+{
+}
+
+void VulkanRender::HandleEvents()
+{
+}
+
+void VulkanRender::ClearWindow()
+{
+}
+
+void VulkanRender::CloseWindow()
+{
+	vkDestroyDevice(device, nullptr);
+	vkDestroyInstance(instance, nullptr);
+
+	glfwDestroyWindow(window);
+	glfwTerminate();
+}
+
+void VulkanRender::DrawSlate(SContainer* slate)
+{
+}
+
+void VulkanRender::DrawLine(const FVec2& start, const FVec2& end, const FColor& color)
+{
+}
+
+void VulkanRender::DrawQuad(const FVec2& position, const FVec2& size, const FColor& color)
+{
+}
