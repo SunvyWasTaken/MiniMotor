@@ -3,8 +3,9 @@
 #include "ConsoleRender.h"
 
 #include "ECS/Entitys.h"
-
-#include <Windows.h>
+//
+//#define NOMINMAX
+//#include <Windows.h>
 
 void ConsoleRender::Init()
 {
@@ -21,10 +22,10 @@ void ConsoleRender::Draw() const
 	{
 		for (size_t x = 0; x < 80; ++x)
 		{
-			static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-			std::cout.flush();
-			COORD coord = { (SHORT)x, (SHORT)y };
-			SetConsoleCursorPosition(hOut, coord);
+			//static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+			//std::cout.flush();
+			//COORD coord = { (SHORT)x, (SHORT)y };
+			//SetConsoleCursorPosition(hOut, coord);
 
 			std::cout << (m_Image)[x * 80 + y];
 		}

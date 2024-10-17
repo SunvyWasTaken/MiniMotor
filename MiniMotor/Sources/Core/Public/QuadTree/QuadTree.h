@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-
 template <typename DataType, typename MetricType>
 class T2DQuadTree final
 {

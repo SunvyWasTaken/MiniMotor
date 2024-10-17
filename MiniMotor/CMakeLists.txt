@@ -98,17 +98,18 @@ endif()
 
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE
+    <algorithm>
     <array>
     <atomic>
     <chrono>
     <cmath>
+    <cstdint>
     <functional>
-    <intrin.h>
     <iostream>
+    <limits>
     <map>
     <memory>
     <optional>
-    <set>
     <string>
     <thread>
     <variant>
@@ -118,3 +119,5 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE
     #====================================================
     "Sources/Core/Public/CoreMinimal.h"
 )
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)

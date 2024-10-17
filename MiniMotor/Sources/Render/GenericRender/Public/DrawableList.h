@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-
 #include "Geometry/Quad2D.h"
 #include "Geometry/VertexArray2D.h"
 

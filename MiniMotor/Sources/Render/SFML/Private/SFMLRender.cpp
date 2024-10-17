@@ -1,6 +1,5 @@
 // Copyright Shimmer Studios : All rights reserved.
 
-#include "CoreMinimal.h"
 #include "ECS/Entitys.h"
 #include "SFMLRender.h"
 #include "Utils/StateMachine.h"

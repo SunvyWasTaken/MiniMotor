@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "GenericRender.h"
 #include "ECS/Components/TagComponent.h"
 #include "ECS/Components/RendableComponent.h"
