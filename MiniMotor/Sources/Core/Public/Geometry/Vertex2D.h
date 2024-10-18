@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-
 template <typename T>
 struct MM_API Vertex2D
 {
