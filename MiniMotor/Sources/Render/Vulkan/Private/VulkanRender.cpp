@@ -52,7 +52,7 @@ namespace
 	{
 	public:
 		template <typename IndiceType>
-		const QueueType& GetIndice() const
+		const QueueType& Get() const
 		{
 			static_assert(IsTypeInList<IndiceType, QueueFamily>::value, "Indice type isn't in the list");
 			return Indices[GetTypelistIndex<IndiceType, QueueFamily>::value].value();
@@ -95,7 +95,7 @@ namespace
 
 	struct SwapChainSupportDetails
 	{
-		VkSurfaceCapabilitiesKHR capabilities;
+		VkSurfaceCapabilitiesKHR capabilities{};
 		std::vector<VkSurfaceFormatKHR> formats;
 		std::vector<VkPresentModeKHR> presentModes;
 	};
@@ -362,8 +362,55 @@ namespace
 		}
 
 		// Retrive the queue
-		vkGetDeviceQueue(device, indices.GetIndice<PresentFamily>(), 0, &presentQueue);
-		vkGetDeviceQueue(device, indices.GetIndice<GraphicFamily>(), 0, &graphicsQueue);
+		vkGetDeviceQueue(device, indices.Get<PresentFamily>(), 0, &presentQueue);
+		vkGetDeviceQueue(device, indices.Get<GraphicFamily>(), 0, &graphicsQueue);
+	}
+
+	void CreateSwapChain()
+	{
+		SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(physicalDevice);
+
+		VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(swapChainSupport.formats);
+		VkPresentModeKHR presentMode = ChoosePresentMode(swapChainSupport.presentModes);
+		VkExtent2D extent = ChooseSwapExtent(swapChainSupport.capabilities);
+
+		uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
+
+		if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount)
+		{
+			imageCount = swapChainSupport.capabilities.maxImageCount;
+		}
+
+		VkSwapchainCreateInfoKHR createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+		createInfo.surface = surface;
+
+		createInfo.minImageCount = imageCount;
+		createInfo.imageFormat = surfaceFormat.format;
+		createInfo.imageColorSpace = surfaceFormat.colorSpace;
+		createInfo.imageExtent = extent;
+		createInfo.imageArrayLayers = 1;
+		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+		QueueFamillyIndices indices = FindQueueFamillies(physicalDevice);
+		uint32_t queueFamilyIndices[] = {indices.Get<GraphicFamily>(), indices.Get<PresentFamily>()};
+
+		if (indices.Get<GraphicFamily>() != indices.Get<PresentFamily>())
+		{
+			createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+			createInfo.queueFamilyIndexCount = 2;
+			createInfo.pQueueFamilyIndices = queueFamilyIndices;
+		}
+		else
+		{
+			createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+			createInfo.queueFamilyIndexCount = 0;
+			createInfo.pQueueFamilyIndices = nullptr;
+		}
+
+		createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
+		// Todo : next step here.
+
 	}
 
 	void initVulkan()
@@ -373,6 +420,7 @@ namespace
 		CreateSurface();
 		PickPhysicalDevice();
 		CreateLogicalDevice();
+		CreateSwapChain();
 	}
 }
 
