@@ -2,7 +2,7 @@ project(MiniMotor VERSION 0.1)
 
 configure_file(Config.h.in Config.h)
 
-file(GLOB_RECURSE SOURCES "*.h" "*.cpp" "*.txt")
+file(GLOB_RECURSE SOURCES "*.h" "*.cpp" "*.txt" "*.vert" "*.frag")
 
 # Macro to group files in the IDE
 macro(GroupSources curdir)
@@ -105,6 +105,7 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE
     <cmath>
     <cstdint>
     <functional>
+    <fstream>
     <iostream>
     <limits>
     <map>
@@ -121,3 +122,4 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
+target_compile_definitions(${PROJECT_NAME} PRIVATE WIN32_LEAN_AND_MEAN)

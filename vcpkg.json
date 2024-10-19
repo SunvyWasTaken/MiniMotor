@@ -11,6 +11,10 @@
 		{
 			"name": "imgui-sfml",
 			"platform": "(!android) & (!emscripten)"
+		},
+		{
+			"name": "shaderc",
+			"platform": "windows"
 		}
   	]
 }

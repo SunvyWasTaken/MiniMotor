@@ -3,9 +3,6 @@
 #include "ConsoleRender.h"
 
 #include "ECS/Entitys.h"
-//
-//#define NOMINMAX
-//#include <Windows.h>
 
 void ConsoleRender::Init()
 {
