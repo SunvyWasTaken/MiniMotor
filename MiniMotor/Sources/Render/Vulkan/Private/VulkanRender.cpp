@@ -517,7 +517,7 @@ namespace
 
 		// ok indicate which module it is and the entry point. can combine multiple shader in one file with multi entrypoint
 		vertShaderStageInfo.module = vertShaderModule;
-		vertShaderModule.pName = "main";
+		vertShaderStageInfo.pName = "main";
 
 		VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
 		fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -527,7 +527,7 @@ namespace
 
 		VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
-		std::vector<SDynamicState> dynamicStates = {
+		std::vector<VkDynamicState> dynamicStates = {
 			VK_DYNAMIC_STATE_VIEWPORT,
 			VK_DYNAMIC_STATE_SCISSOR
 		};
@@ -541,9 +541,9 @@ namespace
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		vertexInputInfo.vertexBindingDescriptionCount = 0;
-		vertexInputInfo.pVertexBindingDescription = nullptr;
+		vertexInputInfo.pVertexBindingDescriptions = nullptr;
 		vertexInputInfo.vertexAttributeDescriptionCount = 0;
-		vertexInputInfo.pVertexAttributionDescriptions = nullptr;
+		vertexInputInfo.pVertexAttributeDescriptions = nullptr;
 
 		VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
 		inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -556,10 +556,13 @@ namespace
 		viewport.width = (float)swapChainExtent.width;
 		viewport.height = (float)swapChainExtent.height;
 		viewport.minDepth = 0.0f;
-		viewport.MaxDepth = 1.0f;
+		viewport.maxDepth = 1.0f;
 
 		VkRect2D scissor{};
-		scissor.offset = {0; 0};
+		scissor.offset = {0, 0};
+
+
+
 
 		vkDestroyShaderModule(device, fragShaderModule, nullptr);
 		vkDestroyShaderModule(device, vertShaderModule, nullptr);
