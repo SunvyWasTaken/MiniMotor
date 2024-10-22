@@ -97,7 +97,7 @@ int main()
 
 	for (size_t i = 0; i < 10000; ++i)
 	{
-		Boids* boid = world->SpawnEntity<Boids>(TEXT("Boids{}", i));
+		Boids* boid = world->SpawnEntity<Boids>(TO_TEXT("Boids{}", i));
 	}
 
 	app->Run();

@@ -45,3 +45,5 @@ struct MM_API Debug
 #else // DO_CHECK
 	#define CHECK_PERF(func) func;
 #endif // DO_CHECK
+
+#define LOG(txt) std::cout << txt << std::endl;

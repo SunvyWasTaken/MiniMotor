@@ -10,7 +10,7 @@
 	#define PLATEFORM_BREAK __asm__("int $3");
 #endif
 
-#define TEXT(txt, ...) std::format(txt, ##__VA_ARGS__)
+#define TO_TEXT(txt, ...) std::format(txt, ##__VA_ARGS__)
 
 #define SQUARECOORD(nbrStart, NbrEnd) TextureCoord{IVec2{nbrStart, nbrStart}, {NbrEnd, nbrStart}, {NbrEnd, NbrEnd}, {nbrStart, NbrEnd}}
 
