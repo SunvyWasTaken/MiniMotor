@@ -44,6 +44,16 @@ namespace
 	// A instance is a connection between the app and VulkLib
 	VkInstance instance;
 
+	const std::vector<const char*> validationLayers = {
+		"VK_LAYER_KHRONOS_validation"
+	};
+
+#ifndef NDEBUG
+	const bool enableValidationLayers = true;
+#else
+	const bool enableValidationLayers = false;
+#endif // !NDEBUG
+
 	VkSurfaceKHR surface;
 
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
@@ -141,6 +151,32 @@ namespace
 		std::vector<VkPresentModeKHR> presentModes;
 	};
 
+	bool CheckValidationLayerSupport()
+	{
+		uint32_t layerCount;
+		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+		std::vector<VkLayerProperties> availableLayers(layerCount);
+		vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+
+		for (const char* layerName : validationLayers) {
+			bool layerFound = false;
+
+			for (const auto& layerProperties : availableLayers) {
+				if (strcmp(layerName, layerProperties.layerName) == 0) {
+					layerFound = true;
+					break;
+				}
+			}
+
+			if (!layerFound) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	// Populate the swapchain struct
 	SwapChainSupportDetails QuerySwapChainSupport(const VkPhysicalDevice& device)
 	{
@@ -227,9 +263,16 @@ namespace
 		return buffer;
 	}
 
+
 	// Create the instance of the vulkan
 	void CreateInstance()
 	{
+		
+		if (enableValidationLayers && !CheckValidationLayerSupport())
+		{
+			throw std::runtime_error("validation layers requested, but not available!");
+		}
+
 		// Init with {} init list for the struct to be nullptr
 		VkApplicationInfo appInfo{};
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -253,7 +296,15 @@ namespace
 		createInfo.ppEnabledExtensionNames = glfwExtentions;
 		// @Detail - End : cuz vulkan is not win dependante it need to know the target win which was create by glfw for window in our case
 
-		createInfo.enabledLayerCount = 0;
+		if (enableValidationLayers)
+		{
+			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+			createInfo.ppEnabledLayerNames = validationLayers.data();
+		}
+		else 
+		{
+			createInfo.enabledLayerCount = 0;
+		}
 
 		//	Pointer to struct with creation info
 		//	Pointer to custom allocator callbacks, always nullptr in this tutorial
@@ -651,7 +702,6 @@ namespace
 		pipelineInfo.renderPass = renderPass;
 		pipelineInfo.subpass = 0;
 
-		VkPipeline graphicsPipeline;
 		if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create graphics pipeline!");
 		}
@@ -755,7 +805,7 @@ namespace
 		}
 	}
 
-	void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
+	void RecordCommandBuffer(const VkCommandBuffer& commandBuffer, uint32_t imageIndex)
 	{
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
