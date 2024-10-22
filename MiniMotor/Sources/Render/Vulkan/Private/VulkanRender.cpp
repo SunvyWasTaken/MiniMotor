@@ -344,24 +344,27 @@ namespace
 		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
 		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
-		for (int i = 0; i < queueFamilyCount; ++i)
-		{
-			VkBool32 presentSupport = false;
-			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
-			if (presentSupport)
-			{
-				indices.SetIndice<PresentFamily>(i);
-			}
+		//for (int i = 0; i < queueFamilyCount; ++i)
+		//{
+		//	VkBool32 presentSupport = false;
+		//	vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+		//	if (presentSupport)
+		//	{
+		//		indices.SetIndice<PresentFamily>(i);
+		//	}
 
-			if (queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
-			{
-				indices.SetIndice<GraphicFamily>(i);
-			}
+		//	if (queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+		//	{
+		//		indices.SetIndice<GraphicFamily>(i);
+		//	}
 
-			// Break the search
-			if (indices)
-				break;
-		}
+		//	// Break the search
+		//	if (indices)
+		//		break;
+		//}
+
+		indices.SetIndice<PresentFamily>(1);
+		indices.SetIndice<GraphicFamily>(0);
 
 		return indices;
 	}
@@ -450,6 +453,7 @@ namespace
 		{
 			VkDeviceQueueCreateInfo queueCreateInfo{};
 			queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			// Todo : Le Problème vient d'ici comme ils ont les mm index il arrive pas à bien les crée.
 			queueCreateInfo.queueFamilyIndex = queueFamily.value();
 			queueCreateInfo.queueCount = 1;
 			queueCreateInfo.pQueuePriorities = &queuePriority;
