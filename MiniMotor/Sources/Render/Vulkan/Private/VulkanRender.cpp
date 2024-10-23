@@ -344,27 +344,28 @@ namespace
 		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
 		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
-		//for (int i = 0; i < queueFamilyCount; ++i)
-		//{
-		//	VkBool32 presentSupport = false;
-		//	vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
-		//	if (presentSupport)
-		//	{
-		//		indices.SetIndice<PresentFamily>(i);
-		//	}
+		// Todo : dirty fixe
+		for (int i = 0; i < queueFamilyCount; ++i)
+		{
+			VkBool32 presentSupport = false;
+			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+			if (presentSupport)
+			{
+				indices.SetIndice<PresentFamily>(i);
+			}
 
-		//	if (queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
-		//	{
-		//		indices.SetIndice<GraphicFamily>(i);
-		//	}
+			if (queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+			{
+				indices.SetIndice<GraphicFamily>(i);
+			}
 
-		//	// Break the search
-		//	if (indices)
-		//		break;
-		//}
+			// Break the search
+			if (indices)
+				break;
+		}
 
-		indices.SetIndice<PresentFamily>(1);
-		indices.SetIndice<GraphicFamily>(0);
+		//indices.SetIndice<PresentFamily>(0);
+		//indices.SetIndice<GraphicFamily>(0);
 
 		return indices;
 	}
@@ -404,7 +405,10 @@ namespace
 			swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
 		}
 
-		return indices && extentionSupported && swapChainAdequate;
+		//VkPhysicalDeviceProperties deviceProperties;
+		//vkGetPhysicalDeviceProperties(device, &deviceProperties);
+
+		return indices && extentionSupported && swapChainAdequate/* && deviceProperties.deviceType != VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU*/;
 	}
 
 	// Cuz Vulk need to select manually a target device.
