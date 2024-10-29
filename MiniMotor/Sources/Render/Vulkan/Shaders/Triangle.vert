@@ -1,5 +1,9 @@
 #version 450
 
+out gl_PerVertex {
+    vec4 gl_Position;
+};
+
 layout(location = 0) out vec3 fragColor;
 
 vec2 positions[3] = vec2[](
