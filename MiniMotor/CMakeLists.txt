@@ -96,6 +96,7 @@ else()
         glfw
         glm::glm-header-only
         ${Stb_INCLUDE_DIR}
+        imgui::imgui
     )
 endif()
 

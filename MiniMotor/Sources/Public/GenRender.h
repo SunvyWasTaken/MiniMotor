@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "AllDefine.h"
+
 #ifdef USE_SFML
 	#include "SFMLRender.h"
 	using CurrentRender = SFMLRender;
