@@ -11,12 +11,10 @@
 #include <imgui-SFML.h>
 
 #include <iostream>
-
+#ifdef USE_SFML
 // This is a private
 namespace
 {
-	std::unique_ptr<sf::RenderWindow> Window;
-
 	sf::Font font;
 
 	sf::Clock DeltaClock;
@@ -34,6 +32,8 @@ namespace
 	using MTextures = std::map<std::string, sf::Texture>;
 
 	MTextures textures;
+
+	std::unique_ptr<sf::RenderWindow> Window;
 
 	sf::Texture* GetTextures(const std::string& filename)
 	{
@@ -319,3 +319,4 @@ void SFMLRender::DrawQuad(const FVec2& position, const FVec2& size, const FColor
 	rectangle.setPosition((float)position.x, (float)position.y);
 	Window->draw(rectangle);
 }
+#endif // USE_SFML

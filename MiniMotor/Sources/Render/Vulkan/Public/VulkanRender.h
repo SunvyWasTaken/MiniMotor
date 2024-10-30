@@ -1,7 +1,7 @@
 // Copyright Shimmer Studios : All rights reserved.
 
 #include "GenericRender.h"
-
+#ifdef USE_VULKAN
 class MM_EXPORT VulkanRender : public GenericRender<VulkanRender>
 {
 public:
@@ -28,3 +28,4 @@ public:
 
 	void DrawQuad(const FVec2& position, const FVec2& size, const FColor& color);
 };
+#endif

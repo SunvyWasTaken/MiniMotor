@@ -121,6 +121,7 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE
     #Need to be last cause they need the standard library
     #====================================================
     "Sources/Core/Public/CoreMinimal.h"
+    "Sources/Public/AllDefine.h"
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
