@@ -290,14 +290,28 @@ namespace
 	/************************************************************************/
 
 	const char* AppName = "Vulkan Test";
+
 	const char* EngineName = "MiniMotor";
 
 	GLFWwindow* window = nullptr;
 	const uint32_t m_width = 800;
 	const uint32_t m_height = 600;
 
+	const int MAX_FRAMES_IN_FLIGHT = 2;
+
 	// A instance is a connection between the app and VulkLib
 	VkInstance m_instance;
+
+	const std::vector<const char*> m_validationLayers = {
+	"VK_LAYER_KHRONOS_validation"
+	};
+
+#ifndef NDEBUG
+	constexpr bool enableValidationLayers = true;
+#else
+	constexpr bool enableValidationLayers = false;
+#endif // !NDEBUG
+
 
 	// It's the device on the computer
 	VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
@@ -340,13 +354,48 @@ namespace
 
 	std::vector<VkCommandBuffer> m_commandBuffers;
 
-	VkSemaphore m_imageAvailableSemaphore;
+	std::vector<VkSemaphore> m_imageAvailableSemaphore;
 
-	VkSemaphore m_renderFinishedSemaphore;
+	std::vector<VkSemaphore> m_renderFinishedSemaphore;
+
+	std::vector<VkFence> m_inFlightFences;
+
+	// Liste des images qui sont en vol pour évité de passer dessus
+	std::vector<VkFence> m_imageInFlight;
+
+	size_t m_currentFrame = 0;
+
+	// Check si il y a un redimensionnement
+	bool m_framebufferResized = false;
 
 	/************************************************************************/
 	/* FuncUtils															*/
 	/************************************************************************/
+
+	bool CheckValidationLayerSupport()
+	{
+		uint32_t layerCount;
+		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+		std::vector<VkLayerProperties> availableLayers(layerCount);
+		vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+
+		for (const char* layerName : m_validationLayers)
+		{
+			bool layerFound = false;
+			for (const auto& layerProperties : availableLayers) {
+				if (strcmp(layerName, layerProperties.layerName) == 0) {
+					layerFound = true;
+					break;
+				}
+			}
+			if (!layerFound) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 
 	QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device)
 	{
@@ -475,11 +524,16 @@ namespace
 
 	VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
 	{
-		if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
+		if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
+		{
 			return capabilities.currentExtent;
 		}
-		else {
-			VkExtent2D actualExtent = { m_width, m_height };
+		else
+		{
+			int width, height;
+			glfwGetFramebufferSize(window, &width, &height);
+
+			VkExtent2D actualExtent = { static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
 
 			actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
 			actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
@@ -524,13 +578,18 @@ namespace
 	}
 
 	/************************************************************************/
-	/* Functions															*/
+	/* InitFunctions														*/
 	/************************************************************************/
 
 	// Create a vulkan instance
 	// Step : Instance
 	void CreateInstance()
 	{
+		if (enableValidationLayers && !CheckValidationLayerSupport())
+		{
+			throw std::runtime_error("les validations layers sont activées mais ne sont pas disponibles!");
+		}
+
 		VkApplicationInfo appInfo{};
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 		appInfo.pApplicationName = AppName;
@@ -563,7 +622,14 @@ namespace
 		}
 		#endif // !NDEBUG
 
-		createInfo.enabledLayerCount = 0;
+		if (enableValidationLayers)
+		{
+			createInfo.enabledLayerCount = static_cast<uint32_t>(m_validationLayers.size());
+			createInfo.ppEnabledLayerNames = m_validationLayers.data();
+		}
+		else {
+			createInfo.enabledLayerCount = 0;
+		}
 
 		CREATE_INSTANCE(vkCreateInstance(&createInfo, nullptr, &m_instance), "Création de l'instance failed", "Instance creation success")
 	}
@@ -932,7 +998,8 @@ namespace
 		CREATE_INSTANCE(vkCreateRenderPass(m_device, &renderPassInfo, nullptr, &m_renderPass), "Render passe failed", "Render pass creation success");
 	}
 
-	void CreateFrameBuffer()
+	// Step : Frame buffer
+	void CreateFrameBuffers()
 	{
 		m_swapChainFramebuffers.resize(m_swapchainImageViews.size());
 
@@ -956,6 +1023,7 @@ namespace
 		}
 	}
 
+	// Step Command Buffer
 	void CreateCommandPool()
 	{
 		QueueFamilyIndices queueFamilyIndices = FindQueueFamilies(m_physicalDevice);
@@ -968,7 +1036,7 @@ namespace
 		CREATE_INSTANCE(vkCreateCommandPool(m_device, &poolInfo, nullptr, &m_commandPool), "CommandPool creation failed", "CommandPool creation success")
 	}
 
-	void CreatCommandBuffers()
+	void CreateCommandBuffers()
 	{
 		m_commandBuffers.resize(m_swapChainFramebuffers.size());
 		VkCommandBufferAllocateInfo allocInfo{};
@@ -1017,15 +1085,28 @@ namespace
 		}
 	}
 
-	void CreateSemaphores()
+	void CreateSyncObjects()
 	{
+		m_imageAvailableSemaphore.resize(MAX_FRAMES_IN_FLIGHT);
+		m_renderFinishedSemaphore.resize(MAX_FRAMES_IN_FLIGHT);
+		m_inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
+		m_imageInFlight.resize(m_swapChainImages.size(), VK_NULL_HANDLE);
+
 		VkSemaphoreCreateInfo semaphoreInfo{};
 		semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-		if (vkCreateSemaphore(m_device, &semaphoreInfo, nullptr, &m_imageAvailableSemaphore) != VK_SUCCESS ||
-			vkCreateSemaphore(m_device, &semaphoreInfo, nullptr, &m_renderFinishedSemaphore) != VK_SUCCESS) {
+		VkFenceCreateInfo fenceInfo{};
+		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-			throw std::runtime_error("échec de la création des sémaphores!");
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
+		{
+			if (vkCreateSemaphore(m_device, &semaphoreInfo, nullptr, &m_imageAvailableSemaphore[i]) != VK_SUCCESS ||
+				vkCreateSemaphore(m_device, &semaphoreInfo, nullptr, &m_renderFinishedSemaphore[i]) != VK_SUCCESS ||
+				vkCreateFence(m_device, &fenceInfo, nullptr, &m_inFlightFences[i]) != VK_SUCCESS)
+			{
+				throw std::runtime_error("échec de la création des sémaphores!");
+			}
 		}
 	}
 
@@ -1040,11 +1121,64 @@ namespace
 		CreateImageViews();
 		CreateRenderPass();
 		CreateGraphicsPipeline();
-		CreateFrameBuffer();
+		CreateFrameBuffers();
 		CreateCommandPool();
-		CreatCommandBuffers();
-		CreateSemaphores();
+		CreateCommandBuffers();
+		CreateSyncObjects();
 	}
+
+	/************************************************************************/
+	/* Functions															*/
+	/************************************************************************/
+
+	void CleanUpSwapchain()
+	{
+		for (auto framebuffer : m_swapChainFramebuffers)
+		{
+			vkDestroyFramebuffer(m_device, framebuffer, nullptr);
+		}
+
+		vkFreeCommandBuffers(m_device, m_commandPool, static_cast<uint32_t>(m_commandBuffers.size()), m_commandBuffers.data());
+
+		vkDestroyPipeline(m_device, m_graphicsPipeline, nullptr);
+		vkDestroyPipelineLayout(m_device, m_pipelineLayout, nullptr);
+		vkDestroyRenderPass(m_device, m_renderPass, nullptr);
+
+		for (auto imageView : m_swapchainImageViews)
+		{
+			vkDestroyImageView(m_device, imageView, nullptr);
+		}
+		vkDestroySwapchainKHR(m_device, m_swapChain, nullptr);
+	}
+
+	void RecreateSwapchain()
+	{
+		int width = 0, height = 0;
+		glfwGetFramebufferSize(window, &width, &height);
+		while (width == 0 || height == 0)
+		{
+			glfwGetFramebufferSize(window, &width, &height);
+			glfwWaitEvents();
+		}
+
+		vkDeviceWaitIdle(m_device);
+
+		CleanUpSwapchain();
+
+		CreateSwapchain();
+		CreateImageViews();
+		CreateRenderPass();
+		CreateGraphicsPipeline();
+		CreateFrameBuffers();
+		CreateCommandBuffers();
+	}
+
+	// Function call when the window is resized
+	void FramebufferResizeCallback(GLFWwindow* window, int width, int height)
+	{
+		m_framebufferResized = true;
+	}
+
 }
 
 void VulkanRender::Init()
@@ -1055,11 +1189,9 @@ void VulkanRender::Init()
 	// Cuz it was create for openGl this tell to not create a openGLWin
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-	// Cuz Resize take a bit more work disable for now
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
 	// This init the window the four parameter are for which monitor. Last only for openGl
     window = glfwCreateWindow(m_width, m_height, AppName, nullptr, nullptr);
+	glfwSetFramebufferSizeCallback(window, FramebufferResizeCallback);
 
 	initVulkan();
 }
@@ -1072,12 +1204,28 @@ void VulkanRender::Update()
 void VulkanRender::Draw()
 {
 	uint32_t imageIndex;
-	vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, m_imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+	VkResult result = vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, m_imageAvailableSemaphore[m_currentFrame], VK_NULL_HANDLE, &imageIndex);
+
+	if (result == VK_ERROR_OUT_OF_DATE_KHR)
+	{
+		RecreateSwapchain();
+		return;
+	}
+	else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
+	{
+		throw std::runtime_error("swapchain presentation failed!");
+	}
+
+	if (m_imageInFlight[imageIndex] != VK_NULL_HANDLE) {
+		vkWaitForFences(m_device, 1, &m_imageInFlight[imageIndex], VK_TRUE, UINT64_MAX);
+	}
+	// Marque l'image comme étant à nouveau utilisée par cette frame
+	m_imageInFlight[imageIndex] = m_inFlightFences[m_currentFrame];
 
 	VkSubmitInfo submitInfo{};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-	VkSemaphore waitSemaphores[] = { m_imageAvailableSemaphore };
+	VkSemaphore waitSemaphores[] = { m_imageAvailableSemaphore[m_currentFrame] };
 	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	submitInfo.waitSemaphoreCount = 1;
 	submitInfo.pWaitSemaphores = waitSemaphores;
@@ -1086,11 +1234,14 @@ void VulkanRender::Draw()
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &m_commandBuffers[imageIndex];
 
-	VkSemaphore signalSemaphores[] = { m_renderFinishedSemaphore };
+	VkSemaphore signalSemaphores[] = { m_renderFinishedSemaphore[m_currentFrame] };
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = signalSemaphores;
 
-	if (vkQueueSubmit(m_graphicQueue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS) {
+	vkResetFences(m_device, 1, &m_inFlightFences[m_currentFrame]);
+
+	if (vkQueueSubmit(m_graphicQueue, 1, &submitInfo, m_inFlightFences[m_currentFrame]) != VK_SUCCESS)
+	{
 		throw std::runtime_error("échec de l'envoi d'un command buffer!");
 	}
 
@@ -1107,7 +1258,19 @@ void VulkanRender::Draw()
 
 	presentInfo.pResults = nullptr; // Optionnel
 
-	vkQueuePresentKHR(m_presentQueue, &presentInfo);
+	result = vkQueuePresentKHR(m_presentQueue, &presentInfo);
+
+	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_framebufferResized)
+	{
+		m_framebufferResized = false;
+		RecreateSwapchain();
+	}
+	else if (result != VK_SUCCESS)
+	{
+		throw std::runtime_error("échec de la présentation d'une image!");
+	}
+
+	m_currentFrame = (m_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
 bool VulkanRender::IsWindowOpen() const
@@ -1129,26 +1292,16 @@ void VulkanRender::ClearWindow()
 
 void VulkanRender::CloseWindow()
 {
-	vkDestroySemaphore(m_device, m_renderFinishedSemaphore, nullptr);
-	vkDestroySemaphore(m_device, m_imageAvailableSemaphore, nullptr);
-
-	vkDestroyCommandPool(m_device, m_commandPool, nullptr);
-
-	for (auto framebuffer : m_swapChainFramebuffers) {
-		vkDestroyFramebuffer(m_device, framebuffer, nullptr);
-	}
-	vkDestroyPipeline(m_device, m_graphicsPipeline, nullptr);
-	vkDestroyPipelineLayout(m_device, m_pipelineLayout, nullptr);
-	vkDestroyRenderPass(m_device, m_renderPass, nullptr);
-
-	for (auto imageView : m_swapchainImageViews)
+	vkDeviceWaitIdle(m_device);
+	CleanUpSwapchain();
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
 	{
-		vkDestroyImageView(m_device, imageView, nullptr);
+		vkDestroySemaphore(m_device, m_renderFinishedSemaphore[i], nullptr);
+		vkDestroySemaphore(m_device, m_imageAvailableSemaphore[i], nullptr);
+		vkDestroyFence(m_device, m_inFlightFences[i], nullptr);
 	}
-	vkDestroySwapchainKHR(m_device, m_swapChain, nullptr);
-
+	vkDestroyCommandPool(m_device, m_commandPool, nullptr);
 	vkDestroyDevice(m_device, nullptr);
-
 	vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
 	vkDestroyInstance(m_instance, nullptr);
 
