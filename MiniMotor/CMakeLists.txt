@@ -32,6 +32,7 @@ if (NOT EMSCRIPTEN)
     find_package(vulkan REQUIRED)
     find_package(glfw3 CONFIG REQUIRED)
     find_package(imgui CONFIG REQUIRED)
+    find_package(glm CONFIG REQUIRED)
 else ()
     set(EMSCRIPTEN_LIB_DIR ${CMAKE_SOURCE_DIR}/vcpkg_installed/wasm32-emscripten/lib)
     set(EMSCRIPTEN_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/vcpkg_installed/wasm32-emscripten/include)   
@@ -92,10 +93,9 @@ else()
         sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML
         Vulkan::Vulkan
         glfw
+        glm::glm-header-only
     )
 endif()
-
-
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE
     <algorithm>
@@ -123,3 +123,13 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
 target_compile_definitions(${PROJECT_NAME} PRIVATE WIN32_LEAN_AND_MEAN)
+
+#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#	COMMAND ${CMAKE_COMMAND} -E copy_directory
+#	${CMAKE_SOURCE_DIR}/Ressources $<TARGET_FILE_DIR:${PROJECT_NAME}>/Ressources
+#)
+#
+#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#	COMMAND ${CMAKE_COMMAND} -E copy_directory
+#	${CMAKE_SOURCE_DIR}/Shaders $<TARGET_FILE_DIR:${PROJECT_NAME}>/Shaders
+#)

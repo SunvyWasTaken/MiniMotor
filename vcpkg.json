@@ -4,6 +4,7 @@
    		"entt",
 		"vulkan",
 		"imgui",
+		"glm",
 		{
 			"name": "glfw3",
 			"platform": "(!android) & (!emscripten)"
