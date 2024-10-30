@@ -5,6 +5,7 @@
 		"vulkan",
 		"imgui",
 		"glm",
+		"stb",
 		{
 			"name": "glfw3",
 			"platform": "(!android) & (!emscripten)"

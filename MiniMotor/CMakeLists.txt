@@ -33,6 +33,7 @@ if (NOT EMSCRIPTEN)
     find_package(glfw3 CONFIG REQUIRED)
     find_package(imgui CONFIG REQUIRED)
     find_package(glm CONFIG REQUIRED)
+    find_package(Stb REQUIRED)
 else ()
     set(EMSCRIPTEN_LIB_DIR ${CMAKE_SOURCE_DIR}/vcpkg_installed/wasm32-emscripten/lib)
     set(EMSCRIPTEN_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/vcpkg_installed/wasm32-emscripten/include)   
@@ -94,6 +95,7 @@ else()
         Vulkan::Vulkan
         glfw
         glm::glm-header-only
+        ${Stb_INCLUDE_DIR}
     )
 endif()
 
