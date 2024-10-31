@@ -3,6 +3,7 @@
 #include "VulkanRender.h"
 #include "Geometry/Vertex2D.h"
 
+#ifdef USE_VULKAN
 // This allow glfw to include it's requirement for vulkan
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -14,7 +15,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#define CREATE_INSTANCE(func, error, success) if (func != VK_SUCCESS) { throw std::runtime_error(error); }
+#define CREATE_INSTANCE(func, error, success) if (func != VK_SUCCESS) { throw std::runtime_error(error); } else { LOG(success); }
 
 #ifndef NDEBUG
 const char* vulkanFormat[]{
@@ -212,7 +213,6 @@ const char* vulkanPresMode[]{
 	"VK_PRESENT_MODE_FIFO_RELAXED_KHR"
 };
 #endif // !NDEBUG
-#ifdef USE_VULKAN
 namespace
 {
 	/************************************************************************/
@@ -1393,7 +1393,6 @@ namespace
 			vkCmdBindIndexBuffer(m_commandBuffers[i], m_indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
 			vkCmdBindDescriptorSets(m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineLayout, 0, 1, &m_descriptorSets[i], 0, nullptr);
-			vkCmdDrawIndexed(m_commandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 
 			vkCmdDrawIndexed(m_commandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 
@@ -1704,7 +1703,6 @@ namespace
 			vkFreeMemory(m_device, m_uniformBuffersMemory[i], nullptr);
 		}
 		vkDestroyDescriptorPool(m_device, m_descriptorPool, nullptr);
-		vkDestroyDescriptorSetLayout(m_device, m_descriptorSetLayout, nullptr);
 		vkDestroyPipeline(m_device, m_graphicsPipeline, nullptr);
 		vkDestroyPipelineLayout(m_device, m_pipelineLayout, nullptr);
 		vkDestroyRenderPass(m_device, m_renderPass, nullptr);
@@ -1737,6 +1735,7 @@ namespace
 		CreateFrameBuffers();
 		CreateUniformBuffers();
 		CreateDescriptorPool();
+		CreateDesciptorSets();
 		CreateCommandBuffers();
 	}
 
@@ -1763,12 +1762,20 @@ namespace
 		vkUnmapMemory(m_device, m_uniformBuffersMemory[currentImage]);
 	}
 
+	/************************************************************************/
+	/* ImGui																*/
+	/************************************************************************/
 }
 
 void VulkanRender::Init()
 {
 	// initializes the GLFW library
 	glfwInit();
+
+	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+	//glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
 	// Cuz it was create for openGl this tell to not create a openGLWin
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -1881,6 +1888,8 @@ void VulkanRender::CloseWindow()
 	vkDeviceWaitIdle(m_device);
 
 	CleanUpSwapchain();
+
+	vkDestroyDescriptorSetLayout(m_device, m_descriptorSetLayout, nullptr);
 
 	vkDestroySampler(m_device, m_textureSampler, nullptr);
 	vkDestroyImageView(m_device, m_textureImageView, nullptr);

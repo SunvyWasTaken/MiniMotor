@@ -15,6 +15,12 @@
 // This is a private
 namespace
 {
+	
+	const uint32_t m_width = 800;
+	const uint32_t m_height = 600;
+
+	std::unique_ptr<sf::RenderWindow> Window;
+
 	sf::Font font;
 
 	sf::Clock DeltaClock;
@@ -32,8 +38,6 @@ namespace
 	using MTextures = std::map<std::string, sf::Texture>;
 
 	MTextures textures;
-
-	std::unique_ptr<sf::RenderWindow> Window;
 
 	sf::Texture* GetTextures(const std::string& filename)
 	{
@@ -153,7 +157,7 @@ namespace
 
 void SFMLRender::Init()
 {
-	Window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style::Fullscreen);
+	Window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style::Close | sf::Style::Titlebar);
 	ensure(Window);
 	Window->setFramerateLimit(0);
 	Window->setVerticalSyncEnabled(false);
@@ -284,7 +288,9 @@ void SFMLRender::ClearWindow()
 
 void SFMLRender::CloseWindow()
 {
+	textures.clear();
 	Window->close();
+	Window.reset(nullptr);
 	ImGui::SFML::Shutdown();
 }
 

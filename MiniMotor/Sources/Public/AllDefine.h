@@ -17,5 +17,3 @@
 	#define USE_VULKAN
 	#endif
 #endif
-
-

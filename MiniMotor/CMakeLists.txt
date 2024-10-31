@@ -85,7 +85,6 @@ if(EMSCRIPTEN)
 	target_link_libraries(${PROJECT_NAME} PRIVATE ${EMSCRIPTEN_LIB_DIR})
     target_include_directories(${PROJECT_NAME} PRIVATE ${EMSCRIPTEN_INCLUDE_DIR})
 else()
-
     target_link_libraries(${PROJECT_NAME} PUBLIC 
         EnTT::EnTT
     )
@@ -125,8 +124,8 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE
     "Sources/Public/AllDefine.h"
 )
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
-target_compile_definitions(${PROJECT_NAME} PRIVATE WIN32_LEAN_AND_MEAN)
+#target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
+#target_compile_definitions(${PROJECT_NAME} PRIVATE WIN32_LEAN_AND_MEAN)
 
 #add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 #	COMMAND ${CMAKE_COMMAND} -E copy_directory
