@@ -2,7 +2,7 @@ project(MiniMotor VERSION 0.1)
 
 configure_file(Config.h.in Config.h)
 
-file(GLOB_RECURSE SOURCES "*.h" "*.cpp" "*.txt")
+file(GLOB_RECURSE SOURCES "*.h" "*.cpp" "*.txt" "*.vert" "*.frag")
 
 # Macro to group files in the IDE
 macro(GroupSources curdir)
@@ -24,12 +24,16 @@ endmacro()
 GroupSources("Sources")
 
 if (NOT EMSCRIPTEN)
-    find_package(OpenGL REQUIRED)
     find_package(EnTT CONFIG REQUIRED)
-    find_package(glad CONFIG REQUIRED)
-    find_package(glfw3 CONFIG REQUIRED)
+
     find_package(SFML CONFIG REQUIRED COMPONENTS system window graphics)
     find_package(ImGui-SFML CONFIG REQUIRED)
+
+    find_package(vulkan REQUIRED)
+    find_package(glfw3 CONFIG REQUIRED)
+    find_package(imgui CONFIG REQUIRED)
+    find_package(glm CONFIG REQUIRED)
+    find_package(Stb REQUIRED)
 else ()
     set(EMSCRIPTEN_LIB_DIR ${CMAKE_SOURCE_DIR}/vcpkg_installed/wasm32-emscripten/lib)
     set(EMSCRIPTEN_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/vcpkg_installed/wasm32-emscripten/include)   
@@ -70,40 +74,45 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 if(EMSCRIPTEN)
 	message("emscripten")
+
 	set(VCPKG_TARGET_ARCHITECTURE wasm32-emscripten)
 	set(CMAKE_TOOLCHAIN_FILE $ENV{EMSDK_HOME}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake)
-	set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
+	
+    set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
 
-	set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-sUSE_GLFW=3 -sFULL_ES3=1 -sWASM=1 -sUSE_SDL=2 -sUSE_SDL_MIXER=2 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sNO_DISABLE_EXCEPTION_CATCHING --preload-file shader")
+	#set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-sUSE_GLFW=3 -sFULL_ES3=1 -sWASM=1 -sUSE_SDL=2 -sUSE_SDL_MIXER=2 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sNO_DISABLE_EXCEPTION_CATCHING --preload-file shader")
 	
 	target_link_libraries(${PROJECT_NAME} PRIVATE ${EMSCRIPTEN_LIB_DIR})
     target_include_directories(${PROJECT_NAME} PRIVATE ${EMSCRIPTEN_INCLUDE_DIR})
 else()
-
     target_link_libraries(${PROJECT_NAME} PUBLIC 
         EnTT::EnTT
     )
     target_link_libraries(${PROJECT_NAME} PRIVATE
         MiniMotor_compiler_flags
         sfml-system sfml-graphics sfml-window ImGui-SFML::ImGui-SFML
-	OpenGL::GL
-        glad::glad
+        Vulkan::Vulkan
         glfw
+        glm::glm-header-only
+        ${Stb_INCLUDE_DIR}
+        imgui::imgui
     )
 endif()
 
-
-
 target_precompile_headers(${PROJECT_NAME} PRIVATE
+    <algorithm>
     <array>
     <atomic>
     <chrono>
     <cmath>
+    <cstdint>
     <functional>
-    <intrin.h>
+    <fstream>
     <iostream>
+    <limits>
     <map>
     <memory>
+    <optional>
     <string>
     <thread>
     <variant>
@@ -112,9 +121,18 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE
     #Need to be last cause they need the standard library
     #====================================================
     "Sources/Core/Public/CoreMinimal.h"
+    "Sources/Public/AllDefine.h"
 )
 
-#if($<OR:<$CONFIG:Debug>,$<CONFIG:RelWithDEbInfo>:$<CONFIG>>)
-#	target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG)
-#	target_compile_options(${PROJECT_NAME} PRIVATE DO_CHECK)
-#endif()
+#target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
+#target_compile_definitions(${PROJECT_NAME} PRIVATE WIN32_LEAN_AND_MEAN)
+
+#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#	COMMAND ${CMAKE_COMMAND} -E copy_directory
+#	${CMAKE_SOURCE_DIR}/Ressources $<TARGET_FILE_DIR:${PROJECT_NAME}>/Ressources
+#)
+#
+#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#	COMMAND ${CMAKE_COMMAND} -E copy_directory
+#	${CMAKE_SOURCE_DIR}/Shaders $<TARGET_FILE_DIR:${PROJECT_NAME}>/Shaders
+#)

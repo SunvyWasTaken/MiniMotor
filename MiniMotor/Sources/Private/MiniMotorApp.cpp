@@ -25,7 +25,7 @@ void MiniMotorApp::Init()
 
 void MiniMotorApp::Run()
 {
-	#ifdef __EMSCRIPTEN__
+	#ifdef FOR_WEB
 	emscripten_set_main_loop(MainLoop, 60, 1);
 	#endif
 	while (IsRunning())

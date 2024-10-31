@@ -2,18 +2,7 @@
 
 #pragma once
 
-#define RENDERTYPE 1 // 0 = Console, 1 = SFML
-
-#if RENDERTYPE == 0
-#include "ConsoleRender.h"
-using CurrentRender = ConsoleRender;
-#elif RENDERTYPE == 1
-#include "SFMLRender.h"
-using CurrentRender = SFMLRender;
-#elif RENDERTYPE == 2
-#include "OpenGLRender.h"
-using CurrentRender = OpenGLRender;
-#endif
+#include "GenRender.h"
 
 #include "Slate/SlateContainer.h"
 

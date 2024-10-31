@@ -3,7 +3,6 @@
 
 #include "BasicDrawable2D.h"
 
-#include "Define/CRTP.h"
 #include "Quad2D.h"
 #include "Textures/Textures.h"
 

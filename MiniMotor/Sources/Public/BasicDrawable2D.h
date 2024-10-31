@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-
 class Entity;
 
 class MM_API BasicDrawable2D

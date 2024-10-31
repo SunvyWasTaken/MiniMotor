@@ -1,8 +1,8 @@
 // Copyright Shimmer Studios : All rights reserved.
 
 #include "GenericRender.h"
-#ifdef USE_SFML
-class MM_EXPORT SFMLRender : public GenericRender<SFMLRender>
+#ifdef USE_VULKAN
+class MM_EXPORT VulkanRender : public GenericRender<VulkanRender>
 {
 public:
 	

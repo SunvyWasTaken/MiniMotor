@@ -1,6 +1,5 @@
 // Copyright Shimmer Studios : All rights reserved.
 
-#include "CoreMinimal.h"
 #include "ECS/Entitys.h"
 #include "SFMLRender.h"
 #include "Utils/StateMachine.h"
@@ -12,10 +11,14 @@
 #include <imgui-SFML.h>
 
 #include <iostream>
-
+#ifdef USE_SFML
 // This is a private
 namespace
 {
+	
+	const uint32_t m_width = 800;
+	const uint32_t m_height = 600;
+
 	std::unique_ptr<sf::RenderWindow> Window;
 
 	sf::Font font;
@@ -154,7 +157,7 @@ namespace
 
 void SFMLRender::Init()
 {
-	Window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style::Fullscreen);
+	Window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style::Close | sf::Style::Titlebar);
 	ensure(Window);
 	Window->setFramerateLimit(0);
 	Window->setVerticalSyncEnabled(false);
@@ -285,7 +288,9 @@ void SFMLRender::ClearWindow()
 
 void SFMLRender::CloseWindow()
 {
+	textures.clear();
 	Window->close();
+	Window.reset(nullptr);
 	ImGui::SFML::Shutdown();
 }
 
@@ -320,3 +325,4 @@ void SFMLRender::DrawQuad(const FVec2& position, const FVec2& size, const FColor
 	rectangle.setPosition((float)position.x, (float)position.y);
 	Window->draw(rectangle);
 }
+#endif // USE_SFML

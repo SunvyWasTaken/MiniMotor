@@ -15,7 +15,7 @@ namespace
 
 void Cell::BeginPlay()
 {
-	AddComponent<RendableComponent>(Texture{ TEXT("Ressources/Brick_Block.png"), WallTextureCoord });
+	AddComponent<RendableComponent>(Texture{ TO_TEXT("Ressources/Brick_Block.png"), WallTextureCoord });
 	std::visit(overloaded(
 		[&](Wall tmp)
 		{

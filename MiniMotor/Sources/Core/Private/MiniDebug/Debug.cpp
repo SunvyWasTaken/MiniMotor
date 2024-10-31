@@ -1,6 +1,6 @@
 #include "MiniDebug/Debug.h"
 
-#if DEBUG
+#ifndef NDEBUG
 
 bool Debug::ExeEnsureIntImpl(std::atomic<bool>& IsExecute, bool bAlways)
 {
@@ -12,4 +12,4 @@ bool Debug::ExeEnsureIntImpl(std::atomic<bool>& IsExecute, bool bAlways)
 	return false;
 }
 
-#endif // DEBUG
+#endif // !NDEBUG

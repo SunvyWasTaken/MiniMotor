@@ -61,7 +61,7 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 
 			if (xTrue || yTrue)
 			{
-				Cell* entity = SpawnEntity<Cell>(TEXT("Wall {}", it), it, Wall(), pos);
+				Cell* entity = SpawnEntity<Cell>(TO_TEXT("Wall {}", it), it, Wall(), pos);
 				entity->SetSize({25, 25});
 				entity->AddWorldOffset(pos * entity->GetSize());
 				Maze.push_back(entity);
@@ -74,7 +74,7 @@ void MazeTerrain::GenerateTerrain(const IVec2& size)
 			}
 			else
 			{
-				Cell* entity = SpawnEntity<Cell>(TEXT("Path {}", it), it, Path(), pos);
+				Cell* entity = SpawnEntity<Cell>(TO_TEXT("Path {}", it), it, Path(), pos);
 				entity->SetSize({ 25, 25 });
 				entity->AddWorldOffset(pos * entity->GetSize());
 				Maze.push_back(entity);		

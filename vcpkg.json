@@ -1,26 +1,21 @@
 {
-	"name": "minimotorapp",
-	"dependencies": [
-   		"entt",
-		"opengl",
-		{
-			"name": "glfw3",
-			"platform": "(!android) & (!emscripten)"
-		},
-		"glad",
-		{
-			"name": "glew",
-			"platform": "!emscripten"
-		},
-		{
-			"name": "imgui",
-			"features": ["glfw-binding", "opengl3-binding"],
-			"platform": "!emscripten"
-		},
-		{
-			"name": "imgui-sfml",
-			"platform": "(!android) & (!emscripten)"
-		},
-		"stb"
-  	]
+  "name": "minimotorapp",
+  "dependencies": [
+    "entt",
+    "glfw3",
+    "glm",
+    {
+      "name": "imgui",
+      "features": ["vulkan-binding", "glfw-binding"]
+    },
+    "opengl",
+    "sfml",
+    {
+      "name": "shaderc",
+      "platform": "windows"
+    },
+    "stb",
+    "vulkan",
+    "imgui-sfml"
+  ]
 }

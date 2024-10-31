@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-
 using TextureCoord = std::array<IVec2, 4>;
 
 template <typename Derived>

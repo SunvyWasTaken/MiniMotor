@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "DrawableList.h"
 #include "Textures/Textures.h"
 #include "World.h"

@@ -4,7 +4,7 @@
 
 #include "Define/ImportExportDLL.h"
 
-#ifdef DEBUG
+#ifndef NDEBUG
 
 namespace std
 {
@@ -19,17 +19,17 @@ struct MM_API Debug
 
 
 #define ENSURE_INTERNAL_IMPL(Expression, Always) \
-	(!!(!!(Expression)) || Debug::ExeEnsureIntImpl([]()->std::atomic<bool>&{static std::atomic<bool> bExecute = false; return bExecute; }(), Always) && [](){PLATEFORM_BREAK; return false;}())
+	(!!(!!(Expression)) || Debug::ExeEnsureIntImpl([]()->std::atomic<bool>&{static std::atomic<bool> bExecute = false; return bExecute; }(), Always) && [](){PLATEFORM_BREAK; return false;}());
 
 #define ensure(Expression) ENSURE_INTERNAL_IMPL(Expression, false)
 #define ensureAlways(Expression) ENSURE_INTERNAL_IMPL(Expression, true)
 
-#else // DEBUG
+#else // !NDEBUG
 
 #define ensure(Expression)
 #define ensureAlways(Expression)
 
-#endif // DEBUG
+#endif // !NDEBUG
 
 #ifdef DO_CHECK
 
@@ -45,3 +45,10 @@ struct MM_API Debug
 #else // DO_CHECK
 	#define CHECK_PERF(func) func;
 #endif // DO_CHECK
+
+#ifndef NDEBUG
+	#define LOG(txt) std::cout << txt << std::endl;
+#else
+	#define LOG(txt)
+#endif // !NDEBUG
+

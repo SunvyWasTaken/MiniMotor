@@ -55,5 +55,5 @@ int main()
 	CurrApp->Run();
 	CurrApp->Shutdown();
 
-	return 0;
+	return EXIT_SUCCESS;
 }
