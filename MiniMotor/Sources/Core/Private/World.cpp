@@ -31,33 +31,11 @@ World::~World()
 {
 }
 
-void funcDrawRect(QuadTree* tree)
-{
-	MiniMotorApp* app = MiniMotorApp::GetInstance();
-	if (!tree)
-	{
-		return;
-	}
-
-	if (tree->m_CurrentDataIndex >= 4)
-	{
-		app->DrawQuad(tree->m_Position, tree->m_Size, FColor::Red);
-		for (auto& child : tree->m_Children)
-		{
-			funcDrawRect(child.get());
-		}
-	}
-	else
-	{
-		app->DrawQuad(tree->m_Position, tree->m_Size, FColor::Red);
-	}
-};
-
-void World::Update()
+void World::Update(float deltaTime)
 {
 	for(auto& entity : m_Entitys)
 	{
-		entity->Update(0.0f);
+		entity->Update(deltaTime);
 	}
 
 	std::unique_ptr<QuadTree> m_QuadTree = std::make_unique<QuadTree>(FVec2{ 0, 0 }, FVec2{ 2000, 2000 });
@@ -66,8 +44,6 @@ void World::Update()
 		const TransformComponent& transform = m_EntityRegistry.get<TransformComponent>(entity);
 		m_QuadTree->AddData(entity, transform.transform.pos);
 	}
-
-	//funcDrawRect(m_QuadTree.get());
 
 	for (auto entity : m_EntityRegistry.view<CollisionComponent>())
 	{
@@ -118,7 +94,10 @@ void World::RemoveEntity(const Entity& entity)
 
 void World::DrawEntitys()
 {
-
+	for (auto& entity : m_EntityRegistry.view<RendableComponent>())
+	{
+		
+	}
 }
 
 

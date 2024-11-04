@@ -12,7 +12,7 @@ MiniMotorApp::MiniMotorApp()
 	, m_Render(std::make_unique<CurrentRender>())
 {
 	m_Render->Init();
-	m_Render->EventCall.Bind(this, &MiniMotorApp::OnEvents);
+	m_Render->BindEvents(std::bind(&MiniMotorApp::OnEvents, this, std::placeholders::_1));
 }
 
 MiniMotorApp::~MiniMotorApp()
@@ -25,9 +25,6 @@ void MiniMotorApp::Init()
 
 void MiniMotorApp::Run()
 {
-	#ifdef FOR_WEB
-	emscripten_set_main_loop(MainLoop, 60, 1);
-	#endif
 	while (IsRunning())
 	{
 		MainLoop();
@@ -48,80 +45,71 @@ void MiniMotorApp::SetWorld(World* world)
 
 bool MiniMotorApp::OnEvents(const Events& event)
 {
-	return std::visit(overloaded(
-		[this](const MEvents::OnWindowClose tmp)->bool
+	return event.Visit(
+		[&](const MEvents::OnWindowClose& tmp)->bool
 		{
 			m_IsRunning = false;
 			return true;
 		},
-		[this](const MEvents::OnWindowResize tmp)->bool
+		[&](const MEvents::OnWindowResize& tmp)->bool
 		{
 			return false;
 		},
-		[this](const MEvents::OnWindowFocus tmp)->bool
+		[&](const MEvents::OnWindowFocus& tmp)->bool
 		{
 			return false;
 		},
-		[this](const MEvents::OnWindowLostFocus tmp)->bool
+		[&](const MEvents::OnWindowLostFocus& tmp)->bool
 		{
 			return false;
 		},
-		[this](const MEvents::OnWindowMoved tmp)->bool
+		[&](const MEvents::OnWindowMoved& tmp)->bool
 		{
 			return false;
 		},
-		[this](const MEvents::OnAppTick tmp)->bool
+		[&](const MEvents::OnAppTick& tmp)->bool
+		{
+			m_World->Update(tmp.m_deltatime);
+			return true;
+		},
+		[&](const MEvents::OnAppUpdate& tmp)->bool
 		{
 			return false;
 		},
-		[this](const MEvents::OnAppUpdate tmp)->bool
+		[&](const MEvents::OnAppRender& tmp)->bool
+		{
+			m_World->DrawEntitys();
+			return true;
+		},
+		[&](const MEvents::OnKeyPressed& tmp)->bool
 		{
 			return false;
 		},
-		[this](const MEvents::OnAppRender tmp)->bool
+		[&](const MEvents::OnKeyReleased& tmp)->bool
 		{
 			return false;
 		},
-		[this](const MEvents::OnKeyPressed tmp)->bool
+		[&](const MEvents::OnMouseButtonPressed& tmp)->bool
 		{
-			return SendEventThroughSlate(tmp);
+			return false;
 		},
-		[this](const MEvents::OnKeyReleased tmp)->bool
+		[&](const MEvents::OnMouseButtonReleased& tmp)->bool
 		{
-			return SendEventThroughSlate(tmp);
+			return false;
 		},
-		[this](const MEvents::OnMouseButtonPressed tmp)->bool
+		[&](const MEvents::OnMouseMoved& tmp)->bool
 		{
-			return SendEventThroughSlate(tmp);
+			return false;
 		},
-		[this](const MEvents::OnMouseButtonReleased tmp)->bool
+		[&](const MEvents::OnMouseScrolled& tmp)->bool
 		{
-			return SendEventThroughSlate(tmp);
-		},
-		[this](const MEvents::OnMouseMoved tmp)->bool
-		{
-			return SendEventThroughSlate(tmp);
-		},
-		[this](const MEvents::OnMouseScrolled tmp)->bool
-		{
-			return SendEventThroughSlate(tmp);
-		}
-	), event);
+			return false;
+		});
 }
 
 void MiniMotorApp::PushLayer(SContainer* slate)
 {
 	m_SlateContainer.PushLayer(slate);
-}
-
-void MiniMotorApp::DrawLine(const FVec2& start, const FVec2& end, const FColor& color)
-{
-	m_Render->DrawLine(start, end, color);
-}
-
-void MiniMotorApp::DrawQuad(const FVec2& position, const FVec2& size, const FColor& color)
-{
-	m_Render->DrawQuad(position, size, color);
 }
 
 MiniMotorApp* MiniMotorApp::GetInstance()
@@ -135,16 +123,7 @@ MiniMotorApp* MiniMotorApp::GetInstance()
 
 void MiniMotorApp::MainLoop()
 {
-	m_Render->ClearWindow();
 	m_Render->Update();
-	m_Render->HandleEvents();
-	m_World->Update();
-	for (auto& slate : m_SlateContainer)
-	{
-		m_Render->DrawSlate(slate);
-	}
-	m_World->BufferFrameEntitys(*m_Render);
-	m_Render->Draw();
 }
 
 bool MiniMotorApp::IsRunning() const

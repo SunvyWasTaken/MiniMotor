@@ -15,7 +15,7 @@ public:
 		return &instance;
 	}
 
-	CRTP_CALL_Variadic_ret(Derived, decltype(auto), GetTextures)
+	CRTP_Params_ret(decltype(auto), GetTextures)
 };
 
 class Texture

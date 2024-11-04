@@ -15,6 +15,10 @@
 // This is a private
 namespace
 {
+
+	/************************************************************************/
+	/* Params																*/
+	/************************************************************************/
 	
 	const uint32_t m_width = 800;
 	const uint32_t m_height = 600;
@@ -38,6 +42,12 @@ namespace
 	using MTextures = std::map<std::string, sf::Texture>;
 
 	MTextures textures;
+
+	EventsCallback EventCall;
+
+	/************************************************************************/
+	/* Function																*/
+	/************************************************************************/
 
 	sf::Texture* GetTextures(const std::string& filename)
 	{
@@ -153,6 +163,96 @@ namespace
 		}
 	}
 
+	void HandleEvents()
+	{
+		sf::Event currEvent;
+		while (Window->pollEvent(currEvent))
+		{
+			if (currEvent.type == sf::Event::KeyPressed)
+			{
+				if (currEvent.key.code >= 0 && currEvent.key.code <= 25)
+				{
+					Events event{MEvents::OnKeyPressed(currEvent.key.code + 65)};
+					if (EventCall(event))
+						return;
+				}
+			}
+			else if (currEvent.type == sf::Event::KeyReleased)
+			{
+				if (currEvent.key.code >= 0 && currEvent.key.code <= 25)
+				{
+					Events event{MEvents::OnKeyReleased(currEvent.key.code + 65)};
+					if (EventCall(event))
+						return;
+				}
+			}
+			else if (currEvent.type == sf::Event::MouseButtonPressed)
+			{
+				Events event{MEvents::OnMouseButtonPressed(currEvent.key.code)};
+				if (EventCall(event))
+					return;
+
+				if (currEvent.mouseButton.button == sf::Mouse::Right)
+				{
+					OldMousePosition = sf::Vector2f{ (float)currEvent.mouseButton.x, (float)currEvent.mouseButton.y };
+					IsMousePressed = true;
+				}
+			}
+			else if (currEvent.type == sf::Event::MouseButtonReleased)
+			{
+				Events event{MEvents::OnMouseButtonReleased(currEvent.key.code)};
+				if (EventCall(event))
+					return;
+
+				if (currEvent.mouseButton.button == sf::Mouse::Right)
+				{
+					IsMousePressed = false;
+				}
+			}
+			else if (currEvent.type == sf::Event::MouseMoved)
+			{
+				Events event{MEvents::OnMouseMoved({ currEvent.mouseMove.x, currEvent.mouseMove.y })};
+				if (EventCall(event))
+					return;
+
+				if (IsMousePressed)
+				{
+					sf::View view = Window->getView();
+					sf::Vector2f diff = sf::Vector2f{ (float)currEvent.mouseMove.x, (float)currEvent.mouseMove.y } - OldMousePosition;
+					view.move(diff.x * -(currZoom), diff.y * -(currZoom));
+					OldMousePosition = sf::Vector2f{ (float)currEvent.mouseMove.x, (float)currEvent.mouseMove.y };
+					Window->setView(view);
+				}
+			}
+			else if (currEvent.type == sf::Event::MouseWheelScrolled)
+			{
+				Events event{MEvents::OnMouseScrolled(currEvent.mouseWheelScroll.delta)};
+				if (EventCall(event))
+					return;
+
+				sf::View view = Window->getView();
+				if (currEvent.mouseWheelScroll.delta > 0)
+				{
+					if (currZoom > 0.15)
+					{
+						view.zoom(0.95f);
+						currZoom -= 0.05f;
+					}
+				}
+				else
+				{
+					if (currZoom < 2.0)
+					{
+						view.zoom(1.05f);
+						currZoom += 0.05f;
+					}
+				}
+				Window->setView(view);
+			}
+			ImGui::SFML::ProcessEvent(currEvent);
+		}
+	}
+
 }
 
 void SFMLRender::Init()
@@ -167,16 +267,23 @@ void SFMLRender::Init()
 void SFMLRender::Update()
 {
 	ImGui::SFML::Update(*Window, CurrClock.restart());
-}
 
-void SFMLRender::Draw()
-{
+	HandleEvents();
+
+	Events eventRender{MEvents::OnAppRender()};
+
 	ImGui::Begin("Performance", 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoInputs);
 	ImGui::SetWindowSize(ImVec2{ 200, 50 });
 	ImGui::SetWindowPos(ImVec2{ 0, 0 });
-	ImGui::Text("Framerate : %f", 1.f / DeltaClock.getElapsedTime().asSeconds());
+	float DeltaTime = DeltaClock.getElapsedTime().asSeconds();
+	ImGui::Text("Framerate : %f", 1.f / DeltaTime);
 	DeltaClock.restart();
 	ImGui::End();
+
+	Events eventTick{MEvents::OnAppTick(DeltaTime)};
+	EventCall(eventTick);
+
+	Window->clear();
 
 	ImGui::SFML::Render(*Window);
 	Window->display();
@@ -187,103 +294,9 @@ bool SFMLRender::IsWindowOpen() const
 	return Window->isOpen();
 }
 
-void SFMLRender::BufferFrame(const VertexArray2D& vertexArray)
+void SFMLRender::DrawObject(const VertexArray2D& vertexArray)
 {
 	DrawVertexArray(vertexArray);
-}
-
-void SFMLRender::HandleEvents()
-{
-	sf::Event currEvent;
-	while (Window->pollEvent(currEvent))
-	{
-		if (currEvent.type == sf::Event::Closed)
-		{
-			if(EventCall(MEvents::OnWindowClose()))
-				return;
-		}
-		else if (currEvent.type == sf::Event::KeyPressed)
-		{
-			if (currEvent.key.code >= 0 && currEvent.key.code <= 25)
-			{
-				if(EventCall(MEvents::OnKeyPressed(currEvent.key.code + 65)))
-					return;
-			}
-		}
-		else if (currEvent.type == sf::Event::KeyReleased)
-		{
-			if (currEvent.key.code >= 0 && currEvent.key.code <= 25)
-			{
-				if(EventCall(MEvents::OnKeyReleased(currEvent.key.code + 65)))
-					return;
-			}
-		}
-		else if (currEvent.type == sf::Event::MouseButtonPressed)
-		{
-			if(EventCall(MEvents::OnMouseButtonPressed(currEvent.key.code)))
-				return;
-
-			if (currEvent.mouseButton.button == sf::Mouse::Right)
-			{
-				OldMousePosition = sf::Vector2f{ (float)currEvent.mouseButton.x, (float)currEvent.mouseButton.y };
-				IsMousePressed = true;
-			}
-		}
-		else if (currEvent.type == sf::Event::MouseButtonReleased)
-		{
-			if(EventCall(MEvents::OnMouseButtonReleased(currEvent.key.code)))
-				return;
-
-			if (currEvent.mouseButton.button == sf::Mouse::Right)
-			{
-				IsMousePressed = false;
-			}
-		}
-		else if (currEvent.type == sf::Event::MouseMoved)
-		{
-			if(EventCall(MEvents::OnMouseMoved({ currEvent.mouseMove.x, currEvent.mouseMove.y})))
-				return;
-
-			if (IsMousePressed)
-			{
-				sf::View view = Window->getView();
-				sf::Vector2f diff = sf::Vector2f{(float)currEvent.mouseMove.x, (float)currEvent.mouseMove.y} - OldMousePosition;
-				view.move(diff.x*-(currZoom), diff.y*-(currZoom));
-				OldMousePosition = sf::Vector2f{ (float)currEvent.mouseMove.x, (float)currEvent.mouseMove.y };
-				Window->setView(view);
-			}
-		}
-		else if (currEvent.type == sf::Event::MouseWheelScrolled)
-		{
-			if (EventCall(MEvents::OnMouseScrolled(currEvent.mouseWheelScroll.delta)))
-				return;
-
-			sf::View view = Window->getView();
-			if (currEvent.mouseWheelScroll.delta > 0)
-			{
-				if (currZoom > 0.15)
-				{
-					view.zoom(0.95f);
-					currZoom -= 0.05f;
-				}
-			}
-			else
-			{
-				if (currZoom < 2.0)
-				{
-					view.zoom(1.05f);
-					currZoom += 0.05f;
-				}
-			}
-			Window->setView(view);
-		}
-		ImGui::SFML::ProcessEvent(currEvent);
-	}
-}
-
-void SFMLRender::ClearWindow()
-{
-	Window->clear();
 }
 
 void SFMLRender::CloseWindow()
@@ -294,35 +307,8 @@ void SFMLRender::CloseWindow()
 	ImGui::SFML::Shutdown();
 }
 
-void SFMLRender::DrawSlate(SContainer* slate)
+void SFMLRender::BindEvents(const EventsCallback& events)
 {
-	ImGui::Begin("Slate", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
-	HandleAnchor(slate);
-	ImGui::SetWindowSize(ImVec2{(float)slate->GetSize()->x, (float)slate->GetSize()->y});
-
-	DrawChild(slate);
-
-	ImGui::End();
-}
-
-void SFMLRender::DrawLine(const FVec2& start, const FVec2& end, const FColor& color)
-{
-	sf::Vertex line[] =
-	{
-		sf::Vertex(sf::Vector2f((float)start.x, (float)start.y), sf::Color(color.r, color.g, color.b, color.a)),
-		sf::Vertex(sf::Vector2f((float)end.x, (float)end.y), sf::Color(color.r, color.g, color.b, color.a))
-	};
-	Window->draw(line, 2, sf::Lines);
-}
-
-void SFMLRender::DrawQuad(const FVec2& position, const FVec2& size, const FColor& color)
-{
-	sf::RectangleShape rectangle;
-	rectangle.setSize(sf::Vector2f((float)size.x, (float)size.y));
-	rectangle.setOutlineColor(sf::Color(color.r, color.g, color.b, color.a));
-	rectangle.setOutlineThickness(2);
-	rectangle.setFillColor(sf::Color::Transparent);
-	rectangle.setPosition((float)position.x, (float)position.y);
-	Window->draw(rectangle);
+	EventCall = events;
 }
 #endif // USE_SFML

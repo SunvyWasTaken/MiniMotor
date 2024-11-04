@@ -29,30 +29,11 @@ public:
 
 	void PushLayer(SContainer* slate);
 
-	void DrawLine(const FVec2& start, const FVec2& end, const FColor& color);
-
-	void DrawQuad(const FVec2& position, const FVec2& size, const FColor& color);
-
 private:
 
 	MiniMotorApp();
 
 	~MiniMotorApp();
-
-	// Send event through all slates
-
-	template <typename eventType>
-	bool SendEventThroughSlate(const eventType& event)
-	{
-		for (auto& slate : m_SlateContainer)
-		{
-			if (slate->OnEvent(event))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
 
 	void MainLoop();
 

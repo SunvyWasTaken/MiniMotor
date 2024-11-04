@@ -147,22 +147,22 @@ using ScreenCoord = Vec2<uint16_t>;
 namespace MEvents
 {
 	struct MM_API OnWindowClose { OnWindowClose(); };
-	struct MM_API OnWindowResize { OnWindowResize(const ScreenCoord& screenSize); ScreenCoord m_size; };
+	struct MM_API OnWindowResize { explicit OnWindowResize(const ScreenCoord& screenSize); ScreenCoord m_size; };
 	struct MM_API OnWindowFocus { OnWindowFocus(); };
 	struct MM_API OnWindowLostFocus { OnWindowLostFocus(); };
 	struct MM_API OnWindowMoved { OnWindowMoved(); };
-	struct MM_API OnAppTick { OnAppTick(const double deltatime); double m_deltatime = .0; };
+	struct MM_API OnAppTick { explicit OnAppTick(const double deltatime); double m_deltatime = .0; };
 	struct MM_API OnAppUpdate { OnAppUpdate(); };
 	struct MM_API OnAppRender { OnAppRender(); };
-	struct MM_API OnKeyPressed { OnKeyPressed(const KeyCode& key); KeyCode m_key; };
-	struct MM_API OnKeyReleased { OnKeyReleased(const KeyCode& key); KeyCode m_key; };
-	struct MM_API OnMouseButtonPressed { OnMouseButtonPressed(const uint8_t button); uint8_t m_Button; };
-	struct MM_API OnMouseButtonReleased { OnMouseButtonReleased(const uint8_t button); uint8_t m_Button; };
-	struct MM_API OnMouseMoved { OnMouseMoved(const ScreenCoord& pos); ScreenCoord m_pos; };
-	struct MM_API OnMouseScrolled { OnMouseScrolled(const double delta); double m_delta = .0; };
+	struct MM_API OnKeyPressed { explicit OnKeyPressed(const KeyCode& key); KeyCode m_key; };
+	struct MM_API OnKeyReleased { explicit OnKeyReleased(const KeyCode& key); KeyCode m_key; };
+	struct MM_API OnMouseButtonPressed { explicit OnMouseButtonPressed(const uint8_t button); uint8_t m_Button; };
+	struct MM_API OnMouseButtonReleased { explicit OnMouseButtonReleased(const uint8_t button); uint8_t m_Button; };
+	struct MM_API OnMouseMoved { explicit OnMouseMoved(const ScreenCoord& pos); ScreenCoord m_pos; };
+	struct MM_API OnMouseScrolled { explicit OnMouseScrolled(const double delta); double m_delta = .0; };
 }
 
-using Events = std::variant<MEvents::OnWindowClose
+using EventsType = std::variant<MEvents::OnWindowClose
 							, MEvents::OnWindowResize
 							, MEvents::OnWindowFocus
 							, MEvents::OnWindowLostFocus
@@ -177,65 +177,75 @@ using Events = std::variant<MEvents::OnWindowClose
 							, MEvents::OnMouseMoved
 							, MEvents::OnMouseScrolled>;
 
+struct MM_API Events
+{
+	explicit Events(const EventsType& event) : m_Event(event) {}
+	template <typename... Ts>
+	decltype(auto) Visit(Ts&& ...ts) const
+	{
+		return std::visit(overloaded(std::forward<Ts>(ts)...), m_Event);
+	}
+	EventsType m_Event;
+};
+
 #define GEN_STATE_MACHINE(event) \
-	return std::visit(overloaded( \
-	[](const MEvents::OnWindowClose tmp)->bool \
+	[](const MEvents::OnWindowClose& tmp)->bool \
 	{ \
 		return false; \
 	}, \
-	[](const MEvents::OnWindowResize tmp)->bool \
+	[](const MEvents::OnWindowResize& tmp)->bool \
 	{ \
 		return false; \
 	}, \
-	[](const MEvents::OnWindowFocus tmp)->bool \
+	[](const MEvents::OnWindowFocus& tmp)->bool \
 	{ \
 		return false; \
 	}, \
-	[](const MEvents::OnWindowLostFocus tmp)->bool \
+	[](const MEvents::OnWindowLostFocus& tmp)->bool \
 	{ \
 		return false; \
 	}, \
-	[](const MEvents::OnWindowMoved tmp)->bool \
+	[](const MEvents::OnWindowMoved& tmp)->bool \
 	{ \
 		return false; \
 	}, \
-	[](const MEvents::OnAppTick tmp)->bool \
+	[](const MEvents::OnAppTick& tmp)->bool \
 	{ \
 		return false; \
 	}, \
-	[](const MEvents::OnAppUpdate tmp)->bool \
+	[](const MEvents::OnAppUpdate& tmp)->bool \
 	{ \
 		return false; \
 	}, \
-	[](const MEvents::OnAppRender tmp)->bool \
+	[](const MEvents::OnAppRender& tmp)->bool \
 	{ \
 		return false; \
 	}, \
-	[](const MEvents::OnKeyPressed tmp)->bool \
+	[](const MEvents::OnKeyPressed& tmp)->bool \
 	{ \
 		return false; \
 	}, \
-	[](const MEvents::OnKeyReleased tmp)->bool \
+	[](const MEvents::OnKeyReleased& tmp)->bool \
 	{ \
 		return false; \
 	}, \
-	[](const MEvents::OnMouseButtonPressed tmp)->bool \
+	[](const MEvents::OnMouseButtonPressed& tmp)->bool \
 	{ \
 		return false; \
 	}, \
-	[](const MEvents::OnMouseButtonReleased tmp)->bool \
+	[](const MEvents::OnMouseButtonReleased& tmp)->bool \
 	{ \
 		return false; \
 	}, \
-	[](const MEvents::OnMouseMoved tmp)->bool \
+	[](const MEvents::OnMouseMoved& tmp)->bool \
 	{ \
 		return false; \
 	}, \
-	[](const MEvents::OnMouseScrolled tmp)->bool \
+	[](const MEvents::OnMouseScrolled& tmp)->bool \
 	{ \
 		return false; \
 	} \
-	), event);
+	)
 
 	using AllKeyEvents = Typelist<MEvents::OnKeyPressed, MEvents::OnKeyReleased, MEvents::OnMouseButtonPressed, MEvents::OnMouseButtonReleased, MEvents::OnMouseButtonReleased, MEvents::OnMouseMoved, MEvents::OnMouseScrolled>;
 	using AllAppEvents = Typelist<MEvents::OnAppTick, MEvents::OnAppUpdate, MEvents::OnAppRender>;
