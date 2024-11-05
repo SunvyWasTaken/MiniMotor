@@ -1,7 +1,9 @@
 // Copyright Shimmer Studios : All rights reserved.
 
 #pragma once
+#include <glm/glm.hpp>
 
+#if DEPRECATED
 template <typename type>
 struct MM_EXPORT Vec2
 {
@@ -150,6 +152,9 @@ struct MM_EXPORT Vec2
 	}
 
 };
+#endif
 
-using FVec2 = Vec2<double>;
-using IVec2 = Vec2<int>;
+using FVec2 = glm::vec2;
+using IVec2 = glm::ivec2;
+using UVec2 = glm::uvec2;
+using DVec2 = glm::dvec2;

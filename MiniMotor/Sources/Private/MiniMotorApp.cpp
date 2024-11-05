@@ -37,12 +37,6 @@ void MiniMotorApp::Shutdown()
 	delete m_Instance;
 }
 
-void MiniMotorApp::SetWorld(World* world)
-{
-	ensure(world);
-	m_World = world;
-}
-
 bool MiniMotorApp::OnEvents(const Events& event)
 {
 	return event.Visit(
@@ -83,10 +77,12 @@ bool MiniMotorApp::OnEvents(const Events& event)
 		},
 		[&](const MEvents::OnKeyPressed& tmp)->bool
 		{
+			m_World->PropagateInput(tmp.m_key, true);
 			return false;
 		},
 		[&](const MEvents::OnKeyReleased& tmp)->bool
 		{
+			m_World->PropagateInput(tmp.m_key, false);
 			return false;
 		},
 		[&](const MEvents::OnMouseButtonPressed& tmp)->bool
@@ -105,11 +101,6 @@ bool MiniMotorApp::OnEvents(const Events& event)
 		{
 			return false;
 		});
-}
-
-void MiniMotorApp::PushLayer(SContainer* slate)
-{
-	m_SlateContainer.PushLayer(slate);
 }
 
 MiniMotorApp* MiniMotorApp::GetInstance()

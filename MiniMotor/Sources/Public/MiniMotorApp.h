@@ -23,11 +23,16 @@ public:
 	// Shutdown the application
 	void Shutdown();
 
-	void SetWorld(World* world);
-
 	bool OnEvents(const Events& event);
 
-	void PushLayer(SContainer* slate);
+	template <typename WorldType, typename ...Args>
+	WorldType* OpenWorld(Args&&... args)
+	{
+		static_assert(std::is_base_of<World, WorldType>(), "WorldType must derive from World");
+
+		m_World.reset(new WorldType(std::forward<Args>(args)...));
+		return m_World.get();
+	}
 
 private:
 
@@ -43,9 +48,7 @@ private:
 	
 	bool m_IsRunning;
 
-	World* m_World;
-
-	SlateContainer m_SlateContainer;
+	std::unique_ptr<World> m_World;
 
 	std::unique_ptr<GenericRender<CurrentRender>> m_Render;
 

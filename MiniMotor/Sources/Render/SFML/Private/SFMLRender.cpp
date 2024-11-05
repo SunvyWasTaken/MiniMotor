@@ -249,7 +249,14 @@ namespace
 				}
 				Window->setView(view);
 			}
+			else if (currEvent.type == sf::Event::EventType::Closed)
+			{
+				Events event{MEvents::OnWindowClose()};
+				if (EventCall(event))
+					return;
+			}
 			ImGui::SFML::ProcessEvent(currEvent);
+
 		}
 	}
 

@@ -2,10 +2,17 @@
 
 #pragma once
 
-template <typename T>
 struct MM_API Vertex2D
 {
-	Vec2<T> position;
-	Vec2<T> texCoords;
+	FVec2 position;
+	FColor color;
+	FVec2 texCoords;
+};
+
+struct MM_API Vertex3D
+{
+	FVec3 position;
+	FVec2 texCoords;
+	FVec3 normal;
 	FColor color;
 };

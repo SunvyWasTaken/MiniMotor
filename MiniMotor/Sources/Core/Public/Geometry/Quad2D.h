@@ -2,27 +2,28 @@
 
 #pragma once
 
-#include "BasicDrawable2D.h"
 #include "Vertex2D.h"
 #include "Textures/Textures.h"
 
 template <typename T>
-struct MM_EXPORT Quad2D : public BasicDrawable2D
+struct MM_EXPORT Quad_T
 {
-	using vertice_type = Vertex2D<T>;
+	using vertice_type = T;
 	using Vertex2DArray = std::array<vertice_type, GetSizelist<QuadSide>::value>;
 
 public:
 
-	Quad2D(const FTrans2& trans = {FVec2{1, 1}, FRot3{0, 0, 0}, FVec2{10, 10}}, const Texture& textu = {"", SQUAREDTEXTURE(0)})
-		: BasicDrawable2D(trans)
+	Quad_T()
 	{
-		vertices[0].position = Vec2<T>(0, 0);
-		vertices[1].position = Vec2<T>(1, 0);
-		vertices[2].position = Vec2<T>(1, 1);
-		vertices[3].position = Vec2<T>(0, 1);
+		vertices[0].position = vertice_type{0, 0};
+		vertices[1].position = vertice_type{1, 0};
+		vertices[2].position = vertice_type{1, 1};
+		vertices[3].position = vertice_type{0, 1};
 
-		SetCoord(textu.coord);
+		vertices[0].texCoords = {0, 0};
+		vertices[1].texCoords = {0, 0};
+		vertices[2].texCoords = {0, 0};
+		vertices[3].texCoords = {0, 0};
 	}
 
 	template <typename TargetSide>
@@ -42,9 +43,9 @@ public:
 	}
 
 	template <typename TargetSide>
-	Vec2<T> GetVerticePosition() const
+	vertice_type GetVerticePosition() const
 	{
-		return (GetVertice<TargetSide>().position * transform.scale) + transform.pos;
+		return GetVertice<TargetSide>().position;
 	}
 
 	void FillColor(const FColor& color)
@@ -67,4 +68,5 @@ public:
 	Vertex2DArray vertices;
 };
 
-using FQuad2D = Quad2D<double>;
+using FQuad2D = Quad_T<Vertex2D>;
+using FQuad3D = Quad_T<Vertex3D>;

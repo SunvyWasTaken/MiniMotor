@@ -1,7 +1,9 @@
 // Copyright Shimmer Studios : All rights reserved.
 
 #pragma once
+#include <glm/glm.hpp>
 
+#if DEPRECATED
 template <typename type>
 struct Vec3
 {
@@ -80,5 +82,9 @@ struct Vec3
 
 	type x, y, z;
 };
+#endif
 
-using FVec3 = Vec3<double>;
+using FVec3 = glm::vec3;
+using IVec3 = glm::ivec3;
+using UVec3 = glm::uvec3;
+using DVec3 = glm::dvec3;

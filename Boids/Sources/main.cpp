@@ -91,9 +91,8 @@ int main()
 {
 	MiniMotorApp* app = MiniMotorApp::GetInstance();
 	app->Init();
-	std::unique_ptr<World> world = std::make_unique<World>();
 
-	app->SetWorld(world.get());
+	World* world = app->OpenWorld<World>();
 
 	for (size_t i = 0; i < 10000; ++i)
 	{

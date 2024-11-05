@@ -1,39 +1,58 @@
 // Copyright Shimmer Studios : All rights reserved.
 #pragma once
 
-#include "BasicDrawable2D.h"
-
 #include "Quad2D.h"
 #include "Textures/Textures.h"
 
-using Quad2DLists = std::vector<FQuad2D>;
-
-class MM_API VertexArray2D
+namespace ArrayType
 {
-public:
+	struct Quad{};
+	struct Line{};
+}
 
-	explicit VertexArray2D(const std::string& textureName = "");
 
-	virtual ~VertexArray2D();
-
-	virtual void SetTexture(const std::string& filename);
-
-	void Resize(const size_t size);
-
-	size_t Size() const;
-
-	void AddQuad(const FTrans2& trans, const Texture& textu);
-
-	FQuad2D& operator[](const size_t index);
-
-	const FQuad2D& operator[](const size_t index) const;
-
-	Quad2DLists* operator->();
+template <typename T>
+class MM_API VertexArray_T
+{
+using VertexType = T;
+using VertexLists = std::vector<VertexType>;
+using TypeArray = std::variant<ArrayType::Quad, ArrayType::Line>;
 
 public:
 
-	Quad2DLists quads;
+	explicit VertexArray_T(const TypeArray& type)
+		: m_type(type)
+	{
+	}
 
-	Texture texture;
+	virtual ~VertexArray_T()
+	{
+	}
+
+	VertexType& operator[](const size_t index)
+	{
+		return vertices[index];
+	}
+
+	const VertexType& operator[](const size_t index) const
+	{
+		return vertices[index];
+	}
+
+	VertexLists* operator->()
+	{
+		return &vertices;
+	}
+
+public:
+
+	VertexLists vertices;
+
+private:
+
+	TypeArray m_type;
 };
+
+using VertexArray2D = VertexArray_T<Vertex2D>;
+using VertexArray3D = VertexArray_T<Vertex3D>;
 

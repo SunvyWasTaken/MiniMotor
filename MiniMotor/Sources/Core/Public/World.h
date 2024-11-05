@@ -55,7 +55,11 @@ public:
 
 	void RemoveEntity(const Entity& entity);
 
+private:
+
 	void DrawEntitys();
+
+	void PropagateInput(const KeyCode& key, bool IsPressed);
 
 private:
 
@@ -65,4 +69,5 @@ private:
 
 	friend class Entity;
 
+	friend class MiniMotorApp;
 };

@@ -142,7 +142,7 @@ namespace Key
 	};
 }
 
-using ScreenCoord = Vec2<uint16_t>;
+using ScreenCoord = UVec2;
 
 namespace MEvents
 {

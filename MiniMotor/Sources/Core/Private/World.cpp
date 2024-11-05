@@ -100,4 +100,15 @@ void World::DrawEntitys()
 	}
 }
 
-
+void World::PropagateInput(const KeyCode& key, bool IsPressed)
+{
+	for (auto& entity : m_EntityRegistry.view<InputComponent>())
+	{
+		InputComponent& input = m_EntityRegistry.get<InputComponent>(entity);
+		if (input.callbacks.contains(key))
+		{
+			auto Func = input.callbacks.at(key);
+			Func(IsPressed);
+		}
+	}
+}
