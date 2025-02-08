@@ -12,4 +12,5 @@ public:
 	void Run(float deltatime);
 
 	bool IsRunning();
+	
 };

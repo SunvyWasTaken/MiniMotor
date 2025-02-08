@@ -2,6 +2,8 @@
 
 class GLFWwindow;
 
+using uint = unsigned int;
+
 template <typename Derived>
 class BasicRender
 {
@@ -30,5 +32,10 @@ protected:
 	int m_Weigth = 800;
 	int m_Height = 600;
 
-	char* m_WindowTitle = "LeafEngine";
+	std::string m_WindowTitle = "LeafEngine";
+
+	// Vertex buffer object.
+	uint VBO;
+	// Vertex array Object.
+	uint VAO;
 };
