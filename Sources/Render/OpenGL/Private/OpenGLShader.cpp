@@ -54,6 +54,7 @@ ShaderOGL::ShaderOGL(const std::string& vertPath, const std::string& fragPath)
 ShaderOGL::~ShaderOGL()
 {
 	glDeleteProgram(_id);
+	std::cerr << "Shader detruit" << std::endl;
 }
 
 void ShaderOGL::Use()

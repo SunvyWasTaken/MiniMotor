@@ -7,11 +7,11 @@
 
 namespace
 {
-	ShaderOGL* shaderProgram = nullptr;
+	std::unique_ptr<ShaderOGL> shaderProgram = nullptr;
 
 	void LoadShader()
 	{
-		
+		shaderProgram = std::make_unique<ShaderOGL>("../../LeafEngine/Sources/Shaders/vShader.vert", "../../LeafEngine/Sources/Shaders/fShader.frag");
 	}
 }
 
@@ -33,10 +33,15 @@ OpenGLRender::OpenGLRender()
 
 	glViewport(0, 0, m_Weigth, m_Height);
 	glEnable(GL_DEPTH_TEST);
+
+	LoadShader();
 }
 
 OpenGLRender::~OpenGLRender()
 {
+	//glDeleteVertexArrays(1, &VAO);
+	//glDeleteBuffers(1, &VBO);
+
 	glfwTerminate();
 }
 
