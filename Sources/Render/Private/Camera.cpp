@@ -5,6 +5,9 @@ Camera::Camera()
 	, m_UpVector({ 0.f, 1.f, 0.f })
 	, m_ForwardVector({0.f, 0.f, -1.f})
 	, m_Rotation({-90.0, 0.0, 0.0})
+	, lastX(0.0)
+	, lastY(0.0)
+	, firstMouse(true)
 {
 }
 
@@ -12,4 +15,45 @@ FMat4 Camera::GetViewMatrice() const
 {
 	LookAt<FMat4> lookAt;
 	return lookAt(m_Position, m_ForwardVector, m_UpVector);
+}
+
+void Camera::ChangeRotation(const double xPos, const double yPos)
+{
+	if (firstMouse)
+	{
+		lastX = (float)xPos;
+		lastY = (float)yPos;
+		firstMouse = false;
+	}
+
+	float xoffset = (float)(xPos - lastX);
+	float yoffset = (float)(lastY - yPos); // reversed since y-coordinates range from bottom to top
+	lastX = (float)xPos;
+	lastY = (float)yPos;
+
+	const float sensitivity = 0.1f;
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	m_Rotation.yaw += xoffset;
+	m_Rotation.pitch += yoffset;
+
+	if (m_Rotation.pitch > 89.0f)
+		m_Rotation.pitch = 89.0f;
+	if (m_Rotation.pitch < -89.0f)
+		m_Rotation.pitch = -89.0f;
+
+	glm::vec3 direction;
+	direction.x = cos(glm::radians((float)m_Rotation.yaw)) * cos(glm::radians((float)m_Rotation.pitch));
+	direction.y = sin(glm::radians((float)m_Rotation.pitch));
+	direction.z = sin(glm::radians((float)m_Rotation.yaw)) * cos(glm::radians((float)m_Rotation.pitch));
+	m_ForwardVector = glm::normalize(direction);
+}
+
+void Camera::UpdateLocation(const FVec3& vec)
+{
+	Cross<FVec3> cross;
+	m_Position += m_ForwardVector * vec.z;
+	m_Position += m_UpVector * vec.y;
+	m_Position += cross(m_ForwardVector, m_UpVector) * vec.x;
 }

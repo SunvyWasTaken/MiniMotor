@@ -18,11 +18,18 @@ public:
 
 	void LoadVirtualObject();
 
+	void CursorPosCallback(double xPos, double yPos);
+
 private:
 
 	void LoadShader();
 
+	void ProcessInput();
+
 private:
 
 	std::unique_ptr<ShaderOGL> shaderProgram;
+	std::unique_ptr<ShaderOGL> lightProgram;
+
+	uint lightVAO;
 };

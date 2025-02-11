@@ -1,11 +1,12 @@
 #pragma once
 
+#include "Event.h"
+
 class GLFWwindow;
 class Camera;
-class Event;
 
 using uint = unsigned int;
-using CallbackFunction = std::function<void(Event)>;
+using CallbackFunction = std::function<void(const Events&)>;
 
 template <typename Derived>
 class BasicRender
@@ -30,8 +31,13 @@ public:
 
 	void BindInputCallback(const CallbackFunction& func)
 	{
+		OnEventFunc = func;
+	}
+
+	void CursorPosCallback(double xPos, double yPos)
+	{
 		DerivedPtr tmp = static_cast<DerivedPtr>(this);
-		tmp->BindInputCallback(std::forward<CallbackFunction>(func));
+		tmp->CursorPosCallback(xPos, yPos);
 	}
 
 protected:
@@ -62,4 +68,6 @@ protected:
 	uint VBO = 0;
 	// Vertex array Object.
 	uint VAO = 0;
+
+	CallbackFunction OnEventFunc;
 };

@@ -20,7 +20,7 @@ using DRot = rot<double>;
 constexpr double PI = 3.14159265358979323846;
 
 template <typename T>
-struct vec3
+struct alignas(16) vec3
 {
 	T x, y, z;
 };
@@ -29,17 +29,21 @@ template <typename T>
 class mat4
 {
 public:
+	mat4()
+	{
+		_data.fill(0.f);
+	}
+	explicit mat4(const T val)
+	{
+		_data.fill(val);
+	}
+
 	T& operator()(int _x, int _y)
 	{
 		return _data[_x + 4 * _y];
 	}
 
-	T _data[4 * 4] = {
-		1.f, 1.f, 1.f, 1.f,
-		1.f, 1.f, 1.f, 1.f,
-		1.f, 1.f, 1.f, 1.f,
-		1.f, 1.f, 1.f, 1.f
-	};
+	std::array<T, 16> _data;
 };
 
 #ifdef USE_GLM
@@ -106,7 +110,7 @@ struct Radian
 {
 	T operator()(const T degree)
 	{
-		return degree * (PI /180);
+		return degree * (PI /180.0);
 	}
 };
 
@@ -118,12 +122,8 @@ struct Perspective
 	{
 		type const tanHalfFovy = tan(fov / static_cast<type>(2));
 
-		T Result{
-			0, 0, 0, 0,
-			0, 0, 0, 0,
-			0, 0, 0, 0,
-			0, 0, 0, 0
-		};
+		T Result{0.f};
+
 		Result(0, 0) = static_cast<type>(1) / (aspect * tanHalfFovy);
 		Result(1, 1) = static_cast<type>(1) / (tanHalfFovy);
 		Result(2, 2) = -(far + near) / (far - near);
@@ -167,7 +167,7 @@ namespace LeafMath
 	template <typename T>
 	inline decltype(auto) GetData(const T& val)
 	{
-		return val._data;
+		return &*val._data.begin();
 	}
 
 #ifdef USE_GLM
@@ -181,6 +181,12 @@ namespace LeafMath
 	inline decltype(auto) GetData<FVec3>(const FVec3& val)
 	{
 		return glm::value_ptr(val);
+	}
+#else
+	template <>
+	inline decltype(auto) GetData<FVec3>(const FVec3& val)
+	{
+		return &val.x;
 	}
 #endif // USE_GLM
 
