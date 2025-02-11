@@ -2,6 +2,7 @@
 //
 
 #include "OpenGLRender.h"
+#include "Camera.h"
 
 template <typename TRender>
 class BasicApp
@@ -17,6 +18,7 @@ public:
 
     void Run()
     {
+        std::unique_ptr<Camera> cam = std::make_unique<Camera>();
         auto PreviousTime = std::chrono::high_resolution_clock::now();
         while (render->IsRunning())
         {
@@ -24,7 +26,7 @@ public:
             std::chrono::duration<float> deltatime = CurrentTime - PreviousTime;
             PreviousTime = CurrentTime;
 
-            render->Run(deltatime.count());
+            render->Run(cam.get());
         }
     }
 

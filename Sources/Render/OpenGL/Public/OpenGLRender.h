@@ -2,6 +2,9 @@
 
 #include "BasicRender.h"
 
+class Camera;
+class ShaderOGL;
+
 class OpenGLRender : public BasicRender<OpenGLRender>
 {
 public:
@@ -9,8 +12,17 @@ public:
 
 	virtual ~OpenGLRender();
 
-	void Run(float deltatime);
+	void Run(Camera* cam);
 
 	bool IsRunning();
-	
+
+	void LoadVirtualObject();
+
+private:
+
+	void LoadShader();
+
+private:
+
+	std::unique_ptr<ShaderOGL> shaderProgram;
 };

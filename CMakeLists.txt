@@ -24,6 +24,7 @@ GroupSources("Sources")
 find_package(OpenGL REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
 
 add_executable(${PROJECT_NAME} ${Sources})
 
@@ -62,6 +63,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 	OpenGL::GL
 	glfw
 	glad::glad
+	glm::glm-header-only
 )
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE

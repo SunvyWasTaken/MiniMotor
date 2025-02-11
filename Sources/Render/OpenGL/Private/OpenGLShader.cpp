@@ -54,10 +54,19 @@ ShaderOGL::ShaderOGL(const std::string& vertPath, const std::string& fragPath)
 ShaderOGL::~ShaderOGL()
 {
 	glDeleteProgram(_id);
-	std::cerr << "Shader detruit" << std::endl;
 }
 
 void ShaderOGL::Use()
 {
 	glUseProgram(_id);
+}
+
+void ShaderOGL::SetMatrice4(const std::string& target, const FMat4& value)
+{
+	glUniformMatrix4fv(glGetUniformLocation(_id, target.c_str()), 1, GL_FALSE, LeafMath::GetData(value));
+}
+
+void ShaderOGL::SetVec3F(const std::string& target, const FVec3& value)
+{
+	glUniform3fv(glGetUniformLocation(_id, target.c_str()), 1, LeafMath::GetData(value));
 }

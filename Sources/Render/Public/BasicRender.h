@@ -1,8 +1,11 @@
 #pragma once
 
 class GLFWwindow;
+class Camera;
+class Event;
 
 using uint = unsigned int;
+using CallbackFunction = std::function<void(Event)>;
 
 template <typename Derived>
 class BasicRender
@@ -13,10 +16,10 @@ public:
 
 	virtual ~BasicRender() = default;
 
-	void Run(float deltatime)
+	void Run(Camera* cam)
 	{
 		DerivedPtr tmp = static_cast<DerivedPtr>(this);
-		tmp->Run(deltatime);
+		tmp->Run(cam);
 	}
 
 	bool IsRunning()
@@ -24,6 +27,27 @@ public:
 		DerivedPtr tmp = static_cast<DerivedPtr>(this);
 		return tmp->IsRunning();
 	}
+
+	void BindInputCallback(const CallbackFunction& func)
+	{
+		DerivedPtr tmp = static_cast<DerivedPtr>(this);
+		tmp->BindInputCallback(std::forward<CallbackFunction>(func));
+	}
+
+protected:
+
+	void PostInit()
+	{
+		LoadVirtualObject();
+	}
+	
+private:
+
+	void LoadVirtualObject()
+	{
+		DerivedPtr tmp = static_cast<DerivedPtr>(this);
+		tmp->LoadVirtualObject();
+	}	
 
 protected:
 
@@ -35,7 +59,7 @@ protected:
 	std::string m_WindowTitle = "LeafEngine";
 
 	// Vertex buffer object.
-	uint VBO;
+	uint VBO = 0;
 	// Vertex array Object.
-	uint VAO;
+	uint VAO = 0;
 };
