@@ -47,6 +47,7 @@ public:
 };
 
 #ifdef USE_GLM
+using FVec2 = glm::vec2;
 using FVec3 = glm::vec3;
 using FMat4 = glm::mat4;
 #else // USE_GLM

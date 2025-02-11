@@ -12,9 +12,13 @@ public:
 
 	void Use();
 
-	void SetMatrice4(const std::string& target, const FMat4& value);
+	void Set1I(const std::string& target, const int value);
+
+	void Set1F(const std::string& target, const float value);
 
 	void SetVec3F(const std::string& target, const FVec3& value);
+
+	void SetMatrice4(const std::string& target, const FMat4& value);
 
 private:
 

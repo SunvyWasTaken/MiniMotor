@@ -34,10 +34,10 @@ public:
 		OnEventFunc = func;
 	}
 
-	void CursorPosCallback(double xPos, double yPos)
+	void OnWindowResize(int width, int height)
 	{
-		DerivedPtr tmp = static_cast<DerivedPtr>(this);
-		tmp->CursorPosCallback(xPos, yPos);
+		m_Width = width;
+		m_Height = height;
 	}
 
 protected:
@@ -59,7 +59,7 @@ protected:
 
 	GLFWwindow* m_Window = nullptr;
 
-	int m_Weigth = 800;
+	int m_Width = 800;
 	int m_Height = 600;
 
 	std::string m_WindowTitle = "LeafEngine";

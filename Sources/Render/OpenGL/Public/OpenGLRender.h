@@ -18,9 +18,9 @@ public:
 
 	void LoadVirtualObject();
 
-	void CursorPosCallback(double xPos, double yPos);
-
 private:
+
+	void CursorPosCallback(double xPos, double yPos);
 
 	void LoadShader();
 

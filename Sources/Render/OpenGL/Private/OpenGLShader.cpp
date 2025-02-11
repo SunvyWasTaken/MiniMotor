@@ -62,12 +62,22 @@ void ShaderOGL::Use()
 	glUseProgram(_id);
 }
 
-void ShaderOGL::SetMatrice4(const std::string& target, const FMat4& value)
+void ShaderOGL::Set1I(const std::string& target, const int value)
 {
-	glUniformMatrix4fv(glGetUniformLocation(_id, target.c_str()), 1, GL_FALSE, LeafMath::GetData(value));
+	glUniform1i(glGetUniformLocation(_id, target.c_str()), value);
+}
+
+void ShaderOGL::Set1F(const std::string& target, const float value)
+{
+	glUniform1f(glGetUniformLocation(_id, target.c_str()), value);
 }
 
 void ShaderOGL::SetVec3F(const std::string& target, const FVec3& value)
 {
 	glUniform3fv(glGetUniformLocation(_id, target.c_str()), 1, LeafMath::GetData(value));
+}
+
+void ShaderOGL::SetMatrice4(const std::string& target, const FMat4& value)
+{
+	glUniformMatrix4fv(glGetUniformLocation(_id, target.c_str()), 1, GL_FALSE, LeafMath::GetData(value));
 }

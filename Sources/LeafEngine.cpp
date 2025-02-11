@@ -8,16 +8,16 @@
 template <typename TRender>
 class BasicApp
 {
-    using RenderType = TRender;
-    using RenderTypePtr = RenderType*;
-    using RenderPtr = std::unique_ptr<BasicRender<RenderType>>;
+    using Type = BasicApp<TRender>;
+    using RenderType = BasicRender<TRender>;
+    using RenderPtr = std::unique_ptr<RenderType>;
 
 public:
     BasicApp()
-        : render(std::make_unique<RenderType>())
+        : render(std::make_unique<TRender>())
         , cam(std::make_unique<Camera>())
     {
-        render->BindInputCallback(std::bind(&BasicApp<TRender>::OnEvents, this, std::placeholders::_1));
+        render->BindInputCallback(std::bind(&Type::OnEvents, this, std::placeholders::_1));
     }
 
     void Run()
@@ -28,6 +28,7 @@ public:
             auto CurrentTime = std::chrono::high_resolution_clock::now();
             std::chrono::duration<float> deltatime = CurrentTime - PreviousTime;
             PreviousTime = CurrentTime;
+            Deltatime = deltatime.count();
 
             render->Run(cam.get());
         }
@@ -36,7 +37,7 @@ public:
     void OnEvents(const Events& even)
     {
         // Todo : Move elsewhere like in the camera directly. and make a Input Manager.
-        float InputSpeed = 0.001f;
+        float InputSpeed = 5.f * Deltatime;
         std::visit(Overloaded{
             [&](KeyEvent key)
             {
@@ -65,6 +66,8 @@ public:
 				{
 					vec += FVec3{ 0.f, -1.f, 0.f };
 				}
+                Normalize<FVec3> norm;
+                vec = norm(vec);
 				cam->UpdateLocation(vec * InputSpeed);
             },
             [&](MouseEvent mouse)
@@ -79,6 +82,7 @@ private:
 
     RenderPtr render;
     std::unique_ptr<Camera> cam;
+    float Deltatime;
 };
 
 using App = BasicApp<OpenGLRender>;
