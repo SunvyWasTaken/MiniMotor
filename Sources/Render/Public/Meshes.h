@@ -9,38 +9,47 @@ struct Vertex
 	FVec2 TexCoords;
 };
 
+#define NEW_TEXTURE_TYPE(_name) struct _name { constexpr inline std::string_view name() const { return #_name; }; };
+
+namespace TTexture
+{
+	NEW_TEXTURE_TYPE(Diffuse)
+	NEW_TEXTURE_TYPE(Specular)
+
+	using TextureType = std::variant<Diffuse, Specular>;
+}
+
 struct Texture
 {
-	using uint = unsigned int;
-	uint id;
-	std::string type;
+	uint32_t id;
+	TTexture::TextureType type;
 };
 
-class Mesh
+class Mesh final
 {
-	using uint = unsigned int;
-	using vertexList = std::vector<Vertex>;
-	using indiceList = std::vector<uint>;
-	using texturelist = std::vector<Texture>;
-
 public:
 
-	Mesh(vertexList _vertices, indiceList _indices, texturelist _textures);
+	using vertexList = std::vector<Vertex>;
+	using indiceList = std::vector<uint32_t>;
+	using texturelist = std::vector<Texture>;
 
-	void Draw(class ShaderOGL* shader);
+	explicit Mesh(vertexList _vertices/*, indiceList _indices, texturelist _textures*/ );
+
+	// todo : should i make it a virtual or a final?
+	~Mesh();
+
+	void Draw(class ShaderOGL* shader) const;
 
 public:
 
 	vertexList vertices;
 
-	indiceList indices;
+	//indiceList indices;
 
-	texturelist textures;
+	//texturelist textures;
 
 private:
 
-	uint VBO, VAO, EBO;
-
-	void setupMesh();
+	uint32_t VBO, VAO, EBO;
 	
 };

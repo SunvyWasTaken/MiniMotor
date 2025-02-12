@@ -22,6 +22,7 @@ endmacro()
 GroupSources("Sources")
 
 find_package(OpenGL REQUIRED)
+find_package(EnTT CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
@@ -61,6 +62,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     LeafEngine_compiler_flags
+    entt::entt
 	OpenGL::GL
 	glfw
 	glad::glad

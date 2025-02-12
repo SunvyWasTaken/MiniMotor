@@ -12,11 +12,13 @@ public:
 
 	virtual ~OpenGLRender();
 
-	void Run(Camera* cam);
+	void BeginFrame();
+
+	void Draw(const Camera* cam, const Mesh* mesh);
+
+	void EndFrame();
 
 	bool IsRunning();
-
-	void LoadVirtualObject();
 
 private:
 

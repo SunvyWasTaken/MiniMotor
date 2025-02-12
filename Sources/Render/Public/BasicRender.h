@@ -2,8 +2,13 @@
 
 #include "Event.h"
 
+#define RET_CRTP(x, returnType) returnType x() { DerivedPtr tmp = static_cast<DerivedPtr>(this); return tmp->x(); }
+#define CRTP(x) RET_CRTP(x, void)
+
+
 class GLFWwindow;
 class Camera;
+class Mesh;
 
 using uint = unsigned int;
 using CallbackFunction = std::function<void(const Events&)>;
@@ -17,17 +22,17 @@ public:
 
 	virtual ~BasicRender() = default;
 
-	void Run(Camera* cam)
+	CRTP(BeginFrame)
+
+	void Draw(const Camera* cam, const Mesh* mesh)
 	{
 		DerivedPtr tmp = static_cast<DerivedPtr>(this);
-		tmp->Run(cam);
+		tmp->Draw(cam, mesh);
 	}
 
-	bool IsRunning()
-	{
-		DerivedPtr tmp = static_cast<DerivedPtr>(this);
-		return tmp->IsRunning();
-	}
+	CRTP(EndFrame)
+
+	RET_CRTP(IsRunning, bool)
 
 	void BindInputCallback(const CallbackFunction& func)
 	{
@@ -38,21 +43,6 @@ public:
 	{
 		m_Width = width;
 		m_Height = height;
-	}
-
-protected:
-
-	void PostInit()
-	{
-		LoadVirtualObject();
-	}
-	
-private:
-
-	void LoadVirtualObject()
-	{
-		DerivedPtr tmp = static_cast<DerivedPtr>(this);
-		tmp->LoadVirtualObject();
 	}	
 
 protected:
