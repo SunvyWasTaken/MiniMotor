@@ -1,5 +1,5 @@
 {
-  "name": "leafengine",
+  "name": "minimotor",
   "dependencies": [
     "entt",
     "opengl",
