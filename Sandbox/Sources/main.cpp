@@ -1,10 +1,21 @@
 #include "MiniMotor.h"
 
-using OpenGLApp = BasicApp<OpenGLRender>;
+struct DefaultApp : BasicApp<OpenGLRender>
+{
+	virtual void Init() override
+	{
+
+	}
+
+	virtual void Update() override
+	{
+
+	}
+};
 
 int main()
 {
-	std::unique_ptr<OpenGLApp> curr = std::make_unique<OpenGLApp>();
+	std::unique_ptr<DefaultApp> curr = std::make_unique<DefaultApp>();
 	curr->Run();
 	return 0;
 }

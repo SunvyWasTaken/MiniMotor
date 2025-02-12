@@ -6,4 +6,4 @@
 #else
 #define MM_API __declspec(dllimport)
 #define MM_EXPORT
-#endif // MM_EXPORT
+#endif // MiniMotor_EXPORTS

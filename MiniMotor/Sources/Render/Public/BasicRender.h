@@ -14,7 +14,7 @@ using uint = unsigned int;
 using CallbackFunction = std::function<void(const Events&)>;
 
 template <typename Derived>
-class MM_API BasicRender
+class BasicRender
 {
 	using DerivedPtr = Derived*;
 public:

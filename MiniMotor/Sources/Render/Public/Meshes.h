@@ -25,7 +25,7 @@ struct Texture
 	TTexture::TextureType type;
 };
 
-class MM_API Mesh final
+class MM_EXPORT Mesh final
 {
 public:
 

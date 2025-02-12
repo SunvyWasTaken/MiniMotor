@@ -1,6 +1,8 @@
 #pragma once
 
-class KeyEvent
+#include "ImportExportDLL.h"
+
+class MM_API KeyEvent
 {
 	using uint = unsigned int;
 public:
@@ -17,7 +19,7 @@ public:
 	}
 };
 
-class MouseEvent
+class MM_API MouseEvent
 {
 public:
 	float x, y;

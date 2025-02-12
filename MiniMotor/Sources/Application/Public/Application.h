@@ -58,7 +58,7 @@ namespace
 }
 
 template <typename TRender>
-class MM_EXPORT BasicApp
+class BasicApp
 {
 	using Type = BasicApp<TRender>;
 	using RenderType = BasicRender<TRender>;
@@ -73,13 +73,17 @@ public:
 		render->BindInputCallback(std::bind(&Type::OnEvents, this, std::placeholders::_1));
 	}
 
+	virtual ~BasicApp() = default;
+
+	virtual void Init() = 0;
+
+	virtual void Update() = 0;
+
 	void Run()
 	{
 		auto PreviousTime = std::chrono::high_resolution_clock::now();
-		Mesh CurrentCube(vertices);
 
-		Entity* cube = world.SpawnEntity<Entity>();
-		cube->AddComponent<MeshComponent>(CurrentCube);
+		Init();
 
 		while (render->IsRunning())
 		{
@@ -88,6 +92,9 @@ public:
 			PreviousTime = CurrentTime;
 			Deltatime = deltatime.count();
 
+			Update();
+
+			// Start rendering maybe it's going to be in another thread oO!
 			render->BeginFrame();
 			auto views = world.entitys.view<MeshComponent>();
 			for (auto curr : views)
@@ -95,7 +102,6 @@ public:
 				MeshComponent currComponent = world.entitys.get<MeshComponent>(curr);
 				render->Draw(cam.get(), currComponent());
 			}
-
 			render->EndFrame();
 		}
 	}

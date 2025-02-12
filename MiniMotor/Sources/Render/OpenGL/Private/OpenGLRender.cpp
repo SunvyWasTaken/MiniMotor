@@ -141,8 +141,8 @@ bool OpenGLRender::IsRunning()
 
 void OpenGLRender::LoadShader()
 {
-	shaderProgram = std::make_unique<ShaderOGL>("../../LeafEngine/Sources/Shaders/vShader.vert", "../../LeafEngine/Sources/Shaders/fShader.frag");
-	lightProgram = std::make_unique<ShaderOGL>("../../LeafEngine/Sources/Shaders/vLightShader.vert", "../../LeafEngine/Sources/Shaders/fLightShader.frag");
+	shaderProgram = std::make_unique<ShaderOGL>("../../MiniMotor/Sources/Shaders/vShader.vert", "../../MiniMotor/Sources/Shaders/fShader.frag");
+	lightProgram = std::make_unique<ShaderOGL>("../../MiniMotor/Sources/Shaders/vLightShader.vert", "../../MiniMotor/Sources/Shaders/fLightShader.frag");
 }
 
 void OpenGLRender::ProcessInput()
