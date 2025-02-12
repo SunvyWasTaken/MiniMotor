@@ -1,0 +1,11 @@
+{
+  "name": "leafengine",
+  "dependencies": [
+    "entt",
+    "opengl",
+    "glfw3",
+    "glad",
+    "glm",
+    "stb"
+  ]
+}
