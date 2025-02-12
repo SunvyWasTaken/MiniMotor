@@ -12,7 +12,7 @@ void VulkanRender::BeginFrame()
 {
 }
 
-void VulkanRender::Draw(const Camera* cam, const Mesh* mesh)
+void VulkanRender::Draw(const Camera* cam, const MeshComponent* mesh)
 {
 }
 

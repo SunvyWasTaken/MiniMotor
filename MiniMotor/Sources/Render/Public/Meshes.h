@@ -30,10 +30,9 @@ class MM_EXPORT Mesh final
 public:
 
 	using vertexList = std::vector<Vertex>;
-	//using indiceList = std::vector<uint32_t>;
-	//using texturelist = std::vector<Texture>;
+	using indicesList = std::vector<uint32_t>;
 
-	explicit Mesh(vertexList _vertices/*, indiceList _indices, texturelist _textures*/ );
+	Mesh(vertexList _vertices, indicesList _indices);
 
 	~Mesh();
 
@@ -42,13 +41,10 @@ public:
 public:
 
 	vertexList vertices;
-
-	//indiceList indices;
-
-	//texturelist textures;
+	indicesList indices;
 
 private:
 
 	uint32_t VBO, VAO, EBO;
-	
+
 };

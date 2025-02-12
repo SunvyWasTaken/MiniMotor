@@ -1,6 +1,7 @@
 {
   "name": "minimotor",
   "dependencies": [
+    "assimp",
     "entt",
     "opengl",
     "glfw3",

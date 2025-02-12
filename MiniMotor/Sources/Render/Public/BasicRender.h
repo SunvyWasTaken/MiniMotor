@@ -8,7 +8,7 @@
 
 class GLFWwindow;
 class Camera;
-class Mesh;
+class MeshComponent;
 
 using uint = unsigned int;
 using CallbackFunction = std::function<void(const Events&)>;
@@ -24,7 +24,7 @@ public:
 
 	CRTP(BeginFrame)
 
-	void Draw(const Camera* cam, const Mesh* mesh)
+	void Draw(const Camera* cam, const MeshComponent* mesh)
 	{
 		DerivedPtr tmp = static_cast<DerivedPtr>(this);
 		tmp->Draw(cam, mesh);
@@ -53,11 +53,6 @@ protected:
 	int m_Height = 600;
 
 	std::string m_WindowTitle = "LeafEngine";
-
-	// Vertex buffer object.
-	uint VBO = 0;
-	// Vertex array Object.
-	uint VAO = 0;
 
 	CallbackFunction OnEventFunc;
 };

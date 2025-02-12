@@ -1,7 +1,7 @@
 
 #include "Camera.h"
 #include "Event.h"
-#include "Meshes.h"
+#include "MesheComponent.h"
 #include "OpenGLRender.h"
 #include "OpenGLShader.h"
 
@@ -104,7 +104,7 @@ void OpenGLRender::BeginFrame()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void OpenGLRender::Draw(const Camera* cam, const Mesh* mesh)
+void OpenGLRender::Draw(const Camera* cam, const MeshComponent* mesh)
 {
 	shaderProgram->Use();
 

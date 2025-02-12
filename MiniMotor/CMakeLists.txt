@@ -22,6 +22,7 @@ endmacro()
 GroupSources("Sources")
 
 find_package(OpenGL REQUIRED)
+find_package(assimp CONFIG REQUIRED)
 find_package(EnTT CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
@@ -69,6 +70,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     MiniMotor_compiler_flags
+    assimp::assimp
     OpenGL::GL
     glfw
     glad::glad
