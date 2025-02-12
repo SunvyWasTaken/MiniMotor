@@ -335,3 +335,4 @@ ASALocalRun/
 
 Build/
 vcpkg_installed/
+/vcpkg
