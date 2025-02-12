@@ -25,13 +25,13 @@ struct Texture
 	TTexture::TextureType type;
 };
 
-class Mesh final
+class MM_API Mesh final
 {
 public:
 
 	using vertexList = std::vector<Vertex>;
-	using indiceList = std::vector<uint32_t>;
-	using texturelist = std::vector<Texture>;
+	//using indiceList = std::vector<uint32_t>;
+	//using texturelist = std::vector<Texture>;
 
 	explicit Mesh(vertexList _vertices/*, indiceList _indices, texturelist _textures*/ );
 

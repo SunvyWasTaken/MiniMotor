@@ -1,13 +1,12 @@
 #pragma once
 
-#include "OpenGLRender.h"
-#include "VulkanRender.h"
+#include "BasicRender.h"
 #include "Camera.h"
+#include "Entity.h"
 #include "Event.h"
+#include "MesheComponent.h"
 #include "Meshes.h"
 #include "Scene.h"
-#include "Entity.h"
-#include "MesheComponent.h"
 
 namespace
 {
@@ -59,7 +58,7 @@ namespace
 }
 
 template <typename TRender>
-class MM_API BasicApp
+class MM_EXPORT BasicApp
 {
 	using Type = BasicApp<TRender>;
 	using RenderType = BasicRender<TRender>;

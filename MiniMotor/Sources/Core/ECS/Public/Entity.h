@@ -1,6 +1,7 @@
 #pragma once
 
 #include "LeafEntity.h"
+#include "Scene.h"
 
 #include <entt/entt.hpp>
 

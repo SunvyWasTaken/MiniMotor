@@ -2,7 +2,7 @@
 
 #include "Maths.h"
 
-class Camera
+class MM_API Camera
 {
 public:
 	Camera();

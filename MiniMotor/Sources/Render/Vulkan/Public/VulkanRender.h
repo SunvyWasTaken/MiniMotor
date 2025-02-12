@@ -2,7 +2,7 @@
 
 #include "BasicRender.h"
 
-class VulkanRender : public BasicRender<VulkanRender>
+class MM_API VulkanRender : public BasicRender<VulkanRender>
 {
 public:
 	VulkanRender();

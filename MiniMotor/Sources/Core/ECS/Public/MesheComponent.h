@@ -3,7 +3,7 @@
 #include "Meshes.h"
 
 // Mesh component is only the component for the ECS it will store the mesh which is going to be draw during the draw function.
-class MeshComponent final
+class MM_API MeshComponent final
 {
 public:
 	explicit MeshComponent(const Mesh& _mesh);

@@ -4,7 +4,7 @@
 
 class Scene;
 
-class Entity
+class MM_API Entity
 {
 public:
 	Entity() = default;

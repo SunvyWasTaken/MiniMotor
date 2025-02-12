@@ -1,8 +1,10 @@
 #include "MiniMotor.h"
 
-// Todo : this should be elsewhere like in another sln who's gonna be the app.
+using OpenGLApp = BasicApp<OpenGLRender>;
 
 int main()
 {
-	RunApp<OpenGLApp>();
+	std::unique_ptr<OpenGLApp> curr = std::make_unique<OpenGLApp>();
+	curr->Run();
+	return 0;
 }

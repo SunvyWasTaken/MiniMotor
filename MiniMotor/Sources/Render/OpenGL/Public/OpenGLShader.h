@@ -2,7 +2,7 @@
 
 #include "Maths.h"
 
-class ShaderOGL
+class MM_API ShaderOGL
 {
 public:
 

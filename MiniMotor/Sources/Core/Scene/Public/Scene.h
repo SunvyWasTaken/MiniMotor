@@ -4,7 +4,7 @@
 
 #include <entt/entt.hpp>
 
-class Scene
+class MM_API Scene
 {
 public:
 	Scene();
