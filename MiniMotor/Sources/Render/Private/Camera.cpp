@@ -68,7 +68,7 @@ FMat4 Camera::GetProjection() const
 	{
 		Perspective<FMat4> perspective;
 		Radian<float> radian;
-		return perspective(radian(45.f), Res.x / Res.y, 0.1f, 100.f);
+		return perspective(radian(45.f), Res.x / Res.y, 0.1f, 200.f);
 	}
 	else if (viewMode == Sunset::ViewMode::Ortho)
 	{

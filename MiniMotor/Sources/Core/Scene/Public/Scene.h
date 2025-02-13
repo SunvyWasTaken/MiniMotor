@@ -15,8 +15,9 @@ public:
 	{
 		entitysList.emplace_back(new T(std::forward<Args>(args)...));
 		auto currEntity = entitysList.end() - 1;
-		(*currEntity)->Init(entitys.create(), this);
-		return (*currEntity).get();
+		(*currEntity)->InitImpl(entitys.create(), this);
+		(*currEntity)->Init();
+		return static_cast<T*>((*currEntity).get());
 	}
 
 	entt::registry entitys;

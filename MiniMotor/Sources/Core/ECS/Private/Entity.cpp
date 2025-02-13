@@ -6,7 +6,7 @@ Entity::~Entity()
 	
 }
 
-void Entity::Init(const entt::entity& _id, Scene* _world)
+void Entity::InitImpl(const entt::entity& _id, Scene* _world)
 {
 	id = _id;
 	world = _world;

@@ -14,9 +14,14 @@ public:
 	template <typename T, typename ...Args>
 	void AddComponent(Args&&... args);
 
+	template <typename T>
+	T& GetComponent() const;
+
 private:
 
-	void Init(const entt::entity& _id, Scene* _world);
+	void InitImpl(const entt::entity& _id, Scene* _world);
+
+	virtual void Init() {};
 
 private:
 

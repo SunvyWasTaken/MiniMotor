@@ -10,7 +10,7 @@ public:
 		: Position(_position)
 	{ }
 	
-	FVec3 operator()()
+	FVec3& operator()()
 	{
 		return Position;
 	}
