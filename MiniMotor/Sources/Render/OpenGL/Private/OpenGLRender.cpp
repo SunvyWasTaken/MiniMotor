@@ -21,6 +21,7 @@ OpenGLRender::OpenGLRender(const std::string& _name, const FVec2 _size)
 	m_Window = glfwCreateWindow(m_Width, m_Height, m_WindowTitle.c_str(), NULL, NULL);
 	glfwMakeContextCurrent(m_Window);
 	glfwSetWindowUserPointer(m_Window, this);
+	glfwSwapInterval(1);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{

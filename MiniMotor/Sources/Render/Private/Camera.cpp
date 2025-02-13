@@ -4,7 +4,7 @@
 
 Camera::Camera()
 	: m_Position({0.f, 0.f, 10.f})
-	, viewMode(Sunset::ViewMode::Ortho)
+	, viewMode(Sunset::ViewMode::Perspective)
 	, Res(1920, 1080)
 	, m_UpVector({ 0.f, 1.f, 0.f })
 	, m_ForwardVector({0.f, 0.f, -1.f})

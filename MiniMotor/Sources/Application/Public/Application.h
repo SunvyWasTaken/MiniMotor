@@ -32,13 +32,13 @@ public:
 
 	void Run()
 	{
-		auto PreviousTime = std::chrono::high_resolution_clock::now();
+		auto PreviousTime = std::chrono::steady_clock::now();
 
 		Init();
 
 		while (render->IsRunning())
 		{
-			auto CurrentTime = std::chrono::high_resolution_clock::now();
+			auto CurrentTime = std::chrono::steady_clock::now();
 			std::chrono::duration<float> deltatime = CurrentTime - PreviousTime;
 			PreviousTime = CurrentTime;
 			Deltatime = deltatime.count();
@@ -114,10 +114,13 @@ protected:
 
 	virtual const char* GetApplicationName() const { return "MiniMotor App"; }
 
+protected:
+
+	float Deltatime;
+
 private:
 
 	RenderPtr render;
 	Scene world;
 	std::unique_ptr<Camera> cam;
-	float Deltatime;
 };

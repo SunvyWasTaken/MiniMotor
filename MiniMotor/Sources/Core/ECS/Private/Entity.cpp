@@ -3,6 +3,7 @@
 
 Entity::~Entity()
 {
+	
 }
 
 void Entity::Init(const entt::entity& _id, Scene* _world)
