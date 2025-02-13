@@ -59,6 +59,7 @@ namespace
 	{
 		uint32_t texture;
 		int width, height, nrChannels;
+		stbi_set_flip_vertically_on_load(true);
 		unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -78,9 +79,9 @@ namespace
 
 MeshComponent::MeshComponent()
 {
-	BaseColor = Texture(LoadTexture("../../Ressources/SunsetBaseColor.jpg"), TTexture::Diffuse());
-	SpecColor = Texture(LoadTexture("../../Ressources/SunsetSpec.png"), TTexture::Specular());
-	TextureList textures = {BaseColor, SpecColor};
+	BaseColor = Texture(LoadTexture("../../Ressources/SunsetBaseColor.jpg"), TTexture::Specular());
+	SpecColor = Texture(LoadTexture("../../Ressources/SunsetSpec.png"), TTexture::Diffuse());
+	TextureList textures = { SpecColor, BaseColor };
 
 	mesh = std::make_unique<Mesh>(vertices, textures);
 }

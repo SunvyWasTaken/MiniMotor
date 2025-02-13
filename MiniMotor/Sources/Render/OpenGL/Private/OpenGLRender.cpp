@@ -35,7 +35,7 @@ OpenGLRender::OpenGLRender(const std::string& _name, const FVec2 _size)
 
 	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(m_Window, 
-	[](GLFWwindow* window, double xPos, double yPos) 
+	[](GLFWwindow* window, double xPos, double yPos)
 	{
 		static_cast<OpenGLRender*>(glfwGetWindowUserPointer(window))->CursorPosCallback(xPos, yPos);
 	});
