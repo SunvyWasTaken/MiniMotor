@@ -68,7 +68,7 @@ void OpenGLRender::BeginFrame()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void OpenGLRender::Draw(const Camera* cam, const Mesh* mesh)
+void OpenGLRender::Draw(const Camera* cam, const Mesh* mesh, const FVec3& Position)
 {
 	shaderProgram->Use();
 
@@ -91,6 +91,7 @@ void OpenGLRender::Draw(const Camera* cam, const Mesh* mesh)
 
 	// todo : It's should be something like that.
 	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, Position);
 	shaderProgram->SetMatrice4("model", model);
 	mesh->Draw(shaderProgram.get());
 }

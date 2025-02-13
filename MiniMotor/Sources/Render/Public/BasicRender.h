@@ -29,10 +29,10 @@ public:
 
 	CRTP(BeginFrame)
 
-	void Draw(const Camera* cam, const Mesh* mesh)
+	void Draw(const Camera* cam, const Mesh* mesh, const FVec3& Position)
 	{
 		DerivedPtr tmp = static_cast<DerivedPtr>(this);
-		tmp->Draw(cam, mesh);
+		tmp->Draw(cam, mesh, Position);
 	}
 
 	CRTP(EndFrame)

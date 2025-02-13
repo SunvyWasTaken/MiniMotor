@@ -14,7 +14,7 @@ public:
 
 	void BeginFrame();
 
-	void Draw(const Camera* cam, const Mesh* mesh);
+	void Draw(const Camera* cam, const Mesh* mesh, const FVec3& Position);
 
 	void EndFrame();
 

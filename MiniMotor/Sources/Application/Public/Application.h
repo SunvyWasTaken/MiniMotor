@@ -5,6 +5,7 @@
 #include "Entity.h"
 #include "Event.h"
 #include "MesheComponent.h"
+#include "TransformComponent.h"
 #include "Meshes.h"
 #include "Scene.h"
 
@@ -47,11 +48,12 @@ public:
 
 			// Start rendering maybe it's going to be in another thread oO!
 			render->BeginFrame();
-			auto views = world.entitys.view<MeshComponent>();
+			auto views = world.entitys.view<MeshComponent, TransformComponent>();
 			for (auto curr : views)
 			{
-				MeshComponent& currComponent = world.entitys.get<MeshComponent>(curr);
-				render->Draw(cam.get(), currComponent());
+				MeshComponent& currMesh = world.entitys.get<MeshComponent>(curr);
+				TransformComponent& currTrans = world.entitys.get<TransformComponent>(curr);
+				render->Draw(cam.get(), currMesh(), currTrans());
 			}
 			render->EndFrame();
 		}
