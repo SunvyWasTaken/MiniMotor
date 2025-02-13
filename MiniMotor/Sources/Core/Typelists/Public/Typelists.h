@@ -1,8 +1,14 @@
 #pragma once
 
+#include <variant>
+
 template <typename ...Ts>
 struct Typelist
 { };
+
+/************************************************************************/
+/* TypeIndex															*/
+/************************************************************************/
 
 template <typename T, typename T2>
 struct TypeIndex
@@ -21,6 +27,22 @@ struct TypeIndex<T, Typelist<T2, Ts...>>
 	static constexpr int value = 1 + TypeIndex<T, Typelist<Ts...>>::value;
 };
 
+template <typename T, typename ...Ts>
+struct TypeIndex<T, std::variant<T, Ts...>>
+{
+	static constexpr int value = 0;
+};
+
+template <typename T, typename T2, typename ...Ts>
+struct TypeIndex<T, std::variant<T2, Ts...>>
+{
+	static constexpr int value = 1 + TypeIndex<T, std::variant<Ts...>>::value;
+};
+
+/************************************************************************/
+/* Get Type at Index													*/
+/************************************************************************/
+
 template <int i, typename ...Ts>
 struct GetTypeAtIndex
 { };
@@ -36,6 +58,10 @@ struct GetTypeAtIndex<i, Typelist<T, Ts...>>
 {
 	using value = typename GetTypeAtIndex<i - 1, Typelist<Ts...>>::value;
 };
+
+/************************************************************************/
+/* Type Size List														*/
+/************************************************************************/
 
 template <typename T>
 struct TypelistSize

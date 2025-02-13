@@ -21,18 +21,28 @@ namespace TTexture
 
 struct Texture
 {
+	Texture() : isValid(false), id(0) {}
+
+	Texture(const uint32_t _id, const TTexture::TextureType& _type)
+		: isValid(true)
+		, id(_id)
+		, type(_type)
+	{ }
+
+	bool isValid;
 	uint32_t id;
 	TTexture::TextureType type;
 };
+
+using TextureList = std::array<Texture, std::variant_size_v<TTexture::TextureType>>;
 
 class MM_EXPORT Mesh final
 {
 public:
 
-	using vertexList = std::vector<Vertex>;
-	using indicesList = std::vector<uint32_t>;
+	using VertexList = std::vector<Vertex>;
 
-	Mesh(vertexList _vertices, indicesList _indices);
+	explicit Mesh(const VertexList& _vertices, const TextureList& _textures);
 
 	~Mesh();
 
@@ -40,11 +50,11 @@ public:
 
 public:
 
-	vertexList vertices;
-	indicesList indices;
+	VertexList Vertices;
+	TextureList Textures;
 
 private:
 
-	uint32_t VBO, VAO, EBO;
+	uint32_t VBO, VAO;
 
 };

@@ -211,7 +211,11 @@ struct Normalize<FVec3>
 {
 	FVec3 operator()(const FVec3& A)
 	{
-		return glm::normalize(A);
+		if (glm::length(A) > 1)
+		{
+			return glm::normalize(A);
+		}
+		return A;
 	}
 };
 

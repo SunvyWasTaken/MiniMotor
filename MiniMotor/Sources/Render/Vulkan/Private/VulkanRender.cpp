@@ -1,6 +1,7 @@
 #include "VulkanRender.h"
 
-VulkanRender::VulkanRender()
+VulkanRender::VulkanRender(const std::string& _name, const FVec2& size)
+	//: BasicRender<VulkanRender>(_name, size)
 {
 }
 
@@ -12,7 +13,7 @@ void VulkanRender::BeginFrame()
 {
 }
 
-void VulkanRender::Draw(const Camera* cam, const MeshComponent* mesh)
+void VulkanRender::Draw(const Camera* cam, const Mesh* mesh)
 {
 }
 
@@ -23,4 +24,8 @@ void VulkanRender::EndFrame()
 bool VulkanRender::IsRunning() const
 {
 	return false;
+}
+
+void VulkanRender::CloseWindow()
+{
 }

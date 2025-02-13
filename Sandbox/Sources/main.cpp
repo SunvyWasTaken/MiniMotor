@@ -4,7 +4,8 @@ struct DefaultApp : BasicApp<OpenGLRender>
 {
 	virtual void Init() override
 	{
-
+		Entity* cube = GetWorld()->SpawnEntity<Entity>();
+		cube->AddComponent<MeshComponent>();
 	}
 
 	virtual void Update() override

@@ -8,55 +8,6 @@
 #include "Meshes.h"
 #include "Scene.h"
 
-namespace
-{
-	// Todo : this should be temporary
-	std::vector<Vertex> vertices = {
-		// positions						// normals					// texture coords
-		Vertex{FVec3{-0.5f, -0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{ 0.5f, -0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{ 0.5f,  0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{ 0.5f,  0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{-0.5f,  0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{-0.5f, -0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 0.0f}},
-
-		Vertex{FVec3{-0.5f, -0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{ 0.5f, -0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{ 0.5f,  0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{ 0.5f,  0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{-0.5f,  0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{-0.5f, -0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 0.0f}},
-
-		Vertex{FVec3{-0.5f,  0.5f,  0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{-0.5f,  0.5f, -0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{-0.5f, -0.5f, -0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{-0.5f, -0.5f, -0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{-0.5f, -0.5f,  0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{-0.5f,  0.5f,  0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-
-		Vertex{FVec3{0.5f,  0.5f,  0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{0.5f,  0.5f, -0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{0.5f, -0.5f, -0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{0.5f, -0.5f, -0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{0.5f, -0.5f,  0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{0.5f,  0.5f,  0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-
-		Vertex{FVec3{-0.5f, -0.5f, -0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{ 0.5f, -0.5f, -0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{ 0.5f, -0.5f,  0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{ 0.5f, -0.5f,  0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{-0.5f, -0.5f,  0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{-0.5f, -0.5f, -0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-
-		Vertex{FVec3{-0.5f,  0.5f, -0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{ 0.5f,  0.5f, -0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{ 0.5f,  0.5f,  0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{ 0.5f,  0.5f,  0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{-0.5f,  0.5f,  0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{-0.5f,  0.5f, -0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 1.0f}}
-	};
-}
-
 template <typename TRender>
 class BasicApp
 {
@@ -66,7 +17,7 @@ class BasicApp
 
 public:
 	BasicApp()
-		: render(std::make_unique<TRender>())
+		: render(std::make_unique<TRender>(GetApplicationName(), FVec2{800, 600}))
 		, cam(std::make_unique<Camera>())
 		, Deltatime(0.f)
 	{
@@ -99,7 +50,7 @@ public:
 			auto views = world.entitys.view<MeshComponent>();
 			for (auto curr : views)
 			{
-				MeshComponent currComponent = world.entitys.get<MeshComponent>(curr);
+				MeshComponent& currComponent = world.entitys.get<MeshComponent>(curr);
 				render->Draw(cam.get(), currComponent());
 			}
 			render->EndFrame();
@@ -109,46 +60,59 @@ public:
 	void OnEvents(const Events& even)
 	{
 		// Todo : Move elsewhere like in the camera directly. and make a Input Manager.
-		float InputSpeed = 5.f * Deltatime;
+		//float InputSpeed = 10.f * Deltatime;
+		float InputSpeed = 0.1f;
 		std::visit(Overloaded{
 			[&](KeyEvent key)
 			{
-				FVec3 vec(0);
+				if (key == 256)
+				{
+					render->CloseWindow();
+					return;
+				}
+
+				FVec3 vec = FVec3(0, 0, 0);
 				if (key == 83)
 				{
 					vec += FVec3{0.f, 0.f, -1.f};
 				}
-				else if (key == 87)
+				if (key == 87)
 				{
 					vec += FVec3{ 0.f, 0.f, 1.f };
 				}
-				else if (key == 68)
+				if (key == 68)
 				{
 					vec += FVec3{ 1.f, 0.f, 0.f };
 				}
-				else if (key == 65)
+				if (key == 65)
 				{
 					vec += FVec3{ -1.f, 0.f, 0.f };
 				}
-				else if (key == 69)
+				if (key == 69)
 				{
 					vec += FVec3{ 0.f, 1.f, 0.f };
 				}
-				else if (key == 81)
+				if (key == 81)
 				{
 					vec += FVec3{ 0.f, -1.f, 0.f };
 				}
 				Normalize<FVec3> norm;
 				vec = norm(vec);
 				cam->UpdateLocation(vec * InputSpeed);
+				std::visit([&](auto&& val){std::cerr << val << ", vec : " << vec.x << ", y:" << vec.y << ", z:" << vec.z << std::endl; }, even);
 			},
 			[&](MouseEvent mouse)
 			{
 				cam->ChangeRotation(mouse.x, mouse.y);
 			}
 			}, even);
-		//std::visit([&](auto&& val){std::cerr << val << std::endl; }, even);
 	}
+
+	Scene* GetWorld() { return &world; }
+
+protected:
+
+	virtual const char* GetApplicationName() const { return "MiniMotor App"; }
 
 private:
 

@@ -2,19 +2,21 @@
 
 #include "BasicRender.h"
 
-class MM_API VulkanRender : public BasicRender<VulkanRender>
+class MM_API VulkanRender /*: public BasicRender<VulkanRender>*/
 {
 public:
-	VulkanRender();
+	VulkanRender(const std::string& _name, const FVec2& size);
 
 	virtual ~VulkanRender();
 
 	void BeginFrame();
 
-	void Draw(const Camera* cam, const MeshComponent* mesh);
+	void Draw(const Camera* cam, const Mesh* mesh);
 
 	void EndFrame();
 
 	bool IsRunning() const;
+
+	void CloseWindow();
 
 };

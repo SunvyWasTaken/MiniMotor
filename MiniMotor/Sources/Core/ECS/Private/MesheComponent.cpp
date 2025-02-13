@@ -1,74 +1,98 @@
+
 #include "MesheComponent.h"
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
-MeshComponent::MeshComponent(const std::string& path)
+#include <glad/glad.h>
+
+
+namespace
 {
-	Assimp::Importer import;
-	const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+	// Todo : this should be temporary
+	std::vector<Vertex> vertices = {
+		// positions						// normals					// texture coords
+		Vertex{FVec3{-0.5f, -0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 0.0f}},
+		Vertex{FVec3{ 0.5f, -0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{ 0.5f,  0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 1.0f}},
+		Vertex{FVec3{ 0.5f,  0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 1.0f}},
+		Vertex{FVec3{-0.5f,  0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 1.0f}},
+		Vertex{FVec3{-0.5f, -0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 0.0f}},
 
-	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+		Vertex{FVec3{-0.5f, -0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 0.0f}},
+		Vertex{FVec3{ 0.5f, -0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{ 0.5f,  0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 1.0f}},
+		Vertex{FVec3{ 0.5f,  0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 1.0f}},
+		Vertex{FVec3{-0.5f,  0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 1.0f}},
+		Vertex{FVec3{-0.5f, -0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 0.0f}},
+
+		Vertex{FVec3{-0.5f,  0.5f,  0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{-0.5f,  0.5f, -0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 1.0f}},
+		Vertex{FVec3{-0.5f, -0.5f, -0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Vertex{FVec3{-0.5f, -0.5f, -0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Vertex{FVec3{-0.5f, -0.5f,  0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 0.0f}},
+		Vertex{FVec3{-0.5f,  0.5f,  0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+
+		Vertex{FVec3{ 0.5f,  0.5f,  0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{ 0.5f,  0.5f, -0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 1.0f}},
+		Vertex{FVec3{ 0.5f, -0.5f, -0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Vertex{FVec3{ 0.5f, -0.5f, -0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Vertex{FVec3{ 0.5f, -0.5f,  0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 0.0f}},
+		Vertex{FVec3{ 0.5f,  0.5f,  0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+
+		Vertex{FVec3{-0.5f, -0.5f, -0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Vertex{FVec3{ 0.5f, -0.5f, -0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 1.0f}},
+		Vertex{FVec3{ 0.5f, -0.5f,  0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{ 0.5f, -0.5f,  0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{-0.5f, -0.5f,  0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 0.0f}},
+		Vertex{FVec3{-0.5f, -0.5f, -0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+
+		Vertex{FVec3{-0.5f,  0.5f, -0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Vertex{FVec3{ 0.5f,  0.5f, -0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 1.0f}},
+		Vertex{FVec3{ 0.5f,  0.5f,  0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{ 0.5f,  0.5f,  0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{-0.5f,  0.5f,  0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 0.0f}},
+		Vertex{FVec3{-0.5f,  0.5f, -0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 1.0f}}
+	};
+
+	uint32_t LoadTexture(const std::string& path)
 	{
-		std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
-		return;
-	}
-	directory = path.substr(0, path.find_last_of('/'));
+		uint32_t texture;
+		int width, height, nrChannels;
+		unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
 
-	ProcessNode(scene->mRootNode, scene);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glTexImage2D(GL_TEXTURE_2D, 0, 0x1904 + nrChannels, width, height, 0, 0x1904 + nrChannels, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		stbi_image_free(data);
+		return texture;
+	}
 }
 
-void MeshComponent::Draw(ShaderOGL* shader) const
+MeshComponent::MeshComponent()
 {
-	for (uint32_t i = 0; i < meshes.size(); ++i)
-		meshes[i].Draw(shader);
+	BaseColor = Texture(LoadTexture("../../Ressources/SunsetBaseColor.jpg"), TTexture::Diffuse());
+	SpecColor = Texture(LoadTexture("../../Ressources/SunsetSpec.png"), TTexture::Specular());
+	TextureList textures = {BaseColor, SpecColor};
+
+	mesh = std::make_unique<Mesh>(vertices, textures);
 }
 
-void MeshComponent::ProcessNode(aiNode* node, const aiScene* scene)
+MeshComponent::~MeshComponent()
 {
-	// process all the node's meshes (if any)
-	for (unsigned int i = 0; i < node->mNumMeshes; i++)
-	{
-		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		meshes.push_back(ProcessMesh(mesh, scene));
-	}
-	// then do the same for each of its children
-	for (unsigned int i = 0; i < node->mNumChildren; i++)
-	{
-		ProcessNode(node->mChildren[i], scene);
-	}
+	glDeleteTextures(1, &BaseColor.id);
+	glDeleteTextures(1, &SpecColor.id);
 }
 
-Mesh MeshComponent::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+Mesh* MeshComponent::operator()()
 {
-	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
-	std::vector<Texture> textures;
-
-	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
-	{
-		Vertex vertex;
-		// process vertex positions, normals and texture coordinates
-		if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
-		{
-			glm::vec2 vec;
-			vec.x = mesh->mTextureCoords[0][i].x;
-			vec.y = mesh->mTextureCoords[0][i].y;
-			vertex.TexCoords = vec;
-		}
-		else
-			vertex.TexCoords = glm::vec2(0.0f, 0.0f);
-
-		vertices.push_back(vertex);
-	}
-	// process indices
-	for (unsigned int i = 0; i < mesh->mNumFaces; i++)
-	{
-		aiFace face = mesh->mFaces[i];
-		for (unsigned int j = 0; j < face.mNumIndices; j++)
-			indices.push_back(face.mIndices[j]);
-	}
-
-	return Mesh(vertices, indices);
+	return mesh.get();
 }
+

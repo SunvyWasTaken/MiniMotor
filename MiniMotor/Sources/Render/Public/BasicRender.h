@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Event.h"
+#include "Maths.h"
 
 #define RET_CRTP(x, returnType) returnType x() { DerivedPtr tmp = static_cast<DerivedPtr>(this); return tmp->x(); }
 #define CRTP(x) RET_CRTP(x, void)
@@ -8,7 +9,7 @@
 
 class GLFWwindow;
 class Camera;
-class MeshComponent;
+class Mesh;
 
 using uint = unsigned int;
 using CallbackFunction = std::function<void(const Events&)>;
@@ -18,13 +19,17 @@ class BasicRender
 {
 	using DerivedPtr = Derived*;
 public:
-	BasicRender() = default;
+	BasicRender(const std::string& _name, const FVec2& size)
+		: m_WindowTitle(_name.c_str())
+		, m_Width(size.x)
+		, m_Height(size.y)
+	{ }
 
 	virtual ~BasicRender() = default;
 
 	CRTP(BeginFrame)
 
-	void Draw(const Camera* cam, const MeshComponent* mesh)
+	void Draw(const Camera* cam, const Mesh* mesh)
 	{
 		DerivedPtr tmp = static_cast<DerivedPtr>(this);
 		tmp->Draw(cam, mesh);
@@ -33,6 +38,8 @@ public:
 	CRTP(EndFrame)
 
 	RET_CRTP(IsRunning, bool)
+
+	CRTP(CloseWindow)
 
 	void BindInputCallback(const CallbackFunction& func)
 	{

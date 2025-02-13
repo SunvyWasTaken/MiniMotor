@@ -1,59 +1,17 @@
 
 #include "Camera.h"
 #include "Event.h"
-#include "MesheComponent.h"
+#include "Meshes.h"
 #include "OpenGLRender.h"
 #include "OpenGLShader.h"
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-namespace
-{
-
-	std::array<glm::vec3, 10> cubePositions = {
-		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
-	};
-
-	unsigned int texBaseColor;
-	unsigned int texSpec;
-
-	void LoadTexture(unsigned int& texture, const std::string& path)
-	{
-		int width, height, nrChannels;
-		unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexImage2D(GL_TEXTURE_2D, 0, 0x1904 + nrChannels, width, height, 0, 0x1904 + nrChannels, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		stbi_image_free(data);
-	}
-}
-
-OpenGLRender::OpenGLRender()
-	: BasicRender<OpenGLRender>()
+OpenGLRender::OpenGLRender(const std::string& _name, const FVec2 _size)
+	: BasicRender<OpenGLRender>(_name, _size)
 	, shaderProgram(nullptr)
 	, lightProgram(nullptr)
-	, lightVAO(0)
 {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -76,35 +34,40 @@ OpenGLRender::OpenGLRender()
 	LoadShader();
 
 	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos) {
-			static_cast<OpenGLRender*>(glfwGetWindowUserPointer(window))->CursorPosCallback(xPos, yPos);
-		});
-	glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* window, int width, int height){
-			static_cast<BasicRender<OpenGLRender>*>(glfwGetWindowUserPointer(window))->OnWindowResize(width, height);
-			glViewport(0, 0, width, height);
-		});
-
-	LoadTexture(texBaseColor, "../../Ressources/SunsetBaseColor.jpg");
-	LoadTexture(texSpec, "../../Ressources/SunsetSpec.png");
+	glfwSetCursorPosCallback(m_Window, 
+	[](GLFWwindow* window, double xPos, double yPos) 
+	{
+		static_cast<OpenGLRender*>(glfwGetWindowUserPointer(window))->CursorPosCallback(xPos, yPos);
+	});
+	glfwSetFramebufferSizeCallback(m_Window, 
+	[](GLFWwindow* window, int width, int height)
+	{
+		static_cast<BasicRender<OpenGLRender>*>(glfwGetWindowUserPointer(window))->OnWindowResize(width, height);
+		glViewport(0, 0, width, height);
+	});
+	glfwSetKeyCallback(m_Window, 
+	[](GLFWwindow* window, int key, int scancode, int action, int mods)
+	{
+		if (OpenGLRender* OGLWin = static_cast<OpenGLRender*>(glfwGetWindowUserPointer(window)))
+		{
+			Events ev = KeyEvent{ key };
+			OGLWin->OnEventFunc(ev);
+		}
+	});
 }
 
 OpenGLRender::~OpenGLRender()
 {
-	//glDeleteVertexArrays(1, &VAO);
-	//glDeleteBuffers(1, &VBO);
-
 	glfwTerminate();
 }
 
 void OpenGLRender::BeginFrame()
 {
-	ProcessInput();
-
 	glClearColor(0.f, 0.6f, 0.6f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void OpenGLRender::Draw(const Camera* cam, const MeshComponent* mesh)
+void OpenGLRender::Draw(const Camera* cam, const Mesh* mesh)
 {
 	shaderProgram->Use();
 
@@ -139,47 +102,15 @@ bool OpenGLRender::IsRunning()
 	return !glfwWindowShouldClose(m_Window);
 }
 
+void OpenGLRender::CloseWindow()
+{
+	glfwSetWindowShouldClose(m_Window, GLFW_TRUE);
+}
+
 void OpenGLRender::LoadShader()
 {
 	shaderProgram = std::make_unique<ShaderOGL>("../../MiniMotor/Sources/Shaders/vShader.vert", "../../MiniMotor/Sources/Shaders/fShader.frag");
 	lightProgram = std::make_unique<ShaderOGL>("../../MiniMotor/Sources/Shaders/vLightShader.vert", "../../MiniMotor/Sources/Shaders/fLightShader.frag");
-}
-
-void OpenGLRender::ProcessInput()
-{
-	if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(m_Window, true);
-
-	if (glfwGetKey(m_Window, GLFW_KEY_W) == GLFW_PRESS)
-	{
-		Events even = KeyEvent{ GLFW_KEY_W };
-		OnEventFunc(even);
-	}
-	if (glfwGetKey(m_Window, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		Events even = KeyEvent{ GLFW_KEY_S };
-		OnEventFunc(even);
-	}
-	if (glfwGetKey(m_Window, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		Events even = KeyEvent{ GLFW_KEY_A };
-		OnEventFunc(even);
-	}
-	if (glfwGetKey(m_Window, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		Events even = KeyEvent{ GLFW_KEY_D };
-		OnEventFunc(even);
-	}
-	if (glfwGetKey(m_Window, GLFW_KEY_Q) == GLFW_PRESS)
-	{
-		Events even = KeyEvent{ GLFW_KEY_Q };
-		OnEventFunc(even);
-	}
-	if (glfwGetKey(m_Window, GLFW_KEY_E) == GLFW_PRESS)
-	{
-		Events even = KeyEvent{ GLFW_KEY_E };
-		OnEventFunc(even);
-	}
 }
 
 void OpenGLRender::CursorPosCallback(double xPos, double yPos)

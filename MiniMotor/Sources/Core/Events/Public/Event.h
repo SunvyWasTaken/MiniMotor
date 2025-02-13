@@ -4,16 +4,15 @@
 
 class MM_API KeyEvent
 {
-	using uint = unsigned int;
 public:
-	uint key;
+	int key;
 
 	friend std::ostream& operator<<(std::ostream& os, const KeyEvent& data)
 	{
 		return os << "Key event : " << data.key;
 	}
 
-	bool operator==(const uint val)
+	bool operator==(const int val)
 	{
 		return key == val;
 	}
