@@ -20,13 +20,11 @@ in vec2 TexCoords;
 in vec3 FragPos; 
 in vec3 Normal;
 
-out vec4 FragColor;
-
 uniform Material material;
 uniform Light light;
 uniform vec3 viewPos;
 
-const vec3 ObjectColor = vec3(1.0f, 0.6f, 0.8f);
+out vec4 FragColor;
 
 void main()
 {
@@ -43,7 +41,8 @@ void main()
     vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    vec3 specular = light.specular * spec * vec3(texture(material.Specular, TexCoords));
+    vec3 specColor = vec3(texture(material.Diffuse, TexCoords)) * vec3(texture(material.Specular, TexCoords));
+    vec3 specular = light.specular * spec * specColor;
 
     vec3 result = ambient + diffuse + specular;
     FragColor = vec4(result, 1.0);

@@ -80,8 +80,8 @@ namespace
 MeshComponent::MeshComponent()
 {
 	BaseColor = Texture(LoadTexture("../../Ressources/SunsetBaseColor.jpg"), TTexture::Specular());
-	SpecColor = Texture(LoadTexture("../../Ressources/SunsetSpec.png"), TTexture::Diffuse());
-	TextureList textures = { SpecColor, BaseColor };
+	SpecColor = Texture(LoadTexture("../../Ressources/SunsetSpec.jpg"), TTexture::Specular());
+	TextureList textures = { BaseColor, SpecColor };
 
 	mesh = std::make_unique<Mesh>(vertices, textures);
 }

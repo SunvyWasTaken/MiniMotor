@@ -71,19 +71,22 @@ void OpenGLRender::Draw(const Camera* cam, const Mesh* mesh)
 {
 	shaderProgram->Use();
 
-	Perspective<FMat4> perspective;
-	Radian<float> radian;
-	FMat4 projection = perspective(radian(45.f), (float)m_Width / (float)m_Height, 0.1f, 100.f);
-	shaderProgram->SetMatrice4("view", cam->GetViewMatrice());
-	shaderProgram->SetMatrice4("projection", projection);
+	float ambiant = 0.2f;
+	float diffuse = 1.f;
+	float specular = 0.5f;
 
-	shaderProgram->SetVec3F("light.direction", { -0.2f, -1.0f, -0.3f });
+	shaderProgram->SetMatrice4("projection", cam->GetProjection());
+	shaderProgram->SetMatrice4("view", cam->GetViewMatrice());
 	shaderProgram->SetVec3F("viewPos", cam->m_Position);
 
+	shaderProgram->SetVec3F("light.direction", { -0.2f, -1.0f, -0.3f });
+
 	// light properties
-	shaderProgram->SetVec3F("light.ambient", { 0.2f, 0.2f, 0.2f });
-	shaderProgram->SetVec3F("light.diffuse", { 0.5f, 0.5f, 0.5f });
-	shaderProgram->SetVec3F("light.specular", { 1.0f, 1.0f, 1.0f });
+	shaderProgram->SetVec3F("light.ambient", { ambiant, ambiant, ambiant });
+	shaderProgram->SetVec3F("light.diffuse", { diffuse, diffuse, diffuse });
+	shaderProgram->SetVec3F("light.specular", { specular, specular, specular });
+
+	shaderProgram->Set1F("material.shininess", 1.f);
 
 	// todo : It's should be something like that.
 	glm::mat4 model = glm::mat4(1.0f);

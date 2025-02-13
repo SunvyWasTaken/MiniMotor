@@ -1,7 +1,11 @@
 #include "Camera.h"
+#include "Event.h"
+#include "Maths.h"
 
 Camera::Camera()
 	: m_Position({0.f, 0.f, 10.f})
+	, viewMode(Sunset::ViewMode::Ortho)
+	, Res(1920, 1080)
 	, m_UpVector({ 0.f, 1.f, 0.f })
 	, m_ForwardVector({0.f, 0.f, -1.f})
 	, m_Rotation({-90.0, 0.0, 0.0})
@@ -56,4 +60,22 @@ void Camera::UpdateLocation(const FVec3& vec)
 	m_Position += m_ForwardVector * vec.z;
 	m_Position += m_UpVector * vec.y;
 	m_Position += cross(m_ForwardVector, m_UpVector) * vec.x;
+}
+
+FMat4 Camera::GetProjection() const
+{
+	if (viewMode == Sunset::ViewMode::Perspective)
+	{
+		Perspective<FMat4> perspective;
+		Radian<float> radian;
+		return perspective(radian(45.f), Res.x / Res.y, 0.1f, 100.f);
+	}
+	else if (viewMode == Sunset::ViewMode::Ortho)
+	{
+		float multi = 2;
+		float width = (Res.y / Res.x) * multi;
+		float heigh = (1 - (Res.y / Res.x)) * multi;
+		return glm::ortho(-width, width, -heigh, heigh, -1.f, 100.f);
+	}
+	return FMat4();
 }

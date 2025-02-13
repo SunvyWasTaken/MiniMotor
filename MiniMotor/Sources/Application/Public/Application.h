@@ -17,7 +17,7 @@ class BasicApp
 
 public:
 	BasicApp()
-		: render(std::make_unique<TRender>(GetApplicationName(), FVec2{800, 600}))
+		: render(std::make_unique<TRender>(GetApplicationName(), FVec2{1280, 720}))
 		, cam(std::make_unique<Camera>())
 		, Deltatime(0.f)
 	{

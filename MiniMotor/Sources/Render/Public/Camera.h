@@ -2,6 +2,15 @@
 
 #include "Maths.h"
 
+namespace Sunset
+{
+	enum class ViewMode
+	{
+		Perspective,
+		Ortho
+	};
+}
+
 class MM_API Camera
 {
 public:
@@ -13,11 +22,17 @@ public:
 
 	void UpdateLocation(const FVec3& vec);
 
+	FMat4 GetProjection() const;
+
 public:
 
 	FVec3 m_Position;
 
+	Sunset::ViewMode viewMode;
+
 private:
+
+	FVec2 Res;
 
 	FVec3 m_UpVector;
 
