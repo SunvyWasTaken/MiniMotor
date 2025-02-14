@@ -5,31 +5,40 @@
 class Camera;
 class ShaderOGL;
 
-class MM_API OpenGLRender : public BasicRender<OpenGLRender>
+namespace Sunset
 {
-public:
-	OpenGLRender(const std::string& _name, const FVec2 _size);
+	class MM_API OpenGLRender : public BasicRender<OpenGLRender>
+	{
+	public:
+		OpenGLRender(const std::string& _name, const FVec2 _size);
 
-	virtual ~OpenGLRender();
+		virtual ~OpenGLRender();
 
-	void BeginFrame();
+		void BeginFrame();
 
-	void Draw(const Camera* cam, const Mesh* mesh, const FVec3& Position);
+		void Draw(const Camera* cam, const Mesh* mesh, const Transform& trans);
 
-	void EndFrame();
+		void EndFrame();
 
-	bool IsRunning();
+		bool IsRunning();
 
-	void CloseWindow();
+		void CloseWindow();
 
-private:
+	private:
 
-	void CursorPosCallback(double xPos, double yPos);
+		void CursorPosCallback(double xPos, double yPos);
 
-	void LoadShader();
+		void LoadShader();
 
-private:
+		void ProcessInput();
 
-	std::unique_ptr<ShaderOGL> shaderProgram;
-	std::unique_ptr<ShaderOGL> lightProgram;
-};
+	private:
+
+		std::unique_ptr<ShaderOGL> shaderProgram;
+		std::unique_ptr<ShaderOGL> lightProgram;
+
+		std::array<int, 5> keyPressed;
+		std::array<bool, 5> AvailableIndex;
+	};
+}
+

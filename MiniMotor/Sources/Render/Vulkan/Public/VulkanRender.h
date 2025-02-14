@@ -1,22 +1,24 @@
 #pragma once
 
 #include "BasicRender.h"
-
-class MM_API VulkanRender /*: public BasicRender<VulkanRender>*/
+namespace Sunset
 {
-public:
-	VulkanRender(const std::string& _name, const FVec2& size);
+	class MM_API VulkanRender /*: public BasicRender<VulkanRender>*/
+	{
+	public:
+		VulkanRender(const std::string& _name, const FVec2& size);
 
-	virtual ~VulkanRender();
+		virtual ~VulkanRender();
 
-	void BeginFrame();
+		void BeginFrame();
 
-	void Draw(const Camera* cam, const Mesh* mesh);
+		void Draw(const Camera* cam, const Mesh* mesh);
 
-	void EndFrame();
+		void EndFrame();
 
-	bool IsRunning() const;
+		bool IsRunning() const;
 
-	void CloseWindow();
+		void CloseWindow();
 
-};
+	};
+}

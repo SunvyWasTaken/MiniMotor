@@ -6,14 +6,14 @@ class TransformComponent
 {
 public:
 
-	explicit TransformComponent(const FVec3& _position)
-		: Position(_position)
+	explicit TransformComponent(const Transform& trans)
+		: transform(trans)
 	{ }
 	
-	FVec3& operator()()
+	Transform& operator()()
 	{
-		return Position;
+		return transform;
 	}
 
-	FVec3 Position;
+	Transform transform;
 };

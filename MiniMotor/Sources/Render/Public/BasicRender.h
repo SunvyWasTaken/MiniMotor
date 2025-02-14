@@ -7,59 +7,63 @@
 #define CRTP(x) RET_CRTP(x, void)
 
 
-class GLFWwindow;
-class Camera;
-class Mesh;
-
 using uint = unsigned int;
 using CallbackFunction = std::function<void(const Events&)>;
 
-template <typename Derived>
-class BasicRender
+class GLFWwindow;
+class Mesh;
+
+namespace Sunset
 {
-	using DerivedPtr = Derived*;
-public:
-	BasicRender(const std::string& _name, const FVec2& size)
-		: m_WindowTitle(_name.c_str())
-		, m_Width(size.x)
-		, m_Height(size.y)
-	{ }
+	class Camera;
 
-	virtual ~BasicRender() = default;
-
-	CRTP(BeginFrame)
-
-	void Draw(const Camera* cam, const Mesh* mesh, const FVec3& Position)
+	template <typename Derived>
+	class BasicRender
 	{
-		DerivedPtr tmp = static_cast<DerivedPtr>(this);
-		tmp->Draw(cam, mesh, Position);
-	}
+		using DerivedPtr = Derived*;
+	public:
+		BasicRender(const std::string& _name, const FVec2& size)
+			: m_WindowTitle(_name.c_str())
+			, m_Width(size.x)
+			, m_Height(size.y)
+		{ }
 
-	CRTP(EndFrame)
+		virtual ~BasicRender() = default;
 
-	RET_CRTP(IsRunning, bool)
+		CRTP(BeginFrame)
 
-	CRTP(CloseWindow)
+		void Draw(const Camera* cam, const Mesh* mesh, const Transform& trans)
+		{
+			DerivedPtr tmp = static_cast<DerivedPtr>(this);
+			tmp->Draw(cam, mesh, trans);
+		}
 
-	void BindInputCallback(const CallbackFunction& func)
-	{
-		OnEventFunc = func;
-	}
+		CRTP(EndFrame)
 
-	void OnWindowResize(int width, int height)
-	{
-		m_Width = width;
-		m_Height = height;
-	}	
+		RET_CRTP(IsRunning, bool)
 
-protected:
+		CRTP(CloseWindow)
 
-	GLFWwindow* m_Window = nullptr;
+		void BindInputCallback(const CallbackFunction& func)
+		{
+			OnEventFunc = func;
+		}
 
-	int m_Width = 800;
-	int m_Height = 600;
+		void OnWindowResize(int width, int height)
+		{
+			m_Width = width;
+			m_Height = height;
+		}	
 
-	std::string m_WindowTitle = "LeafEngine";
+	protected:
 
-	CallbackFunction OnEventFunc;
-};
+		GLFWwindow* m_Window = nullptr;
+
+		int m_Width = 800;
+		int m_Height = 600;
+
+		std::string m_WindowTitle = "LeafEngine";
+
+		CallbackFunction OnEventFunc;
+	};
+}

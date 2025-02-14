@@ -9,7 +9,7 @@ struct Vertex
 	FVec2 TexCoords;
 };
 
-#define NEW_TEXTURE_TYPE(_name) struct _name { constexpr inline std::string_view name() const { return #_name; }; };
+#define NEW_TEXTURE_TYPE(_name) struct _name { constexpr inline decltype(auto) name() const { return #_name; }; };
 
 namespace TTexture
 {
