@@ -57,6 +57,12 @@ using FVec3 = vec3<float>;
 using FMat4 = mat4<float>;
 #endif // USE_GLM
 
+struct Transform
+{
+	FVec3 position;
+	FVec3 size;
+};
+
 template <typename T>
 struct VecType
 {};

@@ -2,18 +2,22 @@
 
 #include "Maths.h"
 
-class TransformComponent
+namespace Sunset
 {
-public:
-
-	explicit TransformComponent(const FVec3& _position)
-		: Position(_position)
-	{ }
-	
-	FVec3 operator()()
+	class TransformComponent
 	{
-		return Position;
-	}
+	public:
 
-	FVec3 Position;
-};
+		explicit TransformComponent(const Transform& trans)
+			: transform(trans)
+		{
+		}
+
+		Transform& operator()()
+		{
+			return transform;
+		}
+
+		Transform transform;
+	};
+}

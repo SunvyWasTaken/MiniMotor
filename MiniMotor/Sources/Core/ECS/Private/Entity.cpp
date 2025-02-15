@@ -1,14 +1,22 @@
 #include "LeafEntity.h"
 #include "Scene.h"
-
-Entity::~Entity()
+namespace Sunset
 {
-	
-}
+	Entity::Entity()
+		: id(entt::null)
+		, world(nullptr)
+	{
+	}
 
-void Entity::Init(const entt::entity& _id, Scene* _world)
-{
-	id = _id;
-	world = _world;
+	Entity::~Entity()
+	{
+		std::cerr << "Explosion" << std::endl;
+	}
+
+	void Entity::InitImpl(const entt::entity& _id, Scene* _world)
+	{
+		id = _id;
+		world = _world;
+	}
 }
 

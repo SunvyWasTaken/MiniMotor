@@ -6,53 +6,53 @@
 
 #include <glad/glad.h>
 
-
+using namespace Sunset;
 namespace
 {
 	// Todo : this should be temporary
 	std::vector<Vertex> vertices = {
 		// positions						// normals					// texture coords
-		Vertex{FVec3{-0.5f, -0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{ 0.5f, -0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{ 0.5f,  0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{ 0.5f,  0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{-0.5f,  0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{-0.5f, -0.5f, -0.5f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 0.0f}},
+		Vertex{FVec3{-1.f, -1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 0.0f}},
+		Vertex{FVec3{ 1.f, -1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{ 1.f,  1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 1.0f}},
+		Vertex{FVec3{ 1.f,  1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 1.0f}},
+		Vertex{FVec3{-1.f,  1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 1.0f}},
+		Vertex{FVec3{-1.f, -1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 0.0f}},
 
-		Vertex{FVec3{-0.5f, -0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{ 0.5f, -0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{ 0.5f,  0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{ 0.5f,  0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{-0.5f,  0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{-0.5f, -0.5f,  0.5f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 0.0f}},
+		Vertex{FVec3{-1.f, -1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 0.0f}},
+		Vertex{FVec3{ 1.f, -1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 1.0f}},
+		Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 1.0f}},
+		Vertex{FVec3{-1.f,  1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 1.0f}},
+		Vertex{FVec3{-1.f, -1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 0.0f}},
 
-		Vertex{FVec3{-0.5f,  0.5f,  0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{-0.5f,  0.5f, -0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{-0.5f, -0.5f, -0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{-0.5f, -0.5f, -0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{-0.5f, -0.5f,  0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{-0.5f,  0.5f,  0.5f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{-1.f,  1.f,  1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{-1.f,  1.f, -1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 1.0f}},
+		Vertex{FVec3{-1.f, -1.f, -1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Vertex{FVec3{-1.f, -1.f, -1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Vertex{FVec3{-1.f, -1.f,  1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 0.0f}},
+		Vertex{FVec3{-1.f,  1.f,  1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
 
-		Vertex{FVec3{ 0.5f,  0.5f,  0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{ 0.5f,  0.5f, -0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{ 0.5f, -0.5f, -0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{ 0.5f, -0.5f, -0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{ 0.5f, -0.5f,  0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{ 0.5f,  0.5f,  0.5f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{ 1.f,  1.f, -1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 1.0f}},
+		Vertex{FVec3{ 1.f, -1.f, -1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Vertex{FVec3{ 1.f, -1.f, -1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Vertex{FVec3{ 1.f, -1.f,  1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 0.0f}},
+		Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
 
-		Vertex{FVec3{-0.5f, -0.5f, -0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{ 0.5f, -0.5f, -0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{ 0.5f, -0.5f,  0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{ 0.5f, -0.5f,  0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{-0.5f, -0.5f,  0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{-0.5f, -0.5f, -0.5f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Vertex{FVec3{-1.f, -1.f, -1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Vertex{FVec3{ 1.f, -1.f, -1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 1.0f}},
+		Vertex{FVec3{ 1.f, -1.f,  1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{ 1.f, -1.f,  1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{-1.f, -1.f,  1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 0.0f}},
+		Vertex{FVec3{-1.f, -1.f, -1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
 
-		Vertex{FVec3{-0.5f,  0.5f, -0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{ 0.5f,  0.5f, -0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{ 0.5f,  0.5f,  0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{ 0.5f,  0.5f,  0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{-0.5f,  0.5f,  0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{-0.5f,  0.5f, -0.5f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 1.0f}}
+		Vertex{FVec3{-1.f,  1.f, -1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Vertex{FVec3{ 1.f,  1.f, -1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 1.0f}},
+		Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Vertex{FVec3{-1.f,  1.f,  1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 0.0f}},
+		Vertex{FVec3{-1.f,  1.f, -1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 1.0f}}
 	};
 
 	uint32_t LoadTexture(const std::string& path)
@@ -77,23 +77,26 @@ namespace
 	}
 }
 
-MeshComponent::MeshComponent()
+namespace Sunset
 {
-	BaseColor = Texture(LoadTexture("../../Ressources/SunsetBaseColor.jpg"), TTexture::Specular());
-	SpecColor = Texture(LoadTexture("../../Ressources/SunsetSpec.jpg"), TTexture::Specular());
-	TextureList textures = { BaseColor, SpecColor };
+	MeshComponent::MeshComponent()
+	{
+		BaseColor = Texture(LoadTexture("../../Ressources/SunsetBaseColor.jpg"), Specular());
+		SpecColor = Texture(LoadTexture("../../Ressources/SunsetSpec.jpg"), Specular());
+		TextureList textures = { BaseColor, SpecColor };
 
-	mesh = std::make_unique<Mesh>(vertices, textures);
-}
+		mesh = std::make_unique<Mesh>(vertices, textures);
+	}
 
-MeshComponent::~MeshComponent()
-{
-	glDeleteTextures(1, &BaseColor.id);
-	glDeleteTextures(1, &SpecColor.id);
-}
+	MeshComponent::~MeshComponent()
+	{
+		glDeleteTextures(1, &BaseColor.id);
+		glDeleteTextures(1, &SpecColor.id);
+	}
 
-Mesh* MeshComponent::operator()()
-{
-	return mesh.get();
+	Mesh* MeshComponent::operator()()
+	{
+		return mesh.get();
+	}
 }
 

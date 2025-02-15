@@ -2,23 +2,26 @@
 
 #include "Meshes.h"
 
-class Mesh;
-
-// Mesh component is only the component for the ECS it will store the mesh which is going to be draw during the draw function.
-class MM_API MeshComponent final
+namespace Sunset
 {
-public:
+	class Mesh;
 
-	MeshComponent();
+	// Mesh component is only the component for the ECS it will store the mesh which is going to be draw during the draw function.
+	class MM_API MeshComponent final
+	{
+	public:
 
-	~MeshComponent();
+		MeshComponent();
 
-	Mesh* operator()();
+		~MeshComponent();
 
-private:
-	std::unique_ptr<Mesh> mesh;
+		Mesh* operator()();
 
-	Texture BaseColor;
-	Texture SpecColor;
+	private:
+		std::unique_ptr<Mesh> mesh;
 
-};
+		Texture BaseColor;
+		Texture SpecColor;
+
+	};
+}
