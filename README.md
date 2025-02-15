@@ -23,14 +23,14 @@ vcpkg install
 cd ..
 ```
 ```cmd
-cmake -DCMAKE_TOOLCHAIN_FILE=%cd%/vcpkg/scripts/buildsystems/vcpkg.cmake  -S %currentPath% -B %currentPath%/Build
+cmake -DCMAKE_TOOLCHAIN_FILE=%cd%/vcpkg/scripts/buildsystems/vcpkg.cmake  -S %cd% -B %cd%/Build
 ```
 > You can directly found explanation [Here](https://learn.microsoft.com/fr-fr/vcpkg/get_started/get-started?pivots=shell-cmd).
 ### Run
 You will found the solution on the build folder who was create by CMake.
 Now you can **Build/Run** the code.
 ### Movement
-You can move with your typical **WASD**, Go Up and Down with *QE*, look around with the **mouse** and close the window with **Espace**
+You can move with your typical **WASD**, Go Up and Down with **QE**, look around with the **mouse** and close the window with **Espace**
 ## Third Party
 - **GLFW**
 - **OpenGL** *(including : glad)*
