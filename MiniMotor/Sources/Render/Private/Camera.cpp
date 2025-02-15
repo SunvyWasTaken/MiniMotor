@@ -83,7 +83,7 @@ namespace Sunset
 		{
 			Perspective<FMat4> perspective;
 			Radian<float> radian;
-			return perspective(radian(45.f), Res.x / Res.y, 0.1f, 200.f);
+			return perspective(radian(45.f), Res.x / Res.y, 0.1f, 2000.f);
 		}
 		else if (viewMode == Sunset::ViewMode::Ortho)
 		{

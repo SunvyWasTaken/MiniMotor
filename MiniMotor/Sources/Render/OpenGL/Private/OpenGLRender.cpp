@@ -122,6 +122,9 @@ namespace Sunset
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, trans.position);
 		model = glm::scale(model, trans.size);
+		model = glm::rotate(model, glm::radians(trans.rotation.yaw), glm::vec3(1.f, 0.f, 0.f));
+		model = glm::rotate(model, glm::radians(trans.rotation.pitch), glm::vec3{0.f, 1.f, 0.f});
+		model = glm::rotate(model, glm::radians(trans.rotation.roll), glm::vec3{0.f, 0.f, 1.f});
 		shaderProgram->SetMatrice4("model", model);
 		mesh->Draw(shaderProgram.get());
 	}

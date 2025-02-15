@@ -71,7 +71,7 @@ namespace Sunset
 				currInput.OnEvent(even, Deltatime);
 			}
 			// Todo : Move elsewhere like in the camera directly. and make a Input Manager.
-			float InputSpeed = 10.f * Deltatime;
+			float InputSpeed = 200.f * Deltatime;
 			std::visit(Overloaded{
 				[&](KeyEvent key)
 				{

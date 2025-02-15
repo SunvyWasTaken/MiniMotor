@@ -15,6 +15,7 @@ public:
 
 	virtual void Init() override
 	{
+		// todo : add a way to custom the mesh directly from here.
 		AddComponent<Sunset::MeshComponent>();
 		AddComponent<Sunset::TransformComponent>(Transform{Position, Size});
 	}
@@ -31,10 +32,10 @@ public:
 
 #define CREATE_ASTER(x, ...) class x : public Aster { public: x() : Aster(__VA_ARGS__) {} };
 
-CREATE_ASTER(Sun, {0, 0, 0}, { 7, 7, 7 }, {0, 0, 0}, 1.989e3)
+CREATE_ASTER(Sun, {0, 0, 0}, { 7, 7, 7 }, {0, 0, 0}, 1.989e6)
 //CREATE_ASTER(Mercure)
 //CREATE_ASTER(Venus)
-CREATE_ASTER(Earth, { 149, 0.0, 0.0 }, { 1, 1, 1 }, { 0, 0.0278, 0 }, 0.005972)
+CREATE_ASTER(Earth, { 1.496e3/2, 1.496e3/2, 0.0 }, { 5, 5, 5 }, { 0, 0, 0 }, 5.972)
 //CREATE_ASTER(Mars)
 //CREATE_ASTER(Jupiter)
 //CREATE_ASTER(Saturne)
@@ -59,14 +60,15 @@ public:
 		{
 			Aster& currentAster = *(solarSys[i]);
 			FVec3 F = gravitationForce(currentAster, At<Sun>());
-			FVec3 acc = { F.x / currentAster.M, F.y / currentAster.M, F.z / currentAster.M };
-			updatePositionAndVelocity(currentAster, acc, Deltatime);
+			FVec3 acc = {F.x / currentAster.M, F.y / currentAster.M, F.z / currentAster.M};
+			std::cerr << "Force gravitationel = x:" << acc.x << ", y:" << acc.y << ", z:" << acc.z << std::endl;
+			updatePositionAndVelocity(currentAster, acc, Deltatime * SimulationSpeed);
 		}
 	}
 
 private:
 
-	void updatePositionAndVelocity(Aster& aster, FVec3 acceleration, double dt)
+	void updatePositionAndVelocity(Aster& aster, const FVec3& acceleration, double dt)
 	{
 		FVec3& position = aster.GetComponent<Sunset::TransformComponent>()().position;
 		FVec3& velocity = aster.Velocity;
@@ -77,6 +79,7 @@ private:
 		velocity.x += acceleration.x * dt;
 		velocity.y += acceleration.y * dt;
 		velocity.z += acceleration.z * dt;
+		std::cerr << "Position = x:" << position.x << ", y:" << position.y << ", z:" << position.z << std::endl;
 	}
 
 	FVec3 gravitationForce(const Aster& A1, const Aster& A2)
@@ -84,10 +87,10 @@ private:
 		FVec3 pos1 = A1.GetComponent<Sunset::TransformComponent>()().position;
 		FVec3 pos2 = A2.GetComponent<Sunset::TransformComponent>()().position;
 
-		FVec3 distance = { pos2.x - pos1.x, pos2.y - pos1.y, pos2.z - pos1.z };
-		double r = sqrt(distance.x * distance.x + distance.y * distance.y + distance.z * distance.z);
-		double forceMagnitude = G * A1.M * A2.M / (r * r);
-		FVec3 force = { forceMagnitude * distance.x / r, forceMagnitude * distance.y / r, forceMagnitude * distance.z / r };
+		double distance = glm::length(pos2 - pos1);
+		double forceMagnitude = G * (A1.M * A2.M / (distance * distance));
+		FVec3 force = glm::normalize(pos2 - pos1);
+		force *= forceMagnitude;
 		return force;
 	}
 
@@ -109,6 +112,8 @@ private:
 public:
 
 	std::array<Aster*, TypelistSize<SolarSys>::value> solarSys = {};
+
+	double SimulationSpeed = 1.f;
 };
 
 int main()
