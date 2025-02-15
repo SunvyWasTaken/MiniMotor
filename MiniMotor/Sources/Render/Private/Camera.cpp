@@ -21,10 +21,10 @@ namespace Sunset
 
 	void Camera::Init()
 	{
-		AddComponent<InputComponent>();
+		//AddComponent<InputComponent>();
 
-		InputComponent& comp = GetComponent<InputComponent>();
-		comp.Bind(87, std::bind(&Camera::OnMoveForward, this, std::placeholders::_1));
+		//InputComponent& comp = GetComponent<InputComponent>();
+		//comp.Bind(87, std::bind(&Camera::OnMoveForward, this, std::placeholders::_1));
 		//comp.Bind(83, std::bind(&Camera::OnMoveForward, this, std::placeholders::_1));
 		//comp.Bind(87, std::bind(&Camera::OnMoveForward, this, std::placeholders::_1));
 		//comp.Bind(87, std::bind(&Camera::OnMoveForward, this, std::placeholders::_1));

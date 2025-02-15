@@ -1,6 +1,12 @@
 #include "LeafEntity.h"
 #include "Scene.h"
 
+Entity::Entity()
+	: id(entt::null)
+	, world(nullptr)
+{
+}
+
 Entity::~Entity()
 {
 	

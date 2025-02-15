@@ -5,29 +5,80 @@ constexpr double G = 6.67430e-11;
 class Aster : public Entity
 {
 public:
-	Aster(const FVec3& position, const FVec3& size, double mass)
-		: Position(position)
-		, Size(size)
-		, M(mass)
-	{
-	}
+	Aster(const FVec3& _position, const FVec3& _size, const FVec3& _velocity, double _m)
+		: Position(_position)
+		, Size(_size)
+		, Velocity(_velocity)
+		, M(_m)
+	{}
 
 	virtual void Init() override
 	{
 		AddComponent<MeshComponent>();
 		AddComponent<TransformComponent>(Transform{Position, Size});
 	}
-
 	
+	// Position relative to the 0 . 0 . 0 which is gonna be the sun.
 	FVec3 Position;
+	// Size of the aster
 	FVec3 Size;
+
+	FVec3 Velocity;
 	// Masse de l'astre
 	double M;
 };
 
-struct ProcessF
+#define CREATE_ASTER(x, ...) class x : public Aster { public: x() : Aster(__VA_ARGS__) {} };
+
+CREATE_ASTER(Sun, {0, 0, 0}, { 7, 7, 7 }, {0, 0, 0}, 1.989e3)
+//CREATE_ASTER(Mercure)
+//CREATE_ASTER(Venus)
+CREATE_ASTER(Earth, { 149, 0.0, 0.0 }, { 1, 1, 1 }, { 0, 0.0278, 0 }, 0.005972)
+//CREATE_ASTER(Mars)
+//CREATE_ASTER(Jupiter)
+//CREATE_ASTER(Saturne)
+//CREATE_ASTER(Uranus)
+//CREATE_ASTER(Neptune)
+
+using SolarSys = Typelist<Sun, Earth>;
+
+class DefaultApp : public Sunset::BasicApp<Sunset::OpenGLRender>
 {
-	FVec3 operator()(const Aster& A1, const Aster& A2)
+public:
+
+	virtual void Init() override
+	{
+		InitEntities(std::make_index_sequence<TypelistSize<SolarSys>::value>{});
+	}
+
+	virtual void Update() override
+	{
+		// Let i start at 1 cuz the sun is at the 0 index.
+		for (int i = 1; i < solarSys.size(); ++i)
+		{
+			Aster& currentAster = *(solarSys[i]);
+			FVec3 F = gravitationForce(currentAster, At<Sun>());
+			FVec3 acc = { F.x / currentAster.M, F.y / currentAster.M, F.z / currentAster.M };
+			updatePositionAndVelocity(currentAster, acc, Deltatime);
+		}
+	}
+
+private:
+
+	void updatePositionAndVelocity(Aster& aster, FVec3 acceleration, double dt)
+	{
+		FVec3& position = aster.GetComponent<TransformComponent>()().position;
+		FVec3& velocity = aster.Velocity;
+
+		position.x += velocity.x * dt;
+		position.y += velocity.y * dt;
+		position.z += velocity.z * dt;
+		velocity.x += acceleration.x * dt;
+		velocity.y += acceleration.y * dt;
+		velocity.z += acceleration.z * dt;
+	}
+
+	FVec3 gravitationForce(const Aster& A1, const Aster& A2)
 	{
 		FVec3 pos1 = A1.GetComponent<TransformComponent>()().position;
 		FVec3 pos2 = A2.GetComponent<TransformComponent>()().position;
@@ -38,38 +89,25 @@ struct ProcessF
 		FVec3 force = { forceMagnitude * distance.x / r, forceMagnitude * distance.y / r, forceMagnitude * distance.z / r };
 		return force;
 	}
-};
 
-struct DefaultApp : Sunset::BasicApp<Sunset::OpenGLRender>
-{
-	virtual void Init() override
+	template <typename T>
+	Aster& At()
 	{
-		Sun = GetWorld()->SpawnEntity<Aster>(FVec3{0, 0, 0}, FVec3{7, 7, 7}, 1.989e3);
-		Earth = GetWorld()->SpawnEntity<Aster>(FVec3{ 149, 0.0, 0.0 }, FVec3{1, 1, 1}, 0.005972);
+		return *solarSys[TypeIndex<T, SolarSys>::value];
 	}
 
-	virtual void Update() override
+private:
+
+	// Generated at compile time the for loop to create each aster list in the typelist.
+	template <size_t... Is>
+	void InitEntities(std::index_sequence<Is...>)
 	{
-		FVec3 force = gravitationForce(*Earth, *Sun);
-		FVec3 acceleration = { force.x / Earth->M, force.y / Earth->M, force.z / Earth->M };
-		updatePositionAndVelocity(Earth->GetComponent<TransformComponent>()().position, velocityTerre, acceleration, Deltatime);
-		auto pos = Earth->GetComponent<TransformComponent>()();
+		((solarSys[Is] = GetWorld()->SpawnEntity<typename GetTypeAtIndex<Is, SolarSys>::value>()), ...);
 	}
 
-	void updatePositionAndVelocity(FVec3& position, FVec3& velocity, FVec3 acceleration, double dt) {
-		position.x += velocity.x * dt;
-		position.y += velocity.y * dt;
-		position.z += velocity.z * dt;
-		velocity.x += acceleration.x * dt;
-		velocity.y += acceleration.y * dt;
-		velocity.z += acceleration.z * dt;
-	}
+public:
 
-	ProcessF gravitationForce;
-
-	Aster* Sun = nullptr;
-	Aster* Earth = nullptr;
-	FVec3 velocityTerre = { 0, 0.0278, 0 };
+	std::array<Aster*, TypelistSize<SolarSys>::value> solarSys = {};
 };
 
 int main()

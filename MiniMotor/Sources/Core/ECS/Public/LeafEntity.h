@@ -7,7 +7,7 @@ class Scene;
 class MM_API Entity
 {
 public:
-	Entity() = default;
+	Entity();
 	virtual ~Entity();
 
 	// todo : I thought template need the definition of the function to compile WTF

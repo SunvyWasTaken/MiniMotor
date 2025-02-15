@@ -3,6 +3,8 @@
 #include "Event.h"
 #include "Maths.h"
 
+#include <functional>
+
 #define RET_CRTP(x, returnType) returnType x() { DerivedPtr tmp = static_cast<DerivedPtr>(this); return tmp->x(); }
 #define CRTP(x) RET_CRTP(x, void)
 
