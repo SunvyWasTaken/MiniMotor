@@ -6,7 +6,7 @@
   > I'm unemployed so this project keep me busy and ~~is~~ *(will be)* my Showcase.
 ## How to Start
 ### Clone
-Start by clonning the main branch some where on your computer.
+Start by clonning the main branch somewhere on your computer.
 ### Build Solution
 To build the solution you can directly launch the **vcpkgInstall.bat**
 > You can check the command if you don't trust me. But I guarante you that it will just install vcpkg and all the required **Third Party**.
