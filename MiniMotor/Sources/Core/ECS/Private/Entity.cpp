@@ -9,7 +9,7 @@ Entity::Entity()
 
 Entity::~Entity()
 {
-	
+	std::cerr << "Explosion" << std::endl;
 }
 
 void Entity::InitImpl(const entt::entity& _id, Scene* _world)

@@ -1,5 +1,6 @@
 #include "MiniMotor.h"
 
+// Gravitational constant. m^3 kg^-1 s^-2
 constexpr double G = 6.67430e-11;
 
 class Aster : public Entity
@@ -53,7 +54,7 @@ public:
 
 	virtual void Update() override
 	{
-		// Let i start at 1 cuz the sun is at the 0 index.
+		// Let i start at 1 cuz the sun is at the index 0. (supposedly)
 		for (int i = 1; i < solarSys.size(); ++i)
 		{
 			Aster& currentAster = *(solarSys[i]);

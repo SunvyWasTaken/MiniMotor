@@ -13,7 +13,8 @@ public:
 	template <typename T, typename ...Args>
 	T* SpawnEntity(Args&&... args)
 	{
-		entitysList.emplace_back(new T(std::forward<Args>(args)...));
+		static_assert(std::is_base_of_v<Entity, T>, "T must be a derived class of Entity");
+		entitysList.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
 		auto currEntity = entitysList.end() - 1;
 		(*currEntity)->InitImpl(entitys.create(), this);
 		(*currEntity)->Init();
