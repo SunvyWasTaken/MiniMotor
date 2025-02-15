@@ -6,7 +6,7 @@
 
 #include <glad/glad.h>
 
-
+using namespace Sunset;
 namespace
 {
 	// Todo : this should be temporary
@@ -77,23 +77,26 @@ namespace
 	}
 }
 
-MeshComponent::MeshComponent()
+namespace Sunset
 {
-	BaseColor = Texture(LoadTexture("../../Ressources/SunsetBaseColor.jpg"), TTexture::Specular());
-	SpecColor = Texture(LoadTexture("../../Ressources/SunsetSpec.jpg"), TTexture::Specular());
-	TextureList textures = { BaseColor, SpecColor };
+	MeshComponent::MeshComponent()
+	{
+		BaseColor = Texture(LoadTexture("../../Ressources/SunsetBaseColor.jpg"), Specular());
+		SpecColor = Texture(LoadTexture("../../Ressources/SunsetSpec.jpg"), Specular());
+		TextureList textures = { BaseColor, SpecColor };
 
-	mesh = std::make_unique<Mesh>(vertices, textures);
-}
+		mesh = std::make_unique<Mesh>(vertices, textures);
+	}
 
-MeshComponent::~MeshComponent()
-{
-	glDeleteTextures(1, &BaseColor.id);
-	glDeleteTextures(1, &SpecColor.id);
-}
+	MeshComponent::~MeshComponent()
+	{
+		glDeleteTextures(1, &BaseColor.id);
+		glDeleteTextures(1, &SpecColor.id);
+	}
 
-Mesh* MeshComponent::operator()()
-{
-	return mesh.get();
+	Mesh* MeshComponent::operator()()
+	{
+		return mesh.get();
+	}
 }
 

@@ -8,16 +8,14 @@
 #define RET_CRTP(x, returnType) returnType x() { DerivedPtr tmp = static_cast<DerivedPtr>(this); return tmp->x(); }
 #define CRTP(x) RET_CRTP(x, void)
 
-
-using uint = unsigned int;
-using CallbackFunction = std::function<void(const Events&)>;
-
 class GLFWwindow;
-class Mesh;
 
 namespace Sunset
 {
+	using CallbackFunction = std::function<void(const Events&)>;
+
 	class Camera;
+	class Mesh;
 
 	template <typename Derived>
 	class BasicRender
@@ -25,7 +23,8 @@ namespace Sunset
 		using DerivedPtr = Derived*;
 	public:
 		BasicRender(const std::string& _name, const FVec2& size)
-			: m_WindowTitle(_name.c_str())
+			: m_Window(nullptr)
+			, m_WindowTitle(_name.c_str())
 			, m_Width(size.x)
 			, m_Height(size.y)
 		{ }
@@ -59,12 +58,12 @@ namespace Sunset
 
 	protected:
 
-		GLFWwindow* m_Window = nullptr;
+		GLFWwindow* m_Window;
 
-		int m_Width = 800;
-		int m_Height = 600;
+		int m_Width;
+		int m_Height;
 
-		std::string m_WindowTitle = "LeafEngine";
+		std::string m_WindowTitle;
 
 		CallbackFunction OnEventFunc;
 	};

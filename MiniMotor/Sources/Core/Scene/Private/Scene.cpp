@@ -1,10 +1,13 @@
 #include "Scene.h"
 #include "Entity.h"
 
-Scene::Scene()
+namespace Sunset
 {
-}
+	Scene::Scene()
+	{
+	}
 
-Scene::~Scene()
-{
+	Scene::~Scene()
+	{
+	}
 }

@@ -3,7 +3,7 @@
 // Gravitational constant. m^3 kg^-1 s^-2
 constexpr double G = 6.67430e-11;
 
-class Aster : public Entity
+class Aster : public Sunset::Entity
 {
 public:
 	Aster(const FVec3& _position, const FVec3& _size, const FVec3& _velocity, double _m)
@@ -15,8 +15,8 @@ public:
 
 	virtual void Init() override
 	{
-		AddComponent<MeshComponent>();
-		AddComponent<TransformComponent>(Transform{Position, Size});
+		AddComponent<Sunset::MeshComponent>();
+		AddComponent<Sunset::TransformComponent>(Transform{Position, Size});
 	}
 	
 	// Position relative to the 0 . 0 . 0 which is gonna be the sun.
@@ -68,7 +68,7 @@ private:
 
 	void updatePositionAndVelocity(Aster& aster, FVec3 acceleration, double dt)
 	{
-		FVec3& position = aster.GetComponent<TransformComponent>()().position;
+		FVec3& position = aster.GetComponent<Sunset::TransformComponent>()().position;
 		FVec3& velocity = aster.Velocity;
 
 		position.x += velocity.x * dt;
@@ -81,8 +81,8 @@ private:
 
 	FVec3 gravitationForce(const Aster& A1, const Aster& A2)
 	{
-		FVec3 pos1 = A1.GetComponent<TransformComponent>()().position;
-		FVec3 pos2 = A2.GetComponent<TransformComponent>()().position;
+		FVec3 pos1 = A1.GetComponent<Sunset::TransformComponent>()().position;
+		FVec3 pos2 = A2.GetComponent<Sunset::TransformComponent>()().position;
 
 		FVec3 distance = { pos2.x - pos1.x, pos2.y - pos1.y, pos2.z - pos1.z };
 		double r = sqrt(distance.x * distance.x + distance.y * distance.y + distance.z * distance.z);

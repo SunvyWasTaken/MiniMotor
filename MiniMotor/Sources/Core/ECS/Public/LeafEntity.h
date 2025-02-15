@@ -2,32 +2,35 @@
 
 #include <entt/entt.hpp>
 
-class Scene;
-
-class MM_API Entity
+namespace Sunset
 {
-public:
-	Entity();
-	virtual ~Entity();
+	class Scene;
 
-	// todo : I thought template need the definition of the function to compile WTF
-	template <typename T, typename ...Args>
-	void AddComponent(Args&&... args);
+	class MM_API Entity
+	{
+	public:
+		Entity();
+		virtual ~Entity();
 
-	template <typename T>
-	T& GetComponent() const;
+		// todo : I thought template need the definition of the function to compile WTF
+		template <typename T, typename ...Args>
+		void AddComponent(Args&&... args);
 
-private:
+		template <typename T>
+		T& GetComponent() const;
 
-	void InitImpl(const entt::entity& _id, Scene* _world);
+	private:
 
-	virtual void Init() {};
+		void InitImpl(const entt::entity& _id, Scene* _world);
 
-private:
+		virtual void Init() {};
 
-	entt::entity id;
-	// todo : should be like a weak pointer of maybe?
-	Scene* world;
+	private:
 
-	friend Scene;
-};
+		entt::entity id;
+		// todo : should be like a weak pointer of maybe?
+		Scene* world;
+
+		friend Scene;
+	};
+}

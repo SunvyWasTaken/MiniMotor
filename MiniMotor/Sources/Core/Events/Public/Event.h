@@ -2,40 +2,43 @@
 
 #include "ImportExportDLL.h"
 
-class MM_API KeyEvent
+namespace Sunset
 {
-public:
-	int key;
-
-	friend std::ostream& operator<<(std::ostream& os, const KeyEvent& data)
+	class MM_API KeyEvent
 	{
-		return os << "Key event : " << data.key;
-	}
+	public:
+		int key;
 
-	bool operator==(const int val)
+		friend std::ostream& operator<<(std::ostream& os, const KeyEvent& data)
+		{
+			return os << "Key event : " << data.key;
+		}
+
+		bool operator==(const int val)
+		{
+			return key == val;
+		}
+	};
+
+	class MM_API MouseEvent
 	{
-		return key == val;
-	}
-};
+	public:
+		float x, y;
 
-class MM_API MouseEvent
-{
-public:
-	float x, y;
+		friend std::ostream& operator<<(std::ostream& os, const MouseEvent& data)
+		{
+			return os << "Mouse event -> x: " << data.x << ", y:" << data.y;
+		}
+	};
 
-	friend std::ostream& operator<<(std::ostream& os, const MouseEvent& data)
+	template <typename ...Ts>
+	struct Overloaded : Ts...
 	{
-		return os << "Mouse event -> x: " << data.x << ", y:" << data.y;
-	}
-};
+		using Ts::operator()...;
+	};
 
-template <typename ...Ts>
-struct Overloaded : Ts...
-{
-	using Ts::operator()...;
-};
+	template <class ...Ts>
+	Overloaded(Ts...) -> Overloaded<Ts...>;
 
-template <class ...Ts>
-Overloaded(Ts...) -> Overloaded<Ts...>;
-
-using Events = std::variant<KeyEvent, MouseEvent>;
+	using Events = std::variant<KeyEvent, MouseEvent>;
+}
