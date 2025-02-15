@@ -13,7 +13,6 @@ namespace Sunset
 	OpenGLRender::OpenGLRender(const std::string& _name, const FVec2 _size)
 		: BasicRender<OpenGLRender>(_name, _size)
 		, shaderProgram(nullptr)
-		, lightProgram(nullptr)
 		, keyPressed({ 0, 0, 0, 0, 0 })
 		, AvailableIndex({ true, true, true, true, true })
 	{
@@ -145,7 +144,6 @@ namespace Sunset
 	void OpenGLRender::LoadShader()
 	{
 		shaderProgram = std::make_unique<ShaderOGL>("../../MiniMotor/Sources/Shaders/vShader.vert", "../../MiniMotor/Sources/Shaders/fShader.frag");
-		lightProgram = std::make_unique<ShaderOGL>("../../MiniMotor/Sources/Shaders/vLightShader.vert", "../../MiniMotor/Sources/Shaders/fLightShader.frag");
 	}
 
 	void OpenGLRender::ProcessInput()

@@ -35,7 +35,6 @@ namespace Sunset
 	private:
 
 		std::unique_ptr<ShaderOGL> shaderProgram;
-		std::unique_ptr<ShaderOGL> lightProgram;
 
 		std::array<int, 5> keyPressed;
 		std::array<bool, 5> AvailableIndex;
