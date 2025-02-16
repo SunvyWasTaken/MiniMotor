@@ -7,6 +7,11 @@
 
 namespace Sunset
 {
+
+/************************************************************************/
+/* Mesh																	*/
+/************************************************************************/
+
 	Mesh::Mesh(const VertexList& _vertices, const TextureList& _textures)
 		: Vertices(_vertices)
 		, Textures(_textures)

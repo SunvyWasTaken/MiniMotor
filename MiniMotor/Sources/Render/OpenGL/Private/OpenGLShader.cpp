@@ -56,7 +56,6 @@ namespace Sunset
 	ShaderOGL::~ShaderOGL()
 	{
 		glDeleteProgram(_id);
-		std::cerr << "Shader delete." << std::endl;
 	}
 
 	void ShaderOGL::Use()

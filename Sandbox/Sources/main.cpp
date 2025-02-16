@@ -16,7 +16,7 @@ public:
 	virtual void Init() override
 	{
 		// todo : add a way to custom the mesh directly from here.
-		AddComponent<Sunset::MeshComponent>();
+		AddComponent<Sunset::MeshComponent>(Sunset::NamesList{"../../Ressources/Sun.jpg", "../../Ressources/SunsetSpec.jpg"});
 		AddComponent<Sunset::TransformComponent>(Transform{Position, Size});
 	}
 	
@@ -32,10 +32,10 @@ public:
 
 #define CREATE_ASTER(x, ...) class x : public Aster { public: x() : Aster(__VA_ARGS__) {} };
 
-CREATE_ASTER(Sun, {0, 0, 0}, { 7, 7, 7 }, {0, 0, 0}, 1.989e6)
+CREATE_ASTER(Sun, {0, 0, 0}, { 7, 7, 7 }, {0, 0, 0}, 1.989e3)
 //CREATE_ASTER(Mercure)
 //CREATE_ASTER(Venus)
-CREATE_ASTER(Earth, { 1.496e3/2, 1.496e3/2, 0.0 }, { 5, 5, 5 }, { 0, 0, 0 }, 5.972)
+CREATE_ASTER(Earth, { 1.496e2, 0, 0.0 }, { 5, 5, 5 }, { 0, 0, 0 }, 5.972e-3)
 //CREATE_ASTER(Mars)
 //CREATE_ASTER(Jupiter)
 //CREATE_ASTER(Saturne)
@@ -61,7 +61,6 @@ public:
 			Aster& currentAster = *(solarSys[i]);
 			FVec3 F = gravitationForce(currentAster, At<Sun>());
 			FVec3 acc = {F.x / currentAster.M, F.y / currentAster.M, F.z / currentAster.M};
-			std::cerr << "Force gravitationel = x:" << acc.x << ", y:" << acc.y << ", z:" << acc.z << std::endl;
 			updatePositionAndVelocity(currentAster, acc, Deltatime * SimulationSpeed);
 		}
 	}
