@@ -109,12 +109,7 @@ namespace Sunset
 		shaderProgram->SetMatrice4("view", cam->GetViewMatrice());
 		shaderProgram->SetVec3F("viewPos", cam->m_Position);
 
-		shaderProgram->SetVec3F("light.direction", { -0.2f, -1.0f, -0.3f });
 
-		// light properties
-		shaderProgram->SetVec3F("light.ambient", { ambiant, ambiant, ambiant });
-		shaderProgram->SetVec3F("light.diffuse", { diffuse, diffuse, diffuse });
-		shaderProgram->SetVec3F("light.specular", { specular, specular, specular });
 
 		shaderProgram->Set1F("material.shininess", 1.f);
 

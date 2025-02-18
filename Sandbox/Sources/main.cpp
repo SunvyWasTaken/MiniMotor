@@ -2,15 +2,15 @@
 
 // Gravitational constant. m^3 kg^-1 s^-2
 constexpr double G = 6.67430e-11;
+constexpr double UA = 1e2;
 
 class Aster : public Sunset::Entity
 {
 public:
-	Aster(const FVec3& _position, const FVec3& _size, const FVec3& _velocity, double _m)
+	Aster(const FVec3& _position, const FVec3& _size, const double revolution)
 		: Position(_position)
 		, Size(_size)
-		, Velocity(_velocity)
-		, M(_m)
+		, RevoSpeed(revolution)
 	{}
 
 	virtual void Init() override
@@ -24,18 +24,16 @@ public:
 	FVec3 Position;
 	// Size of the aster
 	FVec3 Size;
-
-	FVec3 Velocity;
-	// Masse de l'astre
-	double M;
+	// How much it take for the aster to make a hole rotation around the sun. (in days)
+	double RevoSpeed;
 };
 
 #define CREATE_ASTER(x, ...) class x : public Aster { public: x() : Aster(__VA_ARGS__) {} };
 
-CREATE_ASTER(Sun, {0, 0, 0}, { 7, 7, 7 }, {0, 0, 0}, 1.989e3)
+CREATE_ASTER(Sun, {0, 0, 0}, { 7, 7, 7 }, 0)
 //CREATE_ASTER(Mercure)
 //CREATE_ASTER(Venus)
-CREATE_ASTER(Earth, { 1.496e2, 0, 0.0 }, { 5, 5, 5 }, { 0, 0, 0 }, 5.972e-3)
+CREATE_ASTER(Earth, { UA, 0, 0.0 }, { 5, 5, 5 }, 365)
 //CREATE_ASTER(Mars)
 //CREATE_ASTER(Jupiter)
 //CREATE_ASTER(Saturne)
@@ -78,7 +76,7 @@ private:
 		velocity.x += acceleration.x * dt;
 		velocity.y += acceleration.y * dt;
 		velocity.z += acceleration.z * dt;
-		std::cerr << "Position = x:" << position.x << ", y:" << position.y << ", z:" << position.z << std::endl;
+		// std::cerr << "Position = x:" << position.x << ", y:" << position.y << ", z:" << position.z << std::endl;
 	}
 
 	FVec3 gravitationForce(const Aster& A1, const Aster& A2)
@@ -98,8 +96,6 @@ private:
 	{
 		return *solarSys[TypeIndex<T, SolarSys>::value];
 	}
-
-private:
 
 	// Generated at compile time the for loop to create each aster list in the typelist.
 	template <size_t... Is>

@@ -21,13 +21,33 @@ namespace Sunset
 
 	void Camera::Init()
 	{
-		//AddComponent<InputComponent>();
+		AddComponent<InputComponent>();
 
-		//InputComponent& comp = GetComponent<InputComponent>();
-		//comp.Bind(87, std::bind(&Camera::OnMoveForward, this, std::placeholders::_1));
-		//comp.Bind(83, std::bind(&Camera::OnMoveForward, this, std::placeholders::_1));
-		//comp.Bind(87, std::bind(&Camera::OnMoveForward, this, std::placeholders::_1));
-		//comp.Bind(87, std::bind(&Camera::OnMoveForward, this, std::placeholders::_1));
+		InputComponent& comp = GetComponent<InputComponent>();
+		comp.Bind(87, std::bind([this](float deltatime)
+			{
+				UpdateLocation(FVec3{ 0.f, 0.f, 1.f } *deltatime);
+			}, std::placeholders::_1));
+		comp.Bind(83, std::bind([this](float deltatime)
+			{
+				UpdateLocation(FVec3{ 0.f, 0.f, -1.f } * deltatime);
+			}, std::placeholders::_1));
+		comp.Bind(68, std::bind([this](float deltatime)
+			{
+				UpdateLocation(FVec3{ 1.f, 0.f, 0.f } * deltatime);
+			}, std::placeholders::_1));
+		comp.Bind(65, std::bind([this](float deltatime)
+			{
+				UpdateLocation(FVec3{ -1.f, 0.f, 0.f } * deltatime);
+			}, std::placeholders::_1));
+		comp.Bind(69, std::bind([this](float deltatime)
+			{
+				UpdateLocation(FVec3{ 0.f, 1.f, 0.f } * deltatime);
+			}, std::placeholders::_1));
+		comp.Bind(81, std::bind([this](float deltatime)
+			{
+				UpdateLocation(FVec3{ 0.f, -1.f, 0.f } * deltatime);
+			}, std::placeholders::_1));
 	}
 
 	FMat4 Camera::GetViewMatrice() const
@@ -93,10 +113,5 @@ namespace Sunset
 			return glm::ortho(-width, width, -heigh, heigh, -1.f, 100.f);
 		}
 		return FMat4();
-	}
-
-	void Camera::OnMoveForward(float deltatime)
-	{
-		UpdateLocation(FVec3{ 0.f, 0.f, 1.f } * deltatime);
 	}
 }

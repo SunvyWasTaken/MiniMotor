@@ -27,8 +27,6 @@ namespace Sunset
 
 		FMat4 GetProjection() const;
 
-		void OnMoveForward(float deltatime);
-
 	public:
 
 		FVec3 m_Position;

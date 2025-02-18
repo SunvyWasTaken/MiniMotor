@@ -80,35 +80,6 @@ namespace Sunset
 						render->CloseWindow();
 						return;
 					}
-
-					FVec3 vec = FVec3(0, 0, 0);
-					if (key == 83)
-					{
-						vec += FVec3{0.f, 0.f, -1.f};
-					}
-					if (key == 87)
-					{
-						vec += FVec3{ 0.f, 0.f, 1.f };
-					}
-					if (key == 68)
-					{
-						vec += FVec3{ 1.f, 0.f, 0.f };
-					}
-					if (key == 65)
-					{
-						vec += FVec3{ -1.f, 0.f, 0.f };
-					}
-					if (key == 69)
-					{
-						vec += FVec3{ 0.f, 1.f, 0.f };
-					}
-					if (key == 81)
-					{
-						vec += FVec3{ 0.f, -1.f, 0.f };
-					}
-					Normalize<FVec3> norm;
-					vec = norm(vec);
-					cam->UpdateLocation(vec * InputSpeed);
 				},
 				[&](MouseEvent mouse)
 				{
