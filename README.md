@@ -39,4 +39,7 @@ You can move with your typical **WASD**, Go Up and Down with **QE**, look around
 - **GLM**
 > I wanted to add **ImGui** but I run into a issues with the definition of the function to **Init ImGui with OpenGL** wasn't define which is weird cause I was downloading the last version of **ImGui** with the correct features with vcpkg. So, I set it aside.
 > I also wanted to add **Assimp** but couldn't for the same reason of **ImGui**.
+
+# Sandbox
+For the sandbox at first I wanted a physical solar system with the calcul of force and gravitation to predict movement from the aster. But i quickly release that if I wanted to be accurate I would need a better ~~computer~~ *(brain)*. I couldn't figure it out how to do it proporly and I wanted something quick to come out of this project so I just use the Astronomical unit and supossed that every aster orbit at a perfect cercle. I know it's not accurate. 
  
