@@ -2,7 +2,7 @@
 ## What is MiniMotor?
 - **MiniMotor** first came out of a prototype, I was making to learn **OpenGL**.
   > So there is actully like 3 more version of this Engine but we are not gonna talk about them.
-- I want to keep learning and progress so **MiniMotor** is my sendbox to test things out.
+- I want to keep learning and progress so **MiniMotor** is my sandbox to test things out.
   > I'm unemployed so this project keep me busy and ~~is~~ *(will be)* my Showcase.
 ## How to Start
 ### Clone
