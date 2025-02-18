@@ -18,7 +18,6 @@ struct rot
 
 using DRot = rot<float>;
 
-
 constexpr double PI = 3.14159265358979323846;
 
 template <typename T>

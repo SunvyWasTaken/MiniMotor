@@ -48,5 +48,7 @@ namespace Sunset
 		double lastY;
 
 		bool firstMouse;
+
+		float MovementSpeed;
 	};
 }

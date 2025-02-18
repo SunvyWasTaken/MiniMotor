@@ -16,6 +16,7 @@ namespace Sunset
 		, lastX(0.0)
 		, lastY(0.0)
 		, firstMouse(true)
+		, MovementSpeed(10.f)
 	{
 	}
 
@@ -26,27 +27,27 @@ namespace Sunset
 		InputComponent& comp = GetComponent<InputComponent>();
 		comp.Bind(87, std::bind([this](float deltatime)
 			{
-				UpdateLocation(FVec3{ 0.f, 0.f, 1.f } *deltatime);
+				UpdateLocation(FVec3{ 0.f, 0.f, 1.f } *deltatime * MovementSpeed);
 			}, std::placeholders::_1));
 		comp.Bind(83, std::bind([this](float deltatime)
 			{
-				UpdateLocation(FVec3{ 0.f, 0.f, -1.f } * deltatime);
+				UpdateLocation(FVec3{ 0.f, 0.f, -1.f } * deltatime * MovementSpeed);
 			}, std::placeholders::_1));
 		comp.Bind(68, std::bind([this](float deltatime)
 			{
-				UpdateLocation(FVec3{ 1.f, 0.f, 0.f } * deltatime);
+				UpdateLocation(FVec3{ 1.f, 0.f, 0.f } * deltatime * MovementSpeed);
 			}, std::placeholders::_1));
 		comp.Bind(65, std::bind([this](float deltatime)
 			{
-				UpdateLocation(FVec3{ -1.f, 0.f, 0.f } * deltatime);
+				UpdateLocation(FVec3{ -1.f, 0.f, 0.f } * deltatime * MovementSpeed);
 			}, std::placeholders::_1));
 		comp.Bind(69, std::bind([this](float deltatime)
 			{
-				UpdateLocation(FVec3{ 0.f, 1.f, 0.f } * deltatime);
+				UpdateLocation(FVec3{ 0.f, 1.f, 0.f } * deltatime * MovementSpeed);
 			}, std::placeholders::_1));
 		comp.Bind(81, std::bind([this](float deltatime)
 			{
-				UpdateLocation(FVec3{ 0.f, -1.f, 0.f } * deltatime);
+				UpdateLocation(FVec3{ 0.f, -1.f, 0.f } * deltatime * MovementSpeed);
 			}, std::placeholders::_1));
 	}
 
