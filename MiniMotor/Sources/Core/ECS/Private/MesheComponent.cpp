@@ -1,5 +1,6 @@
 
 #include "MesheComponent.h"
+#include "Meshes.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -75,28 +76,33 @@ namespace
 		stbi_image_free(data);
 		return texture;
 	}
+
+	template <size_t ...Is>
+	void InitTextures(TextureList& texture, const NamesList& names, std::index_sequence<Is...>)
+	{
+		((texture[Is] = Texture(LoadTexture(names[Is]), typename std::variant_alternative_t<Is, TextureType>())),...);
+	}
 }
 
 namespace Sunset
 {
-	MeshComponent::MeshComponent()
+	MeshComponent::MeshComponent(const NamesList& names)
 	{
-		BaseColor = Texture(LoadTexture("../../Ressources/SunsetBaseColor.jpg"), Specular());
-		SpecColor = Texture(LoadTexture("../../Ressources/SunsetSpec.jpg"), Specular());
-		TextureList textures = { BaseColor, SpecColor };
-
-		mesh = std::make_unique<Mesh>(vertices, textures);
+		InitTextures(m_Textures, names, std::make_index_sequence<std::variant_size_v<TextureType>>{});
+		m_Mesh = std::make_unique<Mesh>(vertices, m_Textures);
 	}
 
 	MeshComponent::~MeshComponent()
 	{
-		glDeleteTextures(1, &BaseColor.id);
-		glDeleteTextures(1, &SpecColor.id);
+		for (uint8_t i = 0; i < m_Textures.size(); ++i)
+		{
+			glDeleteTextures(1, &(m_Textures[i].id));
+		}
 	}
 
 	Mesh* MeshComponent::operator()()
 	{
-		return mesh.get();
+		return m_Mesh.get();
 	}
 }
 

@@ -16,8 +16,7 @@ struct rot
 	T yaw, pitch, roll;
 };
 
-using DRot = rot<double>;
-
+using DRot = rot<float>;
 
 constexpr double PI = 3.14159265358979323846;
 
@@ -61,6 +60,7 @@ struct Transform
 {
 	FVec3 position;
 	FVec3 size;
+	DRot rotation;
 };
 
 template <typename T>

@@ -1,4 +1,5 @@
 #include "InputComponent.h"
+#include "Typelists.h"
 
 #include <GLFW/glfw3.h>
 
@@ -22,7 +23,6 @@ namespace Sunset
 			{
 				(functions.at(arg.key))(deltatime);
 			}
-			std::cerr << arg.key << std::endl;
 		},
 		[&](MouseEvent arg){
 			

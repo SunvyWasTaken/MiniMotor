@@ -4,9 +4,21 @@
 #include "Meshes.h"
 #include "OpenGLRender.h"
 #include "OpenGLShader.h"
+#include "Typelists.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#define NBR_POINT_LIGHT 4
+
+namespace
+{
+	// Maybe this could be ptr?
+	Sunset::Directional directionalLight;
+	std::array<Sunset::Point, NBR_POINT_LIGHT> pointLight;
+
+	constexpr std::string_view pointLightName = "pointLight";
+}
 
 namespace Sunset
 {
@@ -51,6 +63,7 @@ namespace Sunset
 				static_cast<BasicRender<OpenGLRender>*>(glfwGetWindowUserPointer(window))->OnWindowResize(width, height);
 				glViewport(0, 0, width, height);
 			});
+			// todo : make a InputPolling sys cuz this is ugly
 		glfwSetKeyCallback(m_Window,
 			[](GLFWwindow* window, int key, int scancode, int action, int mods)
 			{
@@ -95,6 +108,30 @@ namespace Sunset
 		glfwPollEvents();
 	}
 
+	void OpenGLRender::DrawLight(const Lights* light)
+	{
+		std::visit(Overloaded{
+		[&](Directional light)
+		{
+			directionalLight = light;
+		},
+		[&](Point light)
+		{
+			for (auto& curr : pointLight)
+			{
+				if (!curr.isValid)
+				{
+					curr = light;
+					curr.isValid = true;
+				}
+			}
+		},
+		[&](SpotLight light)
+		{
+		}
+		}, *light);
+	}
+
 	void OpenGLRender::Draw(const Camera* cam, const Mesh* mesh, const Transform& trans)
 	{
 		ProcessInput();
@@ -109,12 +146,26 @@ namespace Sunset
 		shaderProgram->SetMatrice4("view", cam->GetViewMatrice());
 		shaderProgram->SetVec3F("viewPos", cam->m_Position);
 
-		shaderProgram->SetVec3F("light.direction", { -0.2f, -1.0f, -0.3f });
+		shaderProgram->SetVec3F("dirLight.direction", directionalLight.direction);
+		shaderProgram->SetVec3F("dirLight.ambient", directionalLight.ambient);
+		shaderProgram->SetVec3F("dirLight.diffuse", directionalLight.diffuse);
+		shaderProgram->SetVec3F("dirLight.specular", directionalLight.specular);
 
-		// light properties
-		shaderProgram->SetVec3F("light.ambient", { ambiant, ambiant, ambiant });
-		shaderProgram->SetVec3F("light.diffuse", { diffuse, diffuse, diffuse });
-		shaderProgram->SetVec3F("light.specular", { specular, specular, specular });
+		size_t i = 0;
+		for (auto& curr : pointLight)
+		{
+			if (!curr.isValid)
+			{
+				// Break cuz we r (almost sure) there will no more light valid after the first invalid one.
+				break;
+			}
+
+			std::string name = std::string(pointLightName) + '[' + std::to_string(i) + ']';
+			std::string constant = name + ".constant";
+			shaderProgram->Set1F(constant.data(), curr.constant);
+
+			++i;
+		}
 
 		shaderProgram->Set1F("material.shininess", 1.f);
 
@@ -122,6 +173,10 @@ namespace Sunset
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, trans.position);
 		model = glm::scale(model, trans.size);
+		// todo : not correct i think i don't know i did cuz i want to rotation for later.
+		model = glm::rotate(model, glm::radians(trans.rotation.yaw), glm::vec3(1.f, 0.f, 0.f));
+		model = glm::rotate(model, glm::radians(trans.rotation.pitch), glm::vec3{0.f, 1.f, 0.f});
+		model = glm::rotate(model, glm::radians(trans.rotation.roll), glm::vec3{0.f, 0.f, 1.f});
 		shaderProgram->SetMatrice4("model", model);
 		mesh->Draw(shaderProgram.get());
 	}

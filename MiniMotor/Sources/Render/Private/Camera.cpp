@@ -16,18 +16,39 @@ namespace Sunset
 		, lastX(0.0)
 		, lastY(0.0)
 		, firstMouse(true)
+		, MovementSpeed(10.f)
 	{
 	}
 
 	void Camera::Init()
 	{
-		//AddComponent<InputComponent>();
+		AddComponent<InputComponent>();
 
-		//InputComponent& comp = GetComponent<InputComponent>();
-		//comp.Bind(87, std::bind(&Camera::OnMoveForward, this, std::placeholders::_1));
-		//comp.Bind(83, std::bind(&Camera::OnMoveForward, this, std::placeholders::_1));
-		//comp.Bind(87, std::bind(&Camera::OnMoveForward, this, std::placeholders::_1));
-		//comp.Bind(87, std::bind(&Camera::OnMoveForward, this, std::placeholders::_1));
+		InputComponent& comp = GetComponent<InputComponent>();
+		comp.Bind(87, std::bind([this](float deltatime)
+			{
+				UpdateLocation(FVec3{ 0.f, 0.f, 1.f } *deltatime * MovementSpeed);
+			}, std::placeholders::_1));
+		comp.Bind(83, std::bind([this](float deltatime)
+			{
+				UpdateLocation(FVec3{ 0.f, 0.f, -1.f } * deltatime * MovementSpeed);
+			}, std::placeholders::_1));
+		comp.Bind(68, std::bind([this](float deltatime)
+			{
+				UpdateLocation(FVec3{ 1.f, 0.f, 0.f } * deltatime * MovementSpeed);
+			}, std::placeholders::_1));
+		comp.Bind(65, std::bind([this](float deltatime)
+			{
+				UpdateLocation(FVec3{ -1.f, 0.f, 0.f } * deltatime * MovementSpeed);
+			}, std::placeholders::_1));
+		comp.Bind(69, std::bind([this](float deltatime)
+			{
+				UpdateLocation(FVec3{ 0.f, 1.f, 0.f } * deltatime * MovementSpeed);
+			}, std::placeholders::_1));
+		comp.Bind(81, std::bind([this](float deltatime)
+			{
+				UpdateLocation(FVec3{ 0.f, -1.f, 0.f } * deltatime * MovementSpeed);
+			}, std::placeholders::_1));
 	}
 
 	FMat4 Camera::GetViewMatrice() const
@@ -83,7 +104,7 @@ namespace Sunset
 		{
 			Perspective<FMat4> perspective;
 			Radian<float> radian;
-			return perspective(radian(45.f), Res.x / Res.y, 0.1f, 200.f);
+			return perspective(radian(45.f), Res.x / Res.y, 0.1f, 2000.f);
 		}
 		else if (viewMode == Sunset::ViewMode::Ortho)
 		{
@@ -93,10 +114,5 @@ namespace Sunset
 			return glm::ortho(-width, width, -heigh, heigh, -1.f, 100.f);
 		}
 		return FMat4();
-	}
-
-	void Camera::OnMoveForward(float deltatime)
-	{
-		UpdateLocation(FVec3{ 0.f, 0.f, 1.f } * deltatime);
 	}
 }

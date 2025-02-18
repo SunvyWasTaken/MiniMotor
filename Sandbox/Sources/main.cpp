@@ -1,119 +1,126 @@
 #include "MiniMotor.h"
 
-// Gravitational constant. m^3 kg^-1 s^-2
-constexpr double G = 6.67430e-11;
+// Astronomical unit
+constexpr double AU = 1e1;
 
-class Aster : public Sunset::Entity
+namespace Solar
 {
-public:
-	Aster(const FVec3& _position, const FVec3& _size, const FVec3& _velocity, double _m)
-		: Position(_position)
-		, Size(_size)
-		, Velocity(_velocity)
-		, M(_m)
-	{}
+	double SimulationSpeed = 100000000.f;
 
-	virtual void Init() override
+	struct Time
 	{
-		AddComponent<Sunset::MeshComponent>();
-		AddComponent<Sunset::TransformComponent>(Transform{Position, Size});
-	}
-	
-	// Position relative to the 0 . 0 . 0 which is gonna be the sun.
-	FVec3 Position;
-	// Size of the aster
-	FVec3 Size;
+		double years, days;
 
-	FVec3 Velocity;
-	// Masse de l'astre
-	double M;
-};
-
-#define CREATE_ASTER(x, ...) class x : public Aster { public: x() : Aster(__VA_ARGS__) {} };
-
-CREATE_ASTER(Sun, {0, 0, 0}, { 7, 7, 7 }, {0, 0, 0}, 1.989e3)
-//CREATE_ASTER(Mercure)
-//CREATE_ASTER(Venus)
-CREATE_ASTER(Earth, { 149, 0.0, 0.0 }, { 1, 1, 1 }, { 0, 0.0278, 0 }, 0.005972)
-//CREATE_ASTER(Mars)
-//CREATE_ASTER(Jupiter)
-//CREATE_ASTER(Saturne)
-//CREATE_ASTER(Uranus)
-//CREATE_ASTER(Neptune)
-
-using SolarSys = Typelist<Sun, Earth>;
-
-class DefaultApp : public Sunset::BasicApp<Sunset::OpenGLRender>
-{
-public:
-
-	virtual void Init() override
-	{
-		InitEntities(std::make_index_sequence<TypelistSize<SolarSys>::value>{});
-	}
-
-	virtual void Update() override
-	{
-		// Let i start at 1 cuz the sun is at the index 0. (supposedly)
-		for (int i = 1; i < solarSys.size(); ++i)
+		double ToSec() const
 		{
-			Aster& currentAster = *(solarSys[i]);
-			FVec3 F = gravitationForce(currentAster, At<Sun>());
-			FVec3 acc = { F.x / currentAster.M, F.y / currentAster.M, F.z / currentAster.M };
-			updatePositionAndVelocity(currentAster, acc, Deltatime);
+			double secInYear = years * 365 * 24 * 60 * 60;
+			double secInDays = days * 24 * 60 * 60;
+			return secInYear + secInDays;
 		}
-	}
+	};
 
-private:
-
-	void updatePositionAndVelocity(Aster& aster, FVec3 acceleration, double dt)
+	class Aster : public Sunset::Entity
 	{
-		FVec3& position = aster.GetComponent<Sunset::TransformComponent>()().position;
-		FVec3& velocity = aster.Velocity;
+	public:
+		Aster(const double _distance, const double& _size, const Solar::Time& _time)
+			: distance(_distance)
+			, Size(_size, _size, _size)
+			, RevoSpeed(_time.ToSec())
+			, angle(0)
+		{}
 
-		position.x += velocity.x * dt;
-		position.y += velocity.y * dt;
-		position.z += velocity.z * dt;
-		velocity.x += acceleration.x * dt;
-		velocity.y += acceleration.y * dt;
-		velocity.z += acceleration.z * dt;
-	}
+		virtual void Init() override
+		{
+			// todo : add a way to custom the mesh directly from here.
+			AddComponent<Sunset::MeshComponent>(Sunset::NamesList{"../../Ressources/SunsetBaseColor.jpg", "../../Ressources/SunsetSpec.jpg"});
+			AddComponent<Sunset::TransformComponent>(Transform{FVec3{distance, 0, 0}, Size});
+		}
 
-	FVec3 gravitationForce(const Aster& A1, const Aster& A2)
+		// Fake the rotation
+		void Process(const float deltatime)
+		{
+			angle += (2 * PI / RevoSpeed) * deltatime;
+			SetPosition(FVec3{ distance * cos(angle), 0, distance * sin(angle) });
+		}
+
+		void SetPosition(const FVec3& position)
+		{
+			Sunset::TransformComponent& comp = GetComponent<Sunset::TransformComponent>();
+			comp().position = position;
+		}
+
+		const double distance;
+	
+		// Size of the aster
+		FVec3 Size;
+		// How much it take for the aster to make a hole rotation around the sun. (in days)
+		double RevoSpeed;
+
+		// Angle around the sun
+		double angle;
+	};
+
+	#define CREATE_ASTER(x, ...) class x : public Aster { public: x() : Aster(__VA_ARGS__) {} };
+
+	// All data come from wikipedia
+	CREATE_ASTER(Sun, 0, 1, Time())
+
+	CREATE_ASTER(Mercury,	0.37 * AU,	1,		Time{0, 87.969})
+	CREATE_ASTER(Venus,		0.723 * AU,	0.5,	Time{0, 224.7})
+	CREATE_ASTER(Earth,		AU,			1,		Time{0, 365.256})
+	CREATE_ASTER(Mars,		1.534 * AU, 3,		Time{1, 321})
+	CREATE_ASTER(Jupiter,	5.2 * AU,	1,		Time{11, 315})
+	CREATE_ASTER(Saturne,	9 * AU,		1,		Time{29, 167})
+	CREATE_ASTER(Uranus,	19 * AU,	1,		Time{84, 0})
+	CREATE_ASTER(Neptune,	30 * AU,	10,		Time{164, 280})
+
+	// Typelist of all the planet you want to display
+	using SolarSys = Typelist<Sun, Mercury, Venus, Earth, Mars, Jupiter, Saturne, Uranus, Neptune>;
+
+	class DefaultApp : public Sunset::BasicApp<Sunset::OpenGLRender>
 	{
-		FVec3 pos1 = A1.GetComponent<Sunset::TransformComponent>()().position;
-		FVec3 pos2 = A2.GetComponent<Sunset::TransformComponent>()().position;
+	public:
 
-		FVec3 distance = { pos2.x - pos1.x, pos2.y - pos1.y, pos2.z - pos1.z };
-		double r = sqrt(distance.x * distance.x + distance.y * distance.y + distance.z * distance.z);
-		double forceMagnitude = G * A1.M * A2.M / (r * r);
-		FVec3 force = { forceMagnitude * distance.x / r, forceMagnitude * distance.y / r, forceMagnitude * distance.z / r };
-		return force;
-	}
+		virtual void Init() override
+		{
+			InitEntities(std::make_index_sequence<TypelistSize<SolarSys>::value>{});
 
-	template <typename T>
-	Aster& At()
-	{
-		return *solarSys[TypeIndex<T, SolarSys>::value];
-	}
+			// todo : change the light way suz for now it will be a diff obj from the aster sun.
+			LightList.emplace_back(Sunset::Directional{FVec3{- 0.2f, -1.0f, -0.3f}, Sunset::Light{FVec3{0.2f, 0.2f, 0.2f}, FVec3{0.5f, 0.5f, 0.5f}, FVec3{1.0f, 1.0f, 1.0f}}});
+		}
 
-private:
+		virtual void Update() override
+		{
+			// Let i start at 1 cuz the sun is at the index 0. (supposedly)
+			for (int i = 1; i < solarSys.size(); ++i)
+			{
+				solarSys[i]->Process(Deltatime * SimulationSpeed);
+			}
+		}
 
-	// Generated at compile time the for loop to create each aster list in the typelist.
-	template <size_t... Is>
-	void InitEntities(std::index_sequence<Is...>)
-	{
-		((solarSys[Is] = GetWorld()->SpawnEntity<typename GetTypeAtIndex<Is, SolarSys>::value>()), ...);
-	}
+	private:
 
-public:
+		template <typename T>
+		Aster& At()
+		{
+			return *solarSys[TypeIndex<T, SolarSys>::value];
+		}
 
-	std::array<Aster*, TypelistSize<SolarSys>::value> solarSys = {};
-};
+		// Generated at compile time the for loop to create each aster list in the typelist.
+		template <size_t... Is>
+		void InitEntities(std::index_sequence<Is...>)
+		{
+			((solarSys[Is] = GetWorld()->SpawnEntity<typename GetTypeAtIndex<Is, SolarSys>::value>()), ...);
+		}
+
+	public:
+
+		std::array<Aster*, TypelistSize<SolarSys>::value> solarSys = {};
+	};
+}
 
 int main()
 {
-	std::unique_ptr<DefaultApp> curr = std::make_unique<DefaultApp>();
+	std::unique_ptr<Solar::DefaultApp> curr = std::make_unique<Solar::DefaultApp>();
 	curr->Run();
-	return 0;
 }

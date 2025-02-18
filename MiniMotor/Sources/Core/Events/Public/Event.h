@@ -31,14 +31,5 @@ namespace Sunset
 		}
 	};
 
-	template <typename ...Ts>
-	struct Overloaded : Ts...
-	{
-		using Ts::operator()...;
-	};
-
-	template <class ...Ts>
-	Overloaded(Ts...) -> Overloaded<Ts...>;
-
 	using Events = std::variant<KeyEvent, MouseEvent>;
 }
