@@ -98,4 +98,5 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE
     <vector>
 
     "Sources/Core/Public/ImportExportDLL.h"
+    "Sources/Core/Typelists/Public/Typelists.h"
 )

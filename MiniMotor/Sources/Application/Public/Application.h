@@ -19,6 +19,8 @@ namespace Sunset
 		using RenderType = BasicRender<TRender>;
 		using RenderPtr = std::unique_ptr<RenderType>;
 
+		using ListLight = std::vector<Lights>;
+
 	public:
 		BasicApp()
 			: render(std::make_unique<TRender>(GetApplicationName(), FVec2{1280, 720}))
@@ -39,6 +41,12 @@ namespace Sunset
 			auto PreviousTime = std::chrono::steady_clock::now();
 
 			Init();
+
+			// todo : change the way light info is send cuz right now they will be copy to the render. i don't want to do such a thing.
+			for (auto& currLight : LightList)
+			{
+				render->DrawLight(&currLight);
+			}
 
 			while (render->IsRunning())
 			{
@@ -93,6 +101,11 @@ namespace Sunset
 	protected:
 
 		virtual const char* GetApplicationName() const { return "MiniMotor App"; }
+
+	public:
+
+		// todo : for the moment all light will be static.
+		ListLight LightList;
 
 	protected:
 

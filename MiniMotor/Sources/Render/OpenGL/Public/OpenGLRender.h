@@ -2,11 +2,10 @@
 
 #include "BasicRender.h"
 
-class Camera;
-class ShaderOGL;
-
 namespace Sunset
 {
+	class ShaderOGL;
+
 	class MM_API OpenGLRender : public BasicRender<OpenGLRender>
 	{
 	public:
@@ -15,6 +14,8 @@ namespace Sunset
 		virtual ~OpenGLRender();
 
 		void BeginFrame();
+
+		void DrawLight(const Lights* light);
 
 		void Draw(const Camera* cam, const Mesh* mesh, const Transform& trans);
 

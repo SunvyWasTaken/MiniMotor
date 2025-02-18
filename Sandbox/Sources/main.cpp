@@ -49,6 +49,9 @@ public:
 	virtual void Init() override
 	{
 		InitEntities(std::make_index_sequence<TypelistSize<SolarSys>::value>{});
+
+		// todo : change the light way suz for now it will be a diff obj from the aster sun.
+		LightList.emplace_back(Sunset::Directional{FVec3{- 0.2f, -1.0f, -0.3f}, Sunset::Light{FVec3{0.2f, 0.2f, 0.2f}, FVec3{0.5f, 0.5f, 0.5f}, FVec3{1.0f, 1.0f, 1.0f}}});
 	}
 
 	virtual void Update() override
@@ -56,40 +59,11 @@ public:
 		// Let i start at 1 cuz the sun is at the index 0. (supposedly)
 		for (int i = 1; i < solarSys.size(); ++i)
 		{
-			Aster& currentAster = *(solarSys[i]);
-			FVec3 F = gravitationForce(currentAster, At<Sun>());
-			FVec3 acc = {F.x / currentAster.M, F.y / currentAster.M, F.z / currentAster.M};
-			updatePositionAndVelocity(currentAster, acc, Deltatime * SimulationSpeed);
+
 		}
 	}
 
 private:
-
-	void updatePositionAndVelocity(Aster& aster, const FVec3& acceleration, double dt)
-	{
-		FVec3& position = aster.GetComponent<Sunset::TransformComponent>()().position;
-		FVec3& velocity = aster.Velocity;
-
-		position.x += velocity.x * dt;
-		position.y += velocity.y * dt;
-		position.z += velocity.z * dt;
-		velocity.x += acceleration.x * dt;
-		velocity.y += acceleration.y * dt;
-		velocity.z += acceleration.z * dt;
-		// std::cerr << "Position = x:" << position.x << ", y:" << position.y << ", z:" << position.z << std::endl;
-	}
-
-	FVec3 gravitationForce(const Aster& A1, const Aster& A2)
-	{
-		FVec3 pos1 = A1.GetComponent<Sunset::TransformComponent>()().position;
-		FVec3 pos2 = A2.GetComponent<Sunset::TransformComponent>()().position;
-
-		double distance = glm::length(pos2 - pos1);
-		double forceMagnitude = G * (A1.M * A2.M / (distance * distance));
-		FVec3 force = glm::normalize(pos2 - pos1);
-		force *= forceMagnitude;
-		return force;
-	}
 
 	template <typename T>
 	Aster& At()

@@ -2,6 +2,7 @@
 
 #include "Event.h"
 #include "Maths.h"
+#include "Lights.h"
 
 #include <functional>
 
@@ -32,6 +33,13 @@ namespace Sunset
 		virtual ~BasicRender() = default;
 
 		CRTP(BeginFrame)
+
+		// Will draw light like once. cuz I don't know yet how i want to be.
+		void DrawLight(const Lights* light)
+		{
+			DerivedPtr tmp = static_cast<DerivedPtr>(this);
+			tmp->DrawLight(light);
+		}
 
 		void Draw(const Camera* cam, const Mesh* mesh, const Transform& trans)
 		{
