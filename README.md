@@ -30,7 +30,7 @@ cmake -DCMAKE_TOOLCHAIN_FILE=%cd%/vcpkg/scripts/buildsystems/vcpkg.cmake  -S %cd
 You will found the solution on the build folder who was create by CMake.
 Now you can **Build/Run** the code.
 ### Movement
-You can move with your typical **WASD**, Go Up and Down with **QE**, look around with the **mouse** and close the window with **Espace**
+You can move with your typical **WASD**, Go Up and Down with **QE**, look around with the **mouse** and close the window with **Escape**
 ## Third Party
 - **GLFW**
 - **OpenGL** *(including : glad)*
