@@ -1,5 +1,7 @@
 #version 330 core
 
+// this code is clearly from https://learnopengl.com cuz i'm gonna learn math later.
+
 struct Material
 {
     sampler2D Diffuse;
