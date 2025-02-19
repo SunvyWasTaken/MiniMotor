@@ -22,7 +22,8 @@ endmacro()
 GroupSources("Sources")
 
 find_package(OpenGL REQUIRED)
-find_package(assimp CONFIG REQUIRED)
+find_package(vulkan REQUIRED)
+find_package(imgui CONFIG REQUIRED)
 find_package(EnTT CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
@@ -44,7 +45,7 @@ if(WIN32)
 else()
     # Sous Linux/macOS, utiliser la commande Unix `find`
     execute_process(
-        COMMAND find ${CMAKE_SOURCE_DIR} -type d -name Public
+        COMMAND find ${CMAKE_CURRENT_SOURCE_DIR} -type d -name Public
         OUTPUT_VARIABLE PUBLIC_DIRS
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
@@ -58,8 +59,10 @@ separate_arguments(PUBLIC_DIRS)
 
 # Ajouter chaque dossier trouv  dans les includes
 foreach(DIR ${PUBLIC_DIRS})
-    target_include_directories(${PROJECT_NAME} PUBLIC ${DIR})
+    target_include_directories(${PROJECT_NAME} PRIVATE ${DIR})
 endforeach()
+
+target_include_directories(${PROJECT_NAME} PUBLIC "Sources/Public")
 
 # Permet d'aller chercher les fichiers g n r s par CMake
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
@@ -70,7 +73,8 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     MiniMotor_compiler_flags
-    assimp::assimp
+    Vulkan::Vulkan
+    imgui::imgui
     OpenGL::GL
     glfw
     glad::glad

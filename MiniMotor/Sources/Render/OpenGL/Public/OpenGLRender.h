@@ -11,7 +11,7 @@ namespace Sunset
 	public:
 		OpenGLRender(const std::string& _name, const FVec2 _size);
 
-		virtual ~OpenGLRender();
+		virtual ~OpenGLRender() override;
 
 		void BeginFrame();
 

@@ -1,12 +1,23 @@
 {
   "name": "minimotor",
-  "dependencies": [
-    "assimp",
+  "dependencies" : [
     "entt",
+    "glm",
+    "stb",
+
     "opengl",
     "glfw3",
     "glad",
-    "glm",
-    "stb"
+
+    "vulkan",
+    {
+      "name": "shaderc",
+      "platform": "windows"
+    },
+
+    {
+      "name": "imgui",
+      "features": [ "opengl3-binding", "vulkan-binding", "glfw-binding" ]
+    }
   ]
 }
