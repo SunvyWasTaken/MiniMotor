@@ -7,53 +7,52 @@
 
 #include <glad/glad.h>
 
-using namespace Sunset;
 namespace
 {
 	// Todo : this should be temporary
-	std::vector<Vertex> vertices = {
+	std::vector<Sunset::Vertex> vertices = {
 		// positions						// normals					// texture coords
-		Vertex{FVec3{-1.f, -1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{ 1.f, -1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{ 1.f,  1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{ 1.f,  1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{-1.f,  1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{-1.f, -1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 0.0f}},
+		Sunset::Vertex{FVec3{-1.f, -1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 0.0f}},
+		Sunset::Vertex{FVec3{ 1.f, -1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 0.0f}},
+		Sunset::Vertex{FVec3{ 1.f,  1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 1.0f}},
+		Sunset::Vertex{FVec3{ 1.f,  1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{1.0f, 1.0f}},
+		Sunset::Vertex{FVec3{-1.f,  1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 1.0f}},
+		Sunset::Vertex{FVec3{-1.f, -1.f, -1.f},  FVec3{0.0f,  0.0f, -1.0f},  FVec2{0.0f, 0.0f}},
 
-		Vertex{FVec3{-1.f, -1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{ 1.f, -1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{-1.f,  1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{-1.f, -1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 0.0f}},
+		Sunset::Vertex{FVec3{-1.f, -1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 0.0f}},
+		Sunset::Vertex{FVec3{ 1.f, -1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 0.0f}},
+		Sunset::Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 1.0f}},
+		Sunset::Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{1.0f, 1.0f}},
+		Sunset::Vertex{FVec3{-1.f,  1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 1.0f}},
+		Sunset::Vertex{FVec3{-1.f, -1.f,  1.f},  FVec3{0.0f,  0.0f, 1.0f},   FVec2{0.0f, 0.0f}},
 
-		Vertex{FVec3{-1.f,  1.f,  1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{-1.f,  1.f, -1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{-1.f, -1.f, -1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{-1.f, -1.f, -1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{-1.f, -1.f,  1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{-1.f,  1.f,  1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Sunset::Vertex{FVec3{-1.f,  1.f,  1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Sunset::Vertex{FVec3{-1.f,  1.f, -1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 1.0f}},
+		Sunset::Vertex{FVec3{-1.f, -1.f, -1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Sunset::Vertex{FVec3{-1.f, -1.f, -1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Sunset::Vertex{FVec3{-1.f, -1.f,  1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{0.0f, 0.0f}},
+		Sunset::Vertex{FVec3{-1.f,  1.f,  1.f}, FVec3{-1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
 
-		Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{ 1.f,  1.f, -1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{ 1.f, -1.f, -1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{ 1.f, -1.f, -1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{ 1.f, -1.f,  1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Sunset::Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Sunset::Vertex{FVec3{ 1.f,  1.f, -1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 1.0f}},
+		Sunset::Vertex{FVec3{ 1.f, -1.f, -1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Sunset::Vertex{FVec3{ 1.f, -1.f, -1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Sunset::Vertex{FVec3{ 1.f, -1.f,  1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{0.0f, 0.0f}},
+		Sunset::Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{1.0f,  0.0f,  0.0f},  FVec2{1.0f, 0.0f}},
 
-		Vertex{FVec3{-1.f, -1.f, -1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{ 1.f, -1.f, -1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{ 1.f, -1.f,  1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{ 1.f, -1.f,  1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{-1.f, -1.f,  1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{-1.f, -1.f, -1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Sunset::Vertex{FVec3{-1.f, -1.f, -1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Sunset::Vertex{FVec3{ 1.f, -1.f, -1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 1.0f}},
+		Sunset::Vertex{FVec3{ 1.f, -1.f,  1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Sunset::Vertex{FVec3{ 1.f, -1.f,  1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Sunset::Vertex{FVec3{-1.f, -1.f,  1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 0.0f}},
+		Sunset::Vertex{FVec3{-1.f, -1.f, -1.f},  FVec3{0.0f, -1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
 
-		Vertex{FVec3{-1.f,  1.f, -1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
-		Vertex{FVec3{ 1.f,  1.f, -1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 1.0f}},
-		Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
-		Vertex{FVec3{-1.f,  1.f,  1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 0.0f}},
-		Vertex{FVec3{-1.f,  1.f, -1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 1.0f}}
+		Sunset::Vertex{FVec3{-1.f,  1.f, -1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 1.0f}},
+		Sunset::Vertex{FVec3{ 1.f,  1.f, -1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 1.0f}},
+		Sunset::Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Sunset::Vertex{FVec3{ 1.f,  1.f,  1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{1.0f, 0.0f}},
+		Sunset::Vertex{FVec3{-1.f,  1.f,  1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 0.0f}},
+		Sunset::Vertex{FVec3{-1.f,  1.f, -1.f},  FVec3{0.0f,  1.0f,  0.0f},  FVec2{0.0f, 1.0f}}
 	};
 
 	uint32_t LoadTexture(const std::string& path)
@@ -78,9 +77,9 @@ namespace
 	}
 
 	template <size_t ...Is>
-	void InitTextures(TextureList& texture, const NamesList& names, std::index_sequence<Is...>)
+	void InitTextures(Sunset::TextureList& texture, const Sunset::NamesList& names, std::index_sequence<Is...>)
 	{
-		((texture[Is] = Texture(LoadTexture(names[Is]), typename std::variant_alternative_t<Is, TextureType>())),...);
+		((texture[Is] = Sunset::Texture(LoadTexture(names[Is]), typename std::variant_alternative_t<Is, Sunset::TextureType>())),...);
 	}
 }
 

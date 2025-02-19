@@ -69,16 +69,16 @@ namespace Solar
 
 	// All data come from wikipedia
 
-	//			Name		Distance	Size		years,		Days
-	CREATE_ASTER(Sun,		0,			10.9,		Time(),					Sunset::NamesList{ "../../Ressources/Sun.jpg", "" })
-	CREATE_ASTER(Mercury,	0.37 * AU,	0.382 * S,	Time{0,		87.969},	Sunset::NamesList{"../../Ressources/mercure.jpg", ""})
-	CREATE_ASTER(Venus,		0.723 * AU,	0.949 * S,	Time{0,		224.7},		Sunset::NamesList{"../../Ressources/venus.jpg", ""})
-	CREATE_ASTER(Earth,		AU,			S,			Time{0,		365.256},	Sunset::NamesList{"../../Ressources/Earth.jpg", ""})
-	CREATE_ASTER(Mars,		1.534 * AU, 0.532 * S,	Time{1,		321},		Sunset::NamesList{"../../Ressources/Mars.jpg", ""})
-	CREATE_ASTER(Jupiter,	5.2 * AU,	10.973 * S,	Time{11,	315},		Sunset::NamesList{"../../Ressources/jupiter.jpg", ""})
-	CREATE_ASTER(Saturne,	9 * AU,		9.135 * S,	Time{29,	167},		Sunset::NamesList{"../../Ressources/SunsetBaseColor.jpg", ""})
-	CREATE_ASTER(Uranus,	19 * AU,	3.981 * S,	Time{84,	0},			Sunset::NamesList{"../../Ressources/SunsetBaseColor.jpg", ""})
-	CREATE_ASTER(Neptune,	30 * AU,	3.865 * S,	Time{164,	280},		Sunset::NamesList{"../../Ressources/SunsetBaseColor.jpg", ""})
+	//			Name		Distance	Size		years,	Days
+	CREATE_ASTER(Sun,		0,			10.9,		{},					{"../../Ressources/Sun.jpg", ""})
+	CREATE_ASTER(Mercury,	0.37 * AU,	0.382 * S,	{0,		87.969},	{"../../Ressources/mercure.jpg", ""})
+	CREATE_ASTER(Venus,		0.723 * AU,	0.949 * S,	{0,		224.7},		{"../../Ressources/venus.jpg", ""})
+	CREATE_ASTER(Earth,		AU,			S,			{0,		365.256},	{"../../Ressources/Earth.jpg", ""})
+	CREATE_ASTER(Mars,		1.534 * AU, 0.532 * S,	{1,		321},		{"../../Ressources/Mars.jpg", ""})
+	CREATE_ASTER(Jupiter,	5.2 * AU,	10.973 * S,	{11,	315},		{"../../Ressources/jupiter.jpg", ""})
+	CREATE_ASTER(Saturne,	9 * AU,		9.135 * S,	{29,	167},		{"../../Ressources/SunsetBaseColor.jpg", ""})
+	CREATE_ASTER(Uranus,	19 * AU,	3.981 * S,	{84,	0},			{"../../Ressources/SunsetBaseColor.jpg", ""})
+	CREATE_ASTER(Neptune,	30 * AU,	3.865 * S,	{164,	280},		{"../../Ressources/SunsetBaseColor.jpg", ""})
 
 	// Typelist of all the planet you want to display
 	using SolarSys = Typelist<Sun, Mercury, Venus, Earth, Mars, Jupiter, Saturne, Uranus, Neptune>;
