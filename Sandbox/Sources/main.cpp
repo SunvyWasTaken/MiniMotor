@@ -1,15 +1,17 @@
 #include "MiniMotor.h"
 
 // Astronomical unit
-constexpr double AU = 1e1;
+constexpr double AU = 1e2;
+// EarthSize scale down
+constexpr double S = 1;
 
 namespace Solar
 {
-	double SimulationSpeed = 100000000.f;
+	double SimulationSpeed = 1e7;
 
 	struct Time
 	{
-		double years, days;
+		double years, days = 0;
 
 		double ToSec() const
 		{
@@ -22,17 +24,18 @@ namespace Solar
 	class Aster : public Sunset::Entity
 	{
 	public:
-		Aster(const double _distance, const double& _size, const Solar::Time& _time)
+		Aster(const double _distance, const double& _size, const Time& _time, const Sunset::NamesList& textures)
 			: distance(_distance)
 			, Size(_size, _size, _size)
 			, RevoSpeed(_time.ToSec())
 			, angle(0)
+			, texturesList(textures)
 		{}
 
 		virtual void Init() override
 		{
 			// todo : add a way to custom the mesh directly from here.
-			AddComponent<Sunset::MeshComponent>(Sunset::NamesList{"../../Ressources/SunsetBaseColor.jpg", "../../Ressources/SunsetSpec.jpg"});
+			AddComponent<Sunset::MeshComponent>(texturesList);
 			AddComponent<Sunset::TransformComponent>(Transform{FVec3{distance, 0, 0}, Size});
 		}
 
@@ -58,21 +61,24 @@ namespace Solar
 
 		// Angle around the sun
 		double angle;
+
+		Sunset::NamesList texturesList;
 	};
 
 	#define CREATE_ASTER(x, ...) class x : public Aster { public: x() : Aster(__VA_ARGS__) {} };
 
 	// All data come from wikipedia
-	CREATE_ASTER(Sun, 0, 1, Time())
 
-	CREATE_ASTER(Mercury,	0.37 * AU,	1,		Time{0, 87.969})
-	CREATE_ASTER(Venus,		0.723 * AU,	0.5,	Time{0, 224.7})
-	CREATE_ASTER(Earth,		AU,			1,		Time{0, 365.256})
-	CREATE_ASTER(Mars,		1.534 * AU, 3,		Time{1, 321})
-	CREATE_ASTER(Jupiter,	5.2 * AU,	1,		Time{11, 315})
-	CREATE_ASTER(Saturne,	9 * AU,		1,		Time{29, 167})
-	CREATE_ASTER(Uranus,	19 * AU,	1,		Time{84, 0})
-	CREATE_ASTER(Neptune,	30 * AU,	10,		Time{164, 280})
+	//			Name		Distance	Size		years,		Days
+	CREATE_ASTER(Sun,		0,			10.9,		Time(),					Sunset::NamesList{ "../../Ressources/Sun.jpg", "" })
+	CREATE_ASTER(Mercury,	0.37 * AU,	0.382 * S,	Time{0,		87.969},	Sunset::NamesList{"../../Ressources/mercure.jpg", ""})
+	CREATE_ASTER(Venus,		0.723 * AU,	0.949 * S,	Time{0,		224.7},		Sunset::NamesList{"../../Ressources/venus.jpg", ""})
+	CREATE_ASTER(Earth,		AU,			S,			Time{0,		365.256},	Sunset::NamesList{"../../Ressources/Earth.jpg", ""})
+	CREATE_ASTER(Mars,		1.534 * AU, 0.532 * S,	Time{1,		321},		Sunset::NamesList{"../../Ressources/Mars.jpg", ""})
+	CREATE_ASTER(Jupiter,	5.2 * AU,	10.973 * S,	Time{11,	315},		Sunset::NamesList{"../../Ressources/jupiter.jpg", ""})
+	CREATE_ASTER(Saturne,	9 * AU,		9.135 * S,	Time{29,	167},		Sunset::NamesList{"../../Ressources/SunsetBaseColor.jpg", ""})
+	CREATE_ASTER(Uranus,	19 * AU,	3.981 * S,	Time{84,	0},			Sunset::NamesList{"../../Ressources/SunsetBaseColor.jpg", ""})
+	CREATE_ASTER(Neptune,	30 * AU,	3.865 * S,	Time{164,	280},		Sunset::NamesList{"../../Ressources/SunsetBaseColor.jpg", ""})
 
 	// Typelist of all the planet you want to display
 	using SolarSys = Typelist<Sun, Mercury, Venus, Earth, Mars, Jupiter, Saturne, Uranus, Neptune>;
@@ -85,7 +91,7 @@ namespace Solar
 		{
 			InitEntities(std::make_index_sequence<TypelistSize<SolarSys>::value>{});
 
-			// todo : change the light way suz for now it will be a diff obj from the aster sun.
+			// todo : change the light way cuz for now it will be a diff obj from the aster sun.
 			LightList.emplace_back(Sunset::Directional{FVec3{- 0.2f, -1.0f, -0.3f}, Sunset::Light{FVec3{0.2f, 0.2f, 0.2f}, FVec3{0.5f, 0.5f, 0.5f}, FVec3{1.0f, 1.0f, 1.0f}}});
 		}
 
