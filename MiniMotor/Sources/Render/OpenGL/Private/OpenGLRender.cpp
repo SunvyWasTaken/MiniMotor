@@ -93,10 +93,24 @@ namespace Sunset
 					}
 				}
 			});
+
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO();
+		(void)io;
+		ImGui::StyleColorsDark();
+
+		ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
+		ImGui_ImplOpenGL3_Init("#version 330");
 	}
 
 	OpenGLRender::~OpenGLRender()
 	{
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
+
+		glfwDestroyWindow(m_Window); // attention a bien destroy la window
 		glfwTerminate();
 	}
 
@@ -106,6 +120,17 @@ namespace Sunset
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glfwPollEvents();
+
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		ImGui::Begin("Imgui installed");
+		ImGui::Text("Hello, world %d", 123);
+		ImGui::End();
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 
 	void OpenGLRender::DrawLight(const Lights* light)

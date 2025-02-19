@@ -27,6 +27,7 @@ find_package(EnTT CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED ${Sources})
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
@@ -64,6 +65,8 @@ endforeach()
 # Permet d'aller chercher les fichiers g n r s par CMake
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
+target_precompile_headers(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/Sources/Public/mmpch.h")
+
 target_link_libraries(${PROJECT_NAME} PUBLIC
     EnTT::EnTT
 )
@@ -75,28 +78,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     glfw
     glad::glad
     glm::glm-header-only
-)
-
-target_precompile_headers(${PROJECT_NAME} PRIVATE
-    <algorithm>
-    <array>
-    <atomic>
-    <chrono>
-    <cmath>
-    <cstdint>
-    <functional>
-    <fstream>
-    <sstream>
-    <iostream>
-    <limits>
-    <map>
-    <memory>
-    <optional>
-    <string>
-    <thread>
-    <variant>
-    <vector>
-
-    "Sources/Core/Public/ImportExportDLL.h"
-    "Sources/Core/Typelists/Public/Typelists.h"
+    imgui::imgui
 )
