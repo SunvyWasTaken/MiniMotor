@@ -59,10 +59,8 @@ separate_arguments(PUBLIC_DIRS)
 
 # Ajouter chaque dossier trouv  dans les includes
 foreach(DIR ${PUBLIC_DIRS})
-    target_include_directories(${PROJECT_NAME} PRIVATE ${DIR})
+    target_include_directories(${PROJECT_NAME} PUBLIC ${DIR})
 endforeach()
-
-target_include_directories(${PROJECT_NAME} PUBLIC "Sources/Public")
 
 # Permet d'aller chercher les fichiers g n r s par CMake
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})

@@ -1,5 +1,4 @@
 #include "MiniMotor.h"
-#include "imgui.h"
 
 // Astronomical unit
 constexpr double AU = 1e2;
