@@ -17,7 +17,7 @@
 
     {
       "name": "imgui",
-      "features": [ "opengl3-binding", "vulkan-binding", "glfw-binding" ]
+      "features": [ "opengl3-binding", "vulkan-binding", "glfw-binding", "docking-experimental" ]
     }
   ]
 }
