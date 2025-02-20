@@ -9,6 +9,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "imgui_impl_opengl3.h"
+
 #define NBR_POINT_LIGHT 4
 
 namespace

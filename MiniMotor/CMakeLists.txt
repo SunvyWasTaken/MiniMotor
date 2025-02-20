@@ -22,10 +22,11 @@ endmacro()
 GroupSources("Sources")
 
 find_package(OpenGL REQUIRED)
-find_package(assimp CONFIG REQUIRED)
+find_package(vulkan REQUIRED)
 find_package(EnTT CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 
@@ -45,7 +46,7 @@ if(WIN32)
 else()
     # Sous Linux/macOS, utiliser la commande Unix `find`
     execute_process(
-        COMMAND find ${CMAKE_SOURCE_DIR} -type d -name Public
+        COMMAND find ${CMAKE_CURRENT_SOURCE_DIR} -type d -name Public
         OUTPUT_VARIABLE PUBLIC_DIRS
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
@@ -73,9 +74,10 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     MiniMotor_compiler_flags
-    assimp::assimp
+    Vulkan::Vulkan
     OpenGL::GL
     glfw
+    imgui::imgui
     glad::glad
     glm::glm-header-only
     imgui::imgui

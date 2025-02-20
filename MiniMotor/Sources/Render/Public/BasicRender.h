@@ -4,6 +4,9 @@
 #include "Maths.h"
 #include "Lights.h"
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+
 #include <functional>
 #include <imgui.h>	
 #include <imgui_impl_glfw.h>
@@ -65,7 +68,7 @@ namespace Sunset
 		{
 			m_Width = width;
 			m_Height = height;
-		}	
+		}
 
 	protected:
 

@@ -3,20 +3,22 @@
 #include "BasicRender.h"
 namespace Sunset
 {
-	class MM_API VulkanRender /*: public BasicRender<VulkanRender>*/
+	class MM_API VulkanRender : public BasicRender<VulkanRender>
 	{
 	public:
 		VulkanRender(const std::string& _name, const FVec2& size);
 
-		virtual ~VulkanRender();
+		virtual ~VulkanRender() override;
 
 		void BeginFrame();
 
-		void Draw(const Camera* cam, const Mesh* mesh);
+		void DrawLight(const Lights* light);
+
+		void Draw(const Camera* cam, const Mesh* mesh, const Transform& trans);
 
 		void EndFrame();
 
-		bool IsRunning() const;
+		bool IsRunning();
 
 		void CloseWindow();
 

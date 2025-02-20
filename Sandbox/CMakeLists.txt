@@ -34,7 +34,7 @@ if(WIN32)
 else()
     # Sous Linux/macOS, utiliser la commande Unix `find`
     execute_process(
-        COMMAND find ${CMAKE_SOURCE_DIR} -type d -name Public
+        COMMAND find ${CMAKE_CURRENT_SOURCE_DIR} -type d -name Public
         OUTPUT_VARIABLE PUBLIC_DIRS
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
@@ -48,7 +48,7 @@ separate_arguments(PUBLIC_DIRS)
 
 # Ajouter chaque dossier trouv  dans les includes
 foreach(DIR ${PUBLIC_DIRS})
-    target_include_directories(${PROJECT_NAME} PUBLIC ${DIR})
+    target_include_directories(${PROJECT_NAME} PRIVATE ${DIR})
 endforeach()
 
 # Permet d'aller chercher les fichiers g n r s par CMake
