@@ -4,7 +4,7 @@ namespace Sunset
 {
 	class Layer;
 	
-	class LayerStack final
+	class MM_API LayerStack final
 	{
 		using LayerList = std::vector<Layer*>;
 	public:
