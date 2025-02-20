@@ -9,8 +9,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
 #define NBR_POINT_LIGHT 4
@@ -98,13 +96,11 @@ namespace Sunset
 				}
 			});
 
-		// Dans OpenGLRender::OpenGLRender()
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		// ... configuration d'ImGui ...
 
-		ImGui_ImplGlfw_InitForOpenGL(m_Window, true);  // <-- Fonction qui pose problème
-		ImGui_ImplOpenGL3_Init("#version 330"); // Ou la version de votre OpenGL
+		ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
+		ImGui_ImplOpenGL3_Init("#version 330");
 	}
 
 	OpenGLRender::~OpenGLRender()

@@ -1,6 +1,6 @@
 {
   "name": "minimotor",
-  "dependencies" : [
+  "dependencies": [
     "entt",
     "glm",
     "stb",
