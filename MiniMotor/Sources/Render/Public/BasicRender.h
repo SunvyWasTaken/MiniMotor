@@ -4,16 +4,16 @@
 #include "Maths.h"
 #include "Lights.h"
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
 
 #include <functional>
-#include <imgui.h>	
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
 
 #define RET_CRTP(x, returnType) returnType x() { DerivedPtr tmp = static_cast<DerivedPtr>(this); return tmp->x(); }
+#define VAR_RET_CRTP(x, returnType) template <typename ...Args> returnType x(Args&&... args) { DerivedPtr tmp = static_cast<DerivedPtr>(this); return tmp->x(std::forward<Args>(args)...); }
+
 #define CRTP(x) RET_CRTP(x, void)
+#define CRTP_VAR(x) VAR_RET_CRTP(x, void)
 
 class GLFWwindow;
 
@@ -40,18 +40,10 @@ namespace Sunset
 
 		CRTP(BeginFrame)
 
-		// Will draw light like once. cuz I don't know yet how i want to be.
-		void DrawLight(const Lights* light)
-		{
-			DerivedPtr tmp = static_cast<DerivedPtr>(this);
-			tmp->DrawLight(light);
-		}
+		// Will draw light like once. cuz I don't know yet how i want it to be.
+		CRTP_VAR(DrawLight)
 
-		void Draw(const Camera* cam, const Mesh* mesh, const Transform& trans)
-		{
-			DerivedPtr tmp = static_cast<DerivedPtr>(this);
-			tmp->Draw(cam, mesh, trans);
-		}
+		CRTP_VAR(Draw)
 
 		CRTP(EndFrame)
 

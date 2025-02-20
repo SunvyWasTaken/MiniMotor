@@ -4,11 +4,13 @@
 #include "Camera.h"
 #include "Entity.h"
 #include "Event.h"
-#include "MesheComponent.h"
-#include "TransformComponent.h"
 #include "InputComponent.h"
+#include "Layers.h"
+#include "LayersStack.h"
+#include "MesheComponent.h"
 #include "Meshes.h"
 #include "Scene.h"
+#include "TransformComponent.h"
 
 namespace Sunset
 {
@@ -36,6 +38,16 @@ namespace Sunset
 
 		virtual void Update() = 0;
 
+		void PushLayer(Layer* layer)
+		{
+			m_LayerStack.PushLayer(layer);
+		}
+
+		void PushOverlay(Layer* layer)
+		{
+			m_LayerStack.PushOverlay(layer);
+		}
+
 		void Run()
 		{
 			auto PreviousTime = std::chrono::steady_clock::now();
@@ -55,6 +67,11 @@ namespace Sunset
 				PreviousTime = CurrentTime;
 				Deltatime = deltatime.count();
 
+				for (Layer* layer : m_LayerStack)
+				{
+					layer->OnUpdate();
+				}
+
 				Update();
 
 				// Start rendering maybe it's going to be in another thread oO!
@@ -72,6 +89,11 @@ namespace Sunset
 
 		void OnEvents(const Events& even)
 		{
+			for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
+			{
+				(*--it)->OnEvent(even);
+			}
+
 			auto views = world.entitys.view<InputComponent>();
 			for (auto curr : views)
 			{
@@ -116,5 +138,7 @@ namespace Sunset
 		RenderPtr render;
 		Scene world;
 		Camera* cam;
+
+		LayerStack m_LayerStack;
 	};
 }

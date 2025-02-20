@@ -6,10 +6,10 @@
 #include "OpenGLShader.h"
 #include "Typelists.h"
 
+#include <imgui_impl_opengl3.h>
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
-#include "imgui_impl_opengl3.h"
 
 #define NBR_POINT_LIGHT 4
 
@@ -130,9 +130,6 @@ namespace Sunset
 		ImGui::Begin("Imgui installed");
 		ImGui::Text("Hello, world %d", 123);
 		ImGui::End();
-
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 
 	void OpenGLRender::DrawLight(const Lights* light)
@@ -161,7 +158,7 @@ namespace Sunset
 
 	void OpenGLRender::Draw(const Camera* cam, const Mesh* mesh, const Transform& trans)
 	{
-		ProcessInput();
+		SendInput();
 
 		shaderProgram->Use();
 
@@ -210,6 +207,8 @@ namespace Sunset
 
 	void OpenGLRender::EndFrame()
 	{
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		glfwSwapBuffers(m_Window);
 	}
 
@@ -228,7 +227,7 @@ namespace Sunset
 		shaderProgram = std::make_unique<ShaderOGL>("../../MiniMotor/Sources/Shaders/vShader.vert", "../../MiniMotor/Sources/Shaders/fShader.frag");
 	}
 
-	void OpenGLRender::ProcessInput()
+	void OpenGLRender::SendInput()
 	{
 		for (auto key : keyPressed)
 		{

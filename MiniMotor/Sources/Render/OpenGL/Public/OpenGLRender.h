@@ -31,7 +31,7 @@ namespace Sunset
 
 		void LoadShader();
 
-		void ProcessInput();
+		void SendInput();
 
 	private:
 
