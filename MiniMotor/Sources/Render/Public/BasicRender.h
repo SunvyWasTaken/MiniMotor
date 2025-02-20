@@ -8,6 +8,9 @@
 #include "imgui_impl_glfw.h"
 
 #include <functional>
+#include <imgui.h>	
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 #define RET_CRTP(x, returnType) returnType x() { DerivedPtr tmp = static_cast<DerivedPtr>(this); return tmp->x(); }
 #define CRTP(x) RET_CRTP(x, void)

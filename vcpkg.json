@@ -4,9 +4,9 @@
     "entt",
     "glm",
     "stb",
+    "glfw3",
 
     "opengl",
-    "glfw3",
     "glad",
 
     "vulkan",

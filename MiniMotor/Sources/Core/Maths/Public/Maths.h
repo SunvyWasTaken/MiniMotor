@@ -8,7 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #endif // USE_GLM
 
-#include "ImportExportDLL.h"
+#include "core.h"
 
 template <typename T>
 struct rot
