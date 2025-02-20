@@ -62,6 +62,8 @@ namespace Sunset
 			m_Height = height;
 		}
 
+		void* GetWindow() const { return m_Window; }
+
 	protected:
 
 		GLFWwindow* m_Window;

@@ -24,15 +24,27 @@ namespace Sunset
 		using ListLight = std::vector<Lights>;
 
 	public:
+
+		static BasicApp<TRender>* AppPtr;
+
 		BasicApp()
 			: render(std::make_unique<TRender>(GetApplicationName(), FVec2{1280, 720}))
 			, Deltatime(0.f)
 		{
+			if (AppPtr)
+			{
+				throw std::exception(std::runtime_error("App already exist"));
+				return;
+			}
+			AppPtr = this;
 			render->BindInputCallback(std::bind(&Type::OnEvents, this, std::placeholders::_1));
 			cam = world.SpawnEntity<Camera>();
 		}
 
-		virtual ~BasicApp() = default;
+		virtual ~BasicApp()
+		{
+			AppPtr = nullptr;
+		}
 
 		virtual void Init() = 0;
 
@@ -120,6 +132,8 @@ namespace Sunset
 
 		Scene* GetWorld() { return &world; }
 
+		static void* GetWindow() { return AppPtr->render->GetWindow(); }
+
 	protected:
 
 		virtual const char* GetApplicationName() const { return "MiniMotor App"; }
@@ -142,3 +156,6 @@ namespace Sunset
 		LayerStack m_LayerStack;
 	};
 }
+
+template <typename T>
+Sunset::BasicApp<T>* Sunset::BasicApp<T>::AppPtr = nullptr;
