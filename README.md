@@ -41,5 +41,5 @@ You can move with your typical **WASD**, Go Up and Down with **QE**, look around
 > I also wanted to add **Assimp** but couldn't for the same reason of **ImGui**.
 
 # Sandbox
-For the sandbox at first I wanted a physical solar system with the calcul of force and gravitation to predict movement from the aster. But i quickly released that if I wanted to be accurate I would need a better ~~computer~~ *(brain)*. I couldn't figure it out how to do it properly and I wanted something quick to come out of this project so I just use the Astronomical unit and supossed that every aster orbit at a perfect cercle. I know it's not accurate but *if it works* ¯\_(ツ)_/¯. 
+For the sandbox at first I wanted a physical solar system with the calcul of force and gravitation to predict movement from the aster. But i quickly released that if I wanted to be accurate I would need a better ~~computer~~ *(brain)*. I couldn't figure it out how to do it properly and I wanted something quick to come out of this project so I just use the Astronomical unit and supossed that every aster orbit at a perfect cercle. I know it's not accurate but *if it works* ¯\\_(ツ)_/¯. 
  
