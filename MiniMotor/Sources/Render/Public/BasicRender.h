@@ -2,7 +2,6 @@
 
 #include "Event.h"
 #include "Maths.h"
-#include "Lights.h"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>

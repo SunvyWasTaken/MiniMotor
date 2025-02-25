@@ -1,8 +1,9 @@
 
+#include "OpenGLRender.h"
+
 #include "Camera.h"
 #include "Event.h"
 #include "Meshes.h"
-#include "OpenGLRender.h"
 #include "OpenGLShader.h"
 #include "Typelists.h"
 

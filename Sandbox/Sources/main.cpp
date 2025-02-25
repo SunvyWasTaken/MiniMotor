@@ -83,7 +83,7 @@ namespace Solar
 	// Typelist of all the planet you want to display
 	using SolarSys = Typelist<Sun, Mercury, Venus, Earth, Mars, Jupiter, Saturne, Uranus, Neptune>;
 
-	class DefaultApp : public Sunset::BasicApp<Sunset::OpenGLRender>
+	class DefaultApp : public Sunset::BasicApp
 	{
 	public:
 

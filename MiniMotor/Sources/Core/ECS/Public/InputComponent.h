@@ -20,7 +20,6 @@ namespace Sunset
 
 		InputCallbacks functions;
 
-		template <typename T>
 		friend class BasicApp;
 	};
 }
