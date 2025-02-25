@@ -87,3 +87,17 @@ struct TypelistSize<Typelist<T>>
 {
 	static constexpr int value = 1;
 };
+
+/************************************************************************/
+/* Typelist Adder														*/
+/************************************************************************/
+
+template <typename T1, typename T2>
+struct TypeAdder
+{ };
+
+template <typename ...Ts, typename ...Tss>
+struct TypeAdder<Typelist<Ts...>, Typelist<Tss...>>
+{
+	using value = typename Typelist<Ts..., Tss...>;
+};

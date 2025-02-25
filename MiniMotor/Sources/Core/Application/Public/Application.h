@@ -5,8 +5,6 @@
 #include "Entity.h"
 #include "Event.h"
 #include "InputComponent.h"
-#include "Layers.h"
-#include "LayersStack.h"
 #include "MesheComponent.h"
 #include "Meshes.h"
 #include "Scene.h"
@@ -25,40 +23,21 @@ namespace Sunset
 
 	public:
 
-		static BasicApp<TRender>* AppPtr;
-
 		BasicApp()
 			: render(std::make_unique<TRender>(GetApplicationName(), FVec2{1280, 720}))
 			, Deltatime(0.f)
 		{
-			if (AppPtr)
-			{
-				throw std::exception(std::runtime_error("App already exist"));
-				return;
-			}
-			AppPtr = this;
 			render->BindInputCallback(std::bind(&Type::OnEvents, this, std::placeholders::_1));
 			cam = world.SpawnEntity<Camera>();
 		}
 
 		virtual ~BasicApp()
 		{
-			AppPtr = nullptr;
 		}
 
 		virtual void Init() = 0;
 
 		virtual void Update() = 0;
-
-		void PushLayer(Layer* layer)
-		{
-			m_LayerStack.PushLayer(layer);
-		}
-
-		void PushOverlay(Layer* layer)
-		{
-			m_LayerStack.PushOverlay(layer);
-		}
 
 		void Run()
 		{
@@ -79,11 +58,6 @@ namespace Sunset
 				PreviousTime = CurrentTime;
 				Deltatime = deltatime.count();
 
-				for (Layer* layer : m_LayerStack)
-				{
-					layer->OnUpdate();
-				}
-
 				Update();
 
 				// Start rendering maybe it's going to be in another thread oO!
@@ -101,11 +75,6 @@ namespace Sunset
 
 		void OnEvents(const Events& even)
 		{
-			for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
-			{
-				(*--it)->OnEvent(even);
-			}
-
 			auto views = world.entitys.view<InputComponent>();
 			for (auto curr : views)
 			{
@@ -132,8 +101,6 @@ namespace Sunset
 
 		Scene* GetWorld() { return &world; }
 
-		static void* GetWindow() { return AppPtr->render->GetWindow(); }
-
 	protected:
 
 		virtual const char* GetApplicationName() const { return "MiniMotor App"; }
@@ -150,12 +117,9 @@ namespace Sunset
 	private:
 
 		RenderPtr render;
-		Scene world;
-		Camera* cam;
 
-		LayerStack m_LayerStack;
+		Scene world;
+
+		Camera* cam;
 	};
 }
-
-template <typename T>
-Sunset::BasicApp<T>* Sunset::BasicApp<T>::AppPtr = nullptr;

@@ -53,7 +53,7 @@ namespace Sunset
 
 		LoadShader();
 
-		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
 		glfwSetCursorPosCallback(m_Window,
 			[](GLFWwindow* window, double xPos, double yPos)
 			{
@@ -100,6 +100,7 @@ namespace Sunset
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		(void)io;
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		ImGui::StyleColorsDark();
 
 		ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
@@ -122,14 +123,6 @@ namespace Sunset
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glfwPollEvents();
-
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-
-		ImGui::Begin("Imgui installed");
-		ImGui::Text("Hello, world %d", 123);
-		ImGui::End();
 	}
 
 	void OpenGLRender::DrawLight(const Lights* light)
@@ -207,8 +200,16 @@ namespace Sunset
 
 	void OpenGLRender::EndFrame()
 	{
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		bool show = true;
+		ImGui::ShowDemoWindow(&show);
+
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 		glfwSwapBuffers(m_Window);
 	}
 
