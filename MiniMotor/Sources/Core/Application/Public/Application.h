@@ -3,6 +3,7 @@
 #include "Event.h"
 #include "Lights.h"
 #include "Scene.h"
+#include "LayersStack.h"
 
 namespace Sunset
 {
@@ -44,6 +45,11 @@ namespace Sunset
 
 		void* GetWindow();
 
+		void PushLayer(class Layer* layer)
+		{
+			layerStack.PushLayer(layer);
+		}
+
 	protected:
 
 		virtual const char* GetApplicationName() const { return "MiniMotor App"; }
@@ -66,5 +72,9 @@ namespace Sunset
 		Scene world;
 
 		Camera* cam;
+
+		LayerStack layerStack;
+
+		class ImGuiLayer* imLayer;
 	};
 }

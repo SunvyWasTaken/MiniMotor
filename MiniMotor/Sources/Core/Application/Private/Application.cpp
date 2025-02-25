@@ -2,6 +2,7 @@
 #include "BasicRender.h"
 #include "Camera.h"
 #include "Entity.h"
+#include "ImGuiLayer.h"
 #include "InputComponent.h"
 #include "MesheComponent.h"
 #include "Meshes.h"
@@ -19,6 +20,9 @@ namespace Sunset
 		AppPtr = this;
 		render->BindInputCallback(std::bind(&BasicApp::OnEvents, this, std::placeholders::_1));
 		cam = world.SpawnEntity<Camera>();
+
+		imLayer = new ImGuiLayer();
+		PushLayer(imLayer);
 	}
 
 	BasicApp::~BasicApp()
@@ -50,6 +54,12 @@ namespace Sunset
 
 			// Start rendering maybe it's going to be in another thread oO!
 			render->BeginFrame();
+
+			for (auto& layer : layerStack)
+			{
+				layer->OnUpdate();
+			}
+
 			auto views = world.entitys.view<MeshComponent, TransformComponent>();
 			for (auto curr : views)
 			{
@@ -57,6 +67,14 @@ namespace Sunset
 				TransformComponent& currTrans = world.entitys.get<TransformComponent>(curr);
 				render->Draw(cam, currMesh(), currTrans());
 			}
+
+			imLayer->Begin();
+			for (auto& layer : layerStack)
+			{
+				layer->OnImGuiRender();
+			}
+			imLayer->End();
+
 			render->EndFrame();
 		}
 	}
