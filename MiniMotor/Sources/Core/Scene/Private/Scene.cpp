@@ -10,4 +10,12 @@ namespace Sunset
 	Scene::~Scene()
 	{
 	}
+
+	void Scene::Update(float deltatime)
+	{
+		for (auto& entity : entitysList)
+		{
+			entity->Update(deltatime);
+		}
+	}
 }

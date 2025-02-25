@@ -23,6 +23,8 @@ namespace Sunset
 			return static_cast<T*>((*currEntity).get());
 		}
 
+		void Update(float deltatime);
+
 		entt::registry entitys;
 
 	private:

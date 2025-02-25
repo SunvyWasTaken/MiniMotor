@@ -25,6 +25,8 @@ namespace Sunset
 
 		virtual void Init() {};
 
+		virtual void Update(float deltatime) {};
+
 	private:
 
 		entt::entity id;

@@ -2,6 +2,7 @@
 #include "Event.h"
 #include "Maths.h"
 #include "InputComponent.h"
+#include "Inputs.h"
 
 namespace Sunset
 {
@@ -49,6 +50,14 @@ namespace Sunset
 			{
 				UpdateLocation(FVec3{ 0.f, -1.f, 0.f } * deltatime * MovementSpeed);
 			}, std::placeholders::_1));
+	}
+
+	void Camera::Update(float deltatime)
+	{
+		//if (Inputs::IsKeyPressed(87))
+		//{
+		//	UpdateLocation(FVec3{ 0.f, 0.f, 1.f } *deltatime * MovementSpeed);
+		//}
 	}
 
 	FMat4 Camera::GetViewMatrice() const

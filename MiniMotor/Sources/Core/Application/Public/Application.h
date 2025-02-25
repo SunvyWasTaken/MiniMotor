@@ -42,6 +42,8 @@ namespace Sunset
 
 		static BasicApp& Get() { return *AppPtr; }
 
+		void* GetWindow();
+
 	protected:
 
 		virtual const char* GetApplicationName() const { return "MiniMotor App"; }

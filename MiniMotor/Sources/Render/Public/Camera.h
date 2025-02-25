@@ -19,6 +19,8 @@ namespace Sunset
 
 		virtual void Init() override;
 
+		virtual void Update(float deltatime) override;
+
 		FMat4 GetViewMatrice() const;
 
 		void ChangeRotation(const double xPos, const double yPos);

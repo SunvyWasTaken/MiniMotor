@@ -46,6 +46,8 @@ namespace Sunset
 
 			Update();
 
+			world.Update(Deltatime);
+
 			// Start rendering maybe it's going to be in another thread oO!
 			render->BeginFrame();
 			auto views = world.entitys.view<MeshComponent, TransformComponent>();
@@ -88,5 +90,10 @@ namespace Sunset
 	Scene* BasicApp::GetWorld()
 	{
 		return &world;
+	}
+
+	void* BasicApp::GetWindow()
+	{
+		return render->GetWindow();
 	}
 }
