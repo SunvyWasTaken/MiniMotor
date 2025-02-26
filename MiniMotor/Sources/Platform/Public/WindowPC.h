@@ -52,8 +52,6 @@ namespace Sunset
 
 		std::unique_ptr<RenderContext> m_Context;
 
-		EventCallBackFn EventCallBack;
-
 		bool VSync;
 	};
 }

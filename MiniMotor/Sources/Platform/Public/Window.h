@@ -4,10 +4,14 @@
 
 namespace Sunset
 {
+	using EventCallBackFn = std::function<void(const Events&)>;
+
 	struct WindowData
 	{
 		std::string Title;
 		uint32_t Width, Height;
+
+		EventCallBackFn EventCallBack;
 
 		WindowData(const std::string& _title = "Sunset Engine",
 			uint32_t _width = 1280,
@@ -19,7 +23,6 @@ namespace Sunset
 	{
 		using DerivedPtr = Derived*;
 	public:
-		using EventCallBackFn = std::function<void(const Events&)>;
 
 		Window(const WindowData& props) {}
 

@@ -9,6 +9,13 @@
 namespace
 {
 	bool s_GLFMInitialized = false;
+
+	void OnWindowClose(GLFWwindow* window)
+	{
+		Sunset::WindowData& data = *(static_cast<Sunset::WindowData*>(glfwGetWindowUserPointer(window)));
+		Sunset::Events even = Sunset::WinCloseEvent();
+		data.EventCallBack(even);
+	}
 }
 
 namespace Sunset
@@ -41,7 +48,7 @@ namespace Sunset
 
 	void WindowPC::SetEventCallBack(const EventCallBackFn& _callback)
 	{
-		EventCallBack = _callback;
+		m_Data.EventCallBack = _callback;
 	}
 
 	void WindowPC::SetVSync(bool _enable)
@@ -69,7 +76,7 @@ namespace Sunset
 
 		m_Window = glfwCreateWindow((int)m_Data.Width, (int)m_Data.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
-		glfwSetWindowUserPointer(m_Window, this);
+		glfwSetWindowUserPointer(m_Window, &m_Data);
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
@@ -82,13 +89,7 @@ namespace Sunset
 
 		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
 
-		glfwSetWindowCloseCallback(m_Window, 
-		[](GLFWwindow* window)
-		{
-			WindowPC& data = *(static_cast<WindowPC*>(glfwGetWindowUserPointer(window)));
-			Events even = WinCloseEvent();
-			data.EventCallBack(even);
-		});
+		glfwSetWindowCloseCallback(m_Window, &OnWindowClose);
 
 		//glfwSetCursorPosCallback(m_Window,
 		//	[](GLFWwindow* window, double xPos, double yPos)
