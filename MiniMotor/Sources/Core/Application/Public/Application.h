@@ -9,7 +9,7 @@ namespace Sunset
 {
 	class ImGuiLayer;
 
-	class MM_EXPORT BasicApp
+	class MM_API BasicApp
 	{
 		using ListLight = std::vector<Lights>;
 		using Win = Window<WindowPC>;

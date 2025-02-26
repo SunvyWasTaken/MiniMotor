@@ -21,10 +21,6 @@ namespace Sunset
 
 		m_Window = std::make_unique<WindowPC>(WindowData{}, OpenGL());
 		m_Window->SetEventCallBack(std::bind(&BasicApp::OnEvents, AppPtr, std::placeholders::_1));
-
-		imLayer = new ImGuiLayer();
-		PushLayer(imLayer);
-		
 	}
 
 	BasicApp::~BasicApp()

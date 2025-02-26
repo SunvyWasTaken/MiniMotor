@@ -3,7 +3,10 @@
 class DefaultApp : public Sunset::BasicApp
 {
 public:
-	void Init() {};
+	void Init()
+	{
+		PushLayer(new Sunset::ImGuiLayer());
+	};
 	void Update() {};
 };
 

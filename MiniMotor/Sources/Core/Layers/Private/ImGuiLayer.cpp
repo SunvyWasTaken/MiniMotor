@@ -34,10 +34,9 @@ namespace Sunset
 		ImGui::StyleColorsDark();
 		io.DisplaySize = ImVec2{1280, 720};
 		BasicApp& app = BasicApp::Get();
-		void* WinPtr = app.GetWindow().GetNativeWindow();
-		assert(WinPtr);
-		ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow*>(WinPtr), true);
-		ImGui_ImplOpenGL3_Init("#version 330");
+		GLFWwindow* WinPtr = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
+		ImGui_ImplGlfw_InitForOpenGL(WinPtr, true);
+		ImGui_ImplOpenGL3_Init("#version 410");
 	}
 
 	void ImGuiLayer::OnDetach()
@@ -51,7 +50,6 @@ namespace Sunset
 	{
 		static bool show = true;
 		ImGui::ShowDemoWindow(&show);
-
 	}
 
 	void ImGuiLayer::Begin()

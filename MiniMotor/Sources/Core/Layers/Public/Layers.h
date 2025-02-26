@@ -4,7 +4,7 @@
 
 namespace Sunset
 {
-	class Layer
+	class MM_API Layer
 	{
 	public:
 		explicit Layer(const std::string& name = "Layer");

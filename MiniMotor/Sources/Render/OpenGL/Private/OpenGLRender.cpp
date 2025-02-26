@@ -40,6 +40,7 @@ namespace Sunset
 
 	void OpenGLRender::SwapBuffers()
 	{
+		glfwSwapBuffers(m_Window);
 	}
 
 	//void OpenGLRender::BeginFrame()
