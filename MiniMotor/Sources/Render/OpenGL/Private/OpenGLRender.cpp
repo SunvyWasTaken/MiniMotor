@@ -17,25 +17,20 @@ namespace Sunset
 	OpenGLRender::OpenGLRender(GLFWwindow* window)
 		: m_Window(window)
 	{
-		glfwMakeContextCurrent(m_Window);
-		gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-
 		//glViewport(0, 0, , );
 		glEnable(GL_DEPTH_TEST);
-		std::cerr << "Creation OpenGL render" << std::endl;
+		LOG("Creation OpenGL render")
 
 		//LoadShader();
 	}
 
 	OpenGLRender::~OpenGLRender()
 	{
-		std::cerr << "Destruction OpenGL Render" << std::endl;
+		LOG("Destruction OpenGL Render")
 	}
 
 	void OpenGLRender::SwapBuffers()
 	{
-		std::cerr << "Swapbuffer" << std::endl;
-		assert(m_Window);
 		glfwSwapBuffers(m_Window);
 	}
 

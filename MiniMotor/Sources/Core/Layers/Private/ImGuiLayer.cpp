@@ -50,6 +50,17 @@ namespace Sunset
 	{
 		static bool show = true;
 		ImGui::ShowDemoWindow(&show);
+
+		ImGui::Begin("Log");
+		if (ImGui::Button("Clear"))
+		{
+			Logger::Get().clear();
+		}
+		for (const auto& msg : Logger::Get())
+		{
+			ImGui::TextUnformatted(msg.c_str());
+		}
+		ImGui::End();
 	}
 
 	void ImGuiLayer::Begin()

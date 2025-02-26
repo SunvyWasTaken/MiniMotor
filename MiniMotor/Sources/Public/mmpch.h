@@ -25,3 +25,4 @@
 
 #include "Typelists.h"
 #include "core.h"
+#include "Logger.h"

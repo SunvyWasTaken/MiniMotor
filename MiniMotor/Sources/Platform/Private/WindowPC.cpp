@@ -28,12 +28,14 @@ namespace Sunset
 		, m_Window(nullptr)
 		, VSync(true)
 	{
-		std::cerr << "Window creation" << std::endl;
+		LOG("Window creation")
 		Init();
+		CreateContext();
 	}
 
 	WindowPC::~WindowPC()
 	{
+		LOG("WinPc destroyed");
 		glfwDestroyWindow(m_Window);
 		glfwTerminate();
 	}
@@ -77,15 +79,16 @@ namespace Sunset
 
 		m_Window = glfwCreateWindow((int)m_Data.Width, (int)m_Data.Height, m_Data.Title.c_str(), nullptr, nullptr);
 
-		CreateContext();
-
+		glfwMakeContextCurrent(m_Window);
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
 			glfwTerminate();
+			LOG("Load Glad failed!");
 			return;
 		}
+		LOG("Load Glad succed")
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(VSync);
@@ -139,6 +142,7 @@ namespace Sunset
 
 	void WindowPC::CreateContext()
 	{
+		LOG("Create Contex");
 		std::visit(Overloaded
 		{
 			[&](Render::None arg)

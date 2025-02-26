@@ -40,8 +40,6 @@ namespace Sunset
 
 		Camera m_Camera;
 
-		std::shared_ptr<class VertexArray> VAO;
-
 		std::unique_ptr<Win> m_Window;
 
 		bool b_IsWinOpen;

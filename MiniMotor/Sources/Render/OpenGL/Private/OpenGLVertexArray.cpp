@@ -27,13 +27,13 @@ namespace Sunset
 {
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
-		std::cerr << "Vertex array Creation" << std::endl;
+		LOG("Vertex array Creation")
 		glCreateVertexArrays(1, &m_RendererID);
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
-		std::cerr << "Vertex array desctruction" << std::endl;
+		LOG("Vertex array desctruction")
 		glDeleteVertexArrays(1, &m_RendererID);
 	}
 
