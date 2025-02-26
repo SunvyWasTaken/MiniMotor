@@ -3,14 +3,6 @@
 namespace Sunset
 {
 	class VertexArray;
-	
-	namespace Render
-	{
-		struct OpenGL{};
-		struct Vulkan{};
-
-		using Type = std::variant<OpenGL, Vulkan>;
-	}
 
 	class RendererApi
 	{

@@ -11,16 +11,14 @@ namespace Sunset
 	class Camera;
 	class Mesh;
 
-	template <typename Derived>
 	class BasicRender
 	{
-		using DerivedPtr = Derived*;
 	public:
-		BasicRender() = default;
+		BasicRender() { std::cerr << "Creation Basic Render." << std::endl; }
 
-		virtual ~BasicRender() = default;
+		virtual ~BasicRender() { std::cerr << "Basic Render destroy." << std::endl; }
 
-		CRTP(SwapBuffers)
+		void SwapBuffers() {};
 
 		//CRTP(BeginFrame)
 

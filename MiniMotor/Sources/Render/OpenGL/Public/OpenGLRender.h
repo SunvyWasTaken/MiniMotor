@@ -1,20 +1,17 @@
 #pragma once
 
-#include "BasicRender.h"
-#include "Lights.h"
-
 struct GLFWwindow;
 
 namespace Sunset
 {
 	class ShaderOGL;
 
-	class MM_API OpenGLRender : public BasicRender<OpenGLRender>
+	class MM_API OpenGLRender
 	{
 	public:
 		OpenGLRender(GLFWwindow* window);
 
-		virtual ~OpenGLRender() override;
+		virtual ~OpenGLRender();
 
 		void SwapBuffers();
 

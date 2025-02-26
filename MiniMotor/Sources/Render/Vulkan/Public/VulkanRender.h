@@ -1,13 +1,12 @@
 #pragma once
 
-#include "BasicRender.h"
-#include "Lights.h"
-
 namespace Sunset
 {
-	class MM_API VulkanRender : public BasicRender<VulkanRender>
+	class MM_API VulkanRender final
 	{
 	public:
+		VulkanRender() = default;
+		~VulkanRender() = default;
 		void SwapBuffers();
 
 	};

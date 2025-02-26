@@ -101,3 +101,15 @@ struct TypeAdder<Typelist<Ts...>, Typelist<Tss...>>
 {
 	using value = typename Typelist<Ts..., Tss...>;
 };
+
+namespace Sunset
+{
+	namespace Render
+	{
+		struct None {};
+		struct OpenGL {};
+		struct Vulkan {};
+
+		using Type = std::variant<None, OpenGL, Vulkan>;
+	}
+}

@@ -1,7 +1,10 @@
 #include "WindowPC.h"
 
+#include "BasicRender.h"
 #include "OpenGLRender.h"
 #include "VulkanRender.h"
+
+#include "RendererApi.h"
 
 #include <glad/glad.h>
 #include <glfw/glfw3.h>
@@ -20,15 +23,12 @@ namespace
 
 namespace Sunset
 {
-	WindowPC::WindowPC(const WindowData& props, const RenderType& context)
+	WindowPC::WindowPC(const WindowData& props)
 		: Window(props)
-		, ContextType(context)
 		, m_Window(nullptr)
-		, m_Context(nullptr)
 		, VSync(true)
 	{
 		Init();
-		CreateContext();
 	}
 
 	WindowPC::~WindowPC()
@@ -42,8 +42,8 @@ namespace Sunset
 		glfwPollEvents();
 		std::visit([this](auto&& arg)
 		{
-			arg.SwapBuffers();
-		}, *(m_Context.get()));
+			arg->SwapBuffers();
+		}, m_Context);
 	}
 
 	void WindowPC::SetEventCallBack(const EventCallBackFn& _callback)
@@ -75,7 +75,7 @@ namespace Sunset
 		}
 
 		m_Window = glfwCreateWindow((int)m_Data.Width, (int)m_Data.Height, m_Data.Title.c_str(), nullptr, nullptr);
-		//glfwMakeContextCurrent(m_Window);
+		glfwMakeContextCurrent(m_Window);
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -83,6 +83,8 @@ namespace Sunset
 			glfwTerminate();
 			return;
 		}
+
+		CreateContext();
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(VSync);
@@ -138,14 +140,18 @@ namespace Sunset
 	{
 		std::visit(Overloaded
 		{
-			[&](OpenGL arg)
+			[&](Render::None arg)
 			{
-				m_Context = std::make_unique<RenderContext>(OpenGLRender(m_Window));
+
 			},
-			[&](Vulkan arg)
+			[&](Render::OpenGL arg)
 			{
-				// m_Context = std::make_unique<RenderContext>(VulkanRender());
+				m_Context = std::make_unique<OpenGLRender>(m_Window);
+			},
+			[&](Render::Vulkan arg)
+			{
+				
 			}
-		}, ContextType);
+		}, RendererApi::GetAPI());
 	}
 }

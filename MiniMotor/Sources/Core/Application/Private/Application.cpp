@@ -15,7 +15,7 @@ namespace Sunset
 	{
 		AppPtr = this;
 
-		m_Window = std::make_unique<WindowPC>(WindowData{}, OpenGL());
+		m_Window = std::make_unique<WindowPC>(WindowData{});
 		m_Window->SetEventCallBack(std::bind(&BasicApp::OnEvents, AppPtr, std::placeholders::_1));
 	}
 

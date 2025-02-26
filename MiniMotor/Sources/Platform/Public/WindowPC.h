@@ -6,23 +6,17 @@ struct GLFWwindow;
 
 namespace Sunset
 {
-	struct OpenGL{};
-	struct Vulkan{};
-
-	using RenderType = std::variant<OpenGL, Vulkan>;
-
-	template <typename T>
 	class BasicRender;
 	class OpenGLRender;
 	class VulkanRender;
 
 	class WindowPC : public Window<WindowPC>
 	{
-		using RenderContext = std::variant<BasicRender<OpenGLRender>, BasicRender<VulkanRender>>;
+		using RenderContext = std::variant<std::unique_ptr<BasicRender>, std::unique_ptr<OpenGLRender>, std::unique_ptr<VulkanRender>>;
 
 	public:
 
-		WindowPC(const WindowData& props, const RenderType& context);
+		WindowPC(const WindowData& props);
 
 		virtual ~WindowPC();
 
@@ -42,15 +36,11 @@ namespace Sunset
 		// Init the Context (OpenGL or Vulkan)
 		void CreateContext();
 
-	public:
-		
-		RenderType ContextType;
-
 	private:
 
 		GLFWwindow* m_Window;
 
-		std::unique_ptr<RenderContext> m_Context;
+		RenderContext m_Context;
 
 		bool VSync;
 	};

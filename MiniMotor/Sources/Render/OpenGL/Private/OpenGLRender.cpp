@@ -12,37 +12,29 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#define NBR_POINT_LIGHT 4
-
-namespace
-{
-	// Maybe this could be ptr?
-	Sunset::Directional directionalLight;
-	std::array<Sunset::Point, NBR_POINT_LIGHT> pointLight;
-
-	constexpr std::string_view pointLightName = "pointLight";
-}
-
 namespace Sunset
 {
 	OpenGLRender::OpenGLRender(GLFWwindow* window)
-		: BasicRender<OpenGLRender>()
-		, m_Window(window)
+		: m_Window(window)
 	{
 		glfwMakeContextCurrent(m_Window);
+		gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 		//glViewport(0, 0, , );
-		//glEnable(GL_DEPTH_TEST);
+		glEnable(GL_DEPTH_TEST);
+		std::cerr << "Creation OpenGL render" << std::endl;
 
 		//LoadShader();
 	}
 
 	OpenGLRender::~OpenGLRender()
 	{
+		std::cerr << "Destruction OpenGL Render" << std::endl;
 	}
 
 	void OpenGLRender::SwapBuffers()
 	{
+		std::cerr << "Swapbuffer" << std::endl;
 		assert(m_Window);
 		glfwSwapBuffers(m_Window);
 	}
