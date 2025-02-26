@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Camera.h"
 #include "Event.h"
-#include "Lights.h"
 #include "LayersStack.h"
 #include "WindowPC.h"
 
@@ -11,7 +11,6 @@ namespace Sunset
 
 	class MM_API BasicApp
 	{
-		using ListLight = std::vector<Lights>;
 		using Win = Window<WindowPC>;
 
 	public:
@@ -38,6 +37,10 @@ namespace Sunset
 		inline static BasicApp& Get() { return *AppPtr; }
 
 	private:
+
+		Camera m_Camera;
+
+		std::shared_ptr<class VertexArray> VAO;
 
 		std::unique_ptr<Win> m_Window;
 

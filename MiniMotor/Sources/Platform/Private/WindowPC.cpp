@@ -28,6 +28,7 @@ namespace Sunset
 		, m_Window(nullptr)
 		, VSync(true)
 	{
+		std::cerr << "Window creation" << std::endl;
 		Init();
 	}
 
@@ -75,7 +76,9 @@ namespace Sunset
 		}
 
 		m_Window = glfwCreateWindow((int)m_Data.Width, (int)m_Data.Height, m_Data.Title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_Window);
+
+		CreateContext();
+
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -83,8 +86,6 @@ namespace Sunset
 			glfwTerminate();
 			return;
 		}
-
-		CreateContext();
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(VSync);

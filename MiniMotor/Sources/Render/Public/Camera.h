@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Entity.h"
 #include "Event.h"
 
 namespace Sunset
@@ -11,14 +10,14 @@ namespace Sunset
 		Ortho
 	};
 
-	class MM_API Camera : public Entity
+	class MM_API Camera
 	{
 	public:
 		Camera();
 
-		virtual void Init() override;
+		//virtual void Init() override;
 
-		virtual void Update(float deltatime) override;
+		//virtual void Update(float deltatime) override;
 
 		glm::mat4 GetViewMatrice() const;
 
@@ -42,7 +41,7 @@ namespace Sunset
 
 		glm::vec3 m_ForwardVector;
 
-		glm::vec3 m_Rotation;
+		float yaw, pitch, roll;
 
 		double lastX;
 

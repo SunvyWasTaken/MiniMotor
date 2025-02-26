@@ -6,13 +6,14 @@
 namespace Sunset
 {
 	Camera::Camera()
-		: Entity()
-		, m_Position({0.f, 0.f, 10.f})
+		: m_Position({0.f, 0.f, 10.f})
 		, viewMode(Sunset::ViewMode::Perspective)
 		, Res(1920, 1080)
 		, m_UpVector({ 0.f, 1.f, 0.f })
 		, m_ForwardVector({0.f, 0.f, -1.f})
-		, m_Rotation({-90.0, 0.0, 0.0})
+		, yaw(- 90.0)
+		, pitch(0.0)
+		, roll(0.0)
 		, lastX(0.0)
 		, lastY(0.0)
 		, firstMouse(true)
@@ -20,44 +21,44 @@ namespace Sunset
 	{
 	}
 
-	void Camera::Init()
-	{
-		AddComponent<InputComponent>();
+	//void Camera::Init()
+	//{
+	//	AddComponent<InputComponent>();
 
-		InputComponent& comp = GetComponent<InputComponent>();
-		comp.Bind(87, std::bind([this](float deltatime)
-			{
-				UpdateLocation(glm::vec3{ 0.f, 0.f, 1.f } *deltatime * MovementSpeed);
-			}, std::placeholders::_1));
-		comp.Bind(83, std::bind([this](float deltatime)
-			{
-				UpdateLocation(glm::vec3{ 0.f, 0.f, -1.f } * deltatime * MovementSpeed);
-			}, std::placeholders::_1));
-		comp.Bind(68, std::bind([this](float deltatime)
-			{
-				UpdateLocation(glm::vec3{ 1.f, 0.f, 0.f } * deltatime * MovementSpeed);
-			}, std::placeholders::_1));
-		comp.Bind(65, std::bind([this](float deltatime)
-			{
-				UpdateLocation(glm::vec3{ -1.f, 0.f, 0.f } * deltatime * MovementSpeed);
-			}, std::placeholders::_1));
-		comp.Bind(69, std::bind([this](float deltatime)
-			{
-				UpdateLocation(glm::vec3{ 0.f, 1.f, 0.f } * deltatime * MovementSpeed);
-			}, std::placeholders::_1));
-		comp.Bind(81, std::bind([this](float deltatime)
-			{
-				UpdateLocation(glm::vec3{ 0.f, -1.f, 0.f } * deltatime * MovementSpeed);
-			}, std::placeholders::_1));
-	}
+	//	InputComponent& comp = GetComponent<InputComponent>();
+	//	comp.Bind(87, std::bind([this](float deltatime)
+	//		{
+	//			UpdateLocation(glm::vec3{ 0.f, 0.f, 1.f } *deltatime * MovementSpeed);
+	//		}, std::placeholders::_1));
+	//	comp.Bind(83, std::bind([this](float deltatime)
+	//		{
+	//			UpdateLocation(glm::vec3{ 0.f, 0.f, -1.f } * deltatime * MovementSpeed);
+	//		}, std::placeholders::_1));
+	//	comp.Bind(68, std::bind([this](float deltatime)
+	//		{
+	//			UpdateLocation(glm::vec3{ 1.f, 0.f, 0.f } * deltatime * MovementSpeed);
+	//		}, std::placeholders::_1));
+	//	comp.Bind(65, std::bind([this](float deltatime)
+	//		{
+	//			UpdateLocation(glm::vec3{ -1.f, 0.f, 0.f } * deltatime * MovementSpeed);
+	//		}, std::placeholders::_1));
+	//	comp.Bind(69, std::bind([this](float deltatime)
+	//		{
+	//			UpdateLocation(glm::vec3{ 0.f, 1.f, 0.f } * deltatime * MovementSpeed);
+	//		}, std::placeholders::_1));
+	//	comp.Bind(81, std::bind([this](float deltatime)
+	//		{
+	//			UpdateLocation(glm::vec3{ 0.f, -1.f, 0.f } * deltatime * MovementSpeed);
+	//		}, std::placeholders::_1));
+	//}
 
-	void Camera::Update(float deltatime)
-	{
-		//if (Inputs::IsKeyPressed(87))
-		//{
-		//	UpdateLocation(glm::vec3{ 0.f, 0.f, 1.f } *deltatime * MovementSpeed);
-		//}
-	}
+	//void Camera::Update(float deltatime)
+	//{
+	//	//if (Inputs::IsKeyPressed(87))
+	//	//{
+	//	//	UpdateLocation(glm::vec3{ 0.f, 0.f, 1.f } *deltatime * MovementSpeed);
+	//	//}
+	//}
 
 	glm::mat4 Camera::GetViewMatrice() const
 	{
@@ -82,19 +83,19 @@ namespace Sunset
 		xoffset *= sensitivity;
 		yoffset *= sensitivity;
 
-		//m_Rotation.yaw += xoffset;
-		//m_Rotation.pitch += yoffset;
+		yaw += xoffset;
+		pitch += yoffset;
 
-		//if (m_Rotation.pitch > 89.0f)
-		//	m_Rotation.pitch = 89.0f;
-		//if (m_Rotation.pitch < -89.0f)
-		//	m_Rotation.pitch = -89.0f;
+		if (pitch > 89.0f)
+			pitch = 89.0f;
+		if (pitch < -89.0f)
+			pitch = -89.0f;
 
-		//glm::vec3 direction;
-		//direction.x = cos(glm::radians((float)m_Rotation.yaw)) * cos(glm::radians((float)m_Rotation.pitch));
-		//direction.y = sin(glm::radians((float)m_Rotation.pitch));
-		//direction.z = sin(glm::radians((float)m_Rotation.yaw)) * cos(glm::radians((float)m_Rotation.pitch));
-		//m_ForwardVector = glm::normalize(direction);
+		glm::vec3 direction;
+		direction.x = cos(glm::radians((float)yaw)) * cos(glm::radians((float)pitch));
+		direction.y = sin(glm::radians((float)pitch));
+		direction.z = sin(glm::radians((float)yaw)) * cos(glm::radians((float)pitch));
+		m_ForwardVector = glm::normalize(direction);
 	}
 
 	void Camera::UpdateLocation(const glm::vec3& vec)
