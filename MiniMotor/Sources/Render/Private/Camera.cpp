@@ -1,6 +1,5 @@
 #include "Camera.h"
 #include "Event.h"
-#include "Maths.h"
 #include "InputComponent.h"
 #include "Inputs.h"
 
@@ -28,27 +27,27 @@ namespace Sunset
 		InputComponent& comp = GetComponent<InputComponent>();
 		comp.Bind(87, std::bind([this](float deltatime)
 			{
-				UpdateLocation(FVec3{ 0.f, 0.f, 1.f } *deltatime * MovementSpeed);
+				UpdateLocation(glm::vec3{ 0.f, 0.f, 1.f } *deltatime * MovementSpeed);
 			}, std::placeholders::_1));
 		comp.Bind(83, std::bind([this](float deltatime)
 			{
-				UpdateLocation(FVec3{ 0.f, 0.f, -1.f } * deltatime * MovementSpeed);
+				UpdateLocation(glm::vec3{ 0.f, 0.f, -1.f } * deltatime * MovementSpeed);
 			}, std::placeholders::_1));
 		comp.Bind(68, std::bind([this](float deltatime)
 			{
-				UpdateLocation(FVec3{ 1.f, 0.f, 0.f } * deltatime * MovementSpeed);
+				UpdateLocation(glm::vec3{ 1.f, 0.f, 0.f } * deltatime * MovementSpeed);
 			}, std::placeholders::_1));
 		comp.Bind(65, std::bind([this](float deltatime)
 			{
-				UpdateLocation(FVec3{ -1.f, 0.f, 0.f } * deltatime * MovementSpeed);
+				UpdateLocation(glm::vec3{ -1.f, 0.f, 0.f } * deltatime * MovementSpeed);
 			}, std::placeholders::_1));
 		comp.Bind(69, std::bind([this](float deltatime)
 			{
-				UpdateLocation(FVec3{ 0.f, 1.f, 0.f } * deltatime * MovementSpeed);
+				UpdateLocation(glm::vec3{ 0.f, 1.f, 0.f } * deltatime * MovementSpeed);
 			}, std::placeholders::_1));
 		comp.Bind(81, std::bind([this](float deltatime)
 			{
-				UpdateLocation(FVec3{ 0.f, -1.f, 0.f } * deltatime * MovementSpeed);
+				UpdateLocation(glm::vec3{ 0.f, -1.f, 0.f } * deltatime * MovementSpeed);
 			}, std::placeholders::_1));
 	}
 
@@ -56,14 +55,13 @@ namespace Sunset
 	{
 		//if (Inputs::IsKeyPressed(87))
 		//{
-		//	UpdateLocation(FVec3{ 0.f, 0.f, 1.f } *deltatime * MovementSpeed);
+		//	UpdateLocation(glm::vec3{ 0.f, 0.f, 1.f } *deltatime * MovementSpeed);
 		//}
 	}
 
-	FMat4 Camera::GetViewMatrice() const
+	glm::mat4 Camera::GetViewMatrice() const
 	{
-		LookAt<FMat4> lookAt;
-		return lookAt(m_Position, m_ForwardVector, m_UpVector);
+		return glm::lookAt(m_Position, m_ForwardVector, m_UpVector);
 	}
 
 	void Camera::ChangeRotation(const double xPos, const double yPos)
@@ -84,36 +82,33 @@ namespace Sunset
 		xoffset *= sensitivity;
 		yoffset *= sensitivity;
 
-		m_Rotation.yaw += xoffset;
-		m_Rotation.pitch += yoffset;
+		//m_Rotation.yaw += xoffset;
+		//m_Rotation.pitch += yoffset;
 
-		if (m_Rotation.pitch > 89.0f)
-			m_Rotation.pitch = 89.0f;
-		if (m_Rotation.pitch < -89.0f)
-			m_Rotation.pitch = -89.0f;
+		//if (m_Rotation.pitch > 89.0f)
+		//	m_Rotation.pitch = 89.0f;
+		//if (m_Rotation.pitch < -89.0f)
+		//	m_Rotation.pitch = -89.0f;
 
-		glm::vec3 direction;
-		direction.x = cos(glm::radians((float)m_Rotation.yaw)) * cos(glm::radians((float)m_Rotation.pitch));
-		direction.y = sin(glm::radians((float)m_Rotation.pitch));
-		direction.z = sin(glm::radians((float)m_Rotation.yaw)) * cos(glm::radians((float)m_Rotation.pitch));
-		m_ForwardVector = glm::normalize(direction);
+		//glm::vec3 direction;
+		//direction.x = cos(glm::radians((float)m_Rotation.yaw)) * cos(glm::radians((float)m_Rotation.pitch));
+		//direction.y = sin(glm::radians((float)m_Rotation.pitch));
+		//direction.z = sin(glm::radians((float)m_Rotation.yaw)) * cos(glm::radians((float)m_Rotation.pitch));
+		//m_ForwardVector = glm::normalize(direction);
 	}
 
-	void Camera::UpdateLocation(const FVec3& vec)
+	void Camera::UpdateLocation(const glm::vec3& vec)
 	{
-		Cross<FVec3> cross;
 		m_Position += m_ForwardVector * vec.z;
 		m_Position += m_UpVector * vec.y;
-		m_Position += cross(m_ForwardVector, m_UpVector) * vec.x;
+		m_Position += glm::cross(m_ForwardVector, m_UpVector) * vec.x;
 	}
 
-	FMat4 Camera::GetProjection() const
+	glm::mat4 Camera::GetProjection() const
 	{
 		if (viewMode == Sunset::ViewMode::Perspective)
 		{
-			Perspective<FMat4> perspective;
-			Radian<float> radian;
-			return perspective(radian(45.f), Res.x / Res.y, 0.1f, (float)2e7);
+			return glm::perspective(glm::radians(45.f), Res.x / Res.y, 0.1f, (float)2e7);
 		}
 		else if (viewMode == Sunset::ViewMode::Ortho)
 		{
@@ -122,6 +117,6 @@ namespace Sunset
 			float heigh = (1 - (Res.y / Res.x)) * multi;
 			return glm::ortho(-width, width, -heigh, heigh, -1.f, 100.f);
 		}
-		return FMat4();
+		return glm::mat4();
 	}
 }

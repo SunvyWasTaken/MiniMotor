@@ -4,26 +4,54 @@
 
 namespace Sunset
 {
-	VertexOpenGlBuffer::VertexOpenGlBuffer(float* vertices, size_t size)
+	OpenGlVertexBuffer::OpenGlVertexBuffer(float* vertices, size_t size)
 		: m_RenderID(0)
 	{
 		glCreateBuffers(1, &m_RenderID);
 		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 	}
 
-	VertexOpenGlBuffer::~VertexOpenGlBuffer()
+	OpenGlVertexBuffer::~OpenGlVertexBuffer()
 	{
 		glDeleteBuffers(1, &m_RenderID);
 	}
 	
-	void VertexOpenGlBuffer::Bind()
+	void OpenGlVertexBuffer::Bind()
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, m_RenderID);
 	}
 	
-	void VertexOpenGlBuffer::UnBind()
+	void OpenGlVertexBuffer::UnBind()
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
+
+	/************************************************************************/
+	/* Index Buffer															*/
+	/************************************************************************/
+
+	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, size_t count)
+		: m_Count(count)
+	{
+		glCreateBuffers(1, &m_RendererID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+	}
+
+	OpenGLIndexBuffer::~OpenGLIndexBuffer()
+	{
+		glDeleteBuffers(1, &m_RendererID);
+	}
+
+	void OpenGLIndexBuffer::Bind() const
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
+	}
+
+	void OpenGLIndexBuffer::UnBind() const
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	}
+
 }
 

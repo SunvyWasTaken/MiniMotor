@@ -1,13 +1,8 @@
 #include "Application.h"
 #include "BasicRender.h"
-#include "Camera.h"
-#include "Entity.h"
 #include "ImGuiLayer.h"
-#include "InputComponent.h"
-#include "MesheComponent.h"
-#include "Meshes.h"
-#include "OpenGLRender.h"
-#include "TransformComponent.h"
+
+#include "RendererAPi.h"
 
 Sunset::BasicApp* Sunset::BasicApp::AppPtr = nullptr;
 
@@ -29,7 +24,6 @@ namespace Sunset
 	void BasicApp::Run()
 	{
 		Init();
-
 		while (b_IsWinOpen)
 		{
 			for (auto& layer : layerStack)

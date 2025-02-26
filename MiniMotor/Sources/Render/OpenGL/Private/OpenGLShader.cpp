@@ -73,13 +73,13 @@ namespace Sunset
 		glUniform1f(glGetUniformLocation(_id, target.c_str()), value);
 	}
 
-	void ShaderOGL::SetVec3F(const std::string& target, const FVec3& value)
+	void ShaderOGL::SetVec3F(const std::string& target, const glm::vec3& value)
 	{
-		glUniform3fv(glGetUniformLocation(_id, target.c_str()), 1, LeafMath::GetData(value));
+		glUniform3fv(glGetUniformLocation(_id, target.c_str()), 1, glm::value_ptr(value));
 	}
 
-	void ShaderOGL::SetMatrice4(const std::string& target, const FMat4& value)
+	void ShaderOGL::SetMatrice4(const std::string& target, const glm::mat4& value)
 	{
-		glUniformMatrix4fv(glGetUniformLocation(_id, target.c_str()), 1, GL_FALSE, LeafMath::GetData(value));
+		glUniformMatrix4fv(glGetUniformLocation(_id, target.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 	}
 }

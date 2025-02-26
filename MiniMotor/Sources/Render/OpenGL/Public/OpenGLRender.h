@@ -36,6 +36,8 @@ namespace Sunset
 
 	private:
 
+		GLFWwindow* m_Window;
+
 		//std::unique_ptr<ShaderOGL> shaderProgram;
 
 		//std::array<int, 5> keyPressed;

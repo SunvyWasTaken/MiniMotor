@@ -26,7 +26,8 @@ namespace
 namespace Sunset
 {
 	OpenGLRender::OpenGLRender(GLFWwindow* window)
-		: BasicRender<OpenGLRender>(window)
+		: BasicRender<OpenGLRender>()
+		, m_Window(window)
 	{
 		//glViewport(0, 0, , );
 		glEnable(GL_DEPTH_TEST);

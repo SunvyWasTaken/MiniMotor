@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Event.h"
-#include "Maths.h"
 
 struct GLFWwindow;
 
@@ -17,9 +16,7 @@ namespace Sunset
 	{
 		using DerivedPtr = Derived*;
 	public:
-		BasicRender(GLFWwindow* m_Window)
-			: m_Window(m_Window)
-		{ }
+		BasicRender() = default;
 
 		virtual ~BasicRender() = default;
 
@@ -35,10 +32,5 @@ namespace Sunset
 		//CRTP(EndFrame)
 
 		//RET_CRTP(IsRunning, bool)
-
-	protected:
-		
-		GLFWwindow* m_Window;
-
 	};
 }
