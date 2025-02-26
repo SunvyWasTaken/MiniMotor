@@ -3,6 +3,8 @@
 #include "BasicRender.h"
 #include "Lights.h"
 
+struct GLFWwindow;
+
 namespace Sunset
 {
 	class ShaderOGL;
@@ -10,36 +12,34 @@ namespace Sunset
 	class MM_API OpenGLRender : public BasicRender<OpenGLRender>
 	{
 	public:
-		OpenGLRender(const std::string& _name, const FVec2 _size);
+		OpenGLRender(GLFWwindow* window);
 
 		virtual ~OpenGLRender() override;
 
-		void BeginFrame();
+		void SwapBuffers();
 
-		void DrawLight(const Lights* light);
+		//void BeginFrame();
 
-		void Draw(const Camera* cam, const Mesh* mesh, const Transform& trans);
+		//void DrawLight(const Lights* light);
 
-		void EndFrame();
+		//void Draw(const Camera* cam, const Mesh* mesh, const Transform& trans);
 
-		bool IsRunning();
-
-		void CloseWindow();
+		//void EndFrame();
 
 	private:
 
-		void CursorPosCallback(double xPos, double yPos);
+		//void CursorPosCallback(double xPos, double yPos);
 
-		void LoadShader();
+		//void LoadShader();
 
-		void SendInput();
+		//void SendInput();
 
 	private:
 
-		std::unique_ptr<ShaderOGL> shaderProgram;
+		//std::unique_ptr<ShaderOGL> shaderProgram;
 
-		std::array<int, 5> keyPressed;
-		std::array<bool, 5> AvailableIndex;
+		//std::array<int, 5> keyPressed;
+		//std::array<bool, 5> AvailableIndex;
 	};
 }
 

@@ -27,6 +27,10 @@ namespace Sunset
 		},
 		[&](MouseEvent arg){
 			
+		},
+		[&](WinCloseEvent arg)
+		{
+
 		}
 		}, even);
 	}

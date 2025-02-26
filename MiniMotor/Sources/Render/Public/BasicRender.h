@@ -3,18 +3,7 @@
 #include "Event.h"
 #include "Maths.h"
 
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-
-#include <functional>
-
-#define RET_CRTP(x, returnType) returnType x() { DerivedPtr tmp = static_cast<DerivedPtr>(this); return tmp->x(); }
-#define VAR_RET_CRTP(x, returnType) template <typename ...Args> returnType x(Args&&... args) { DerivedPtr tmp = static_cast<DerivedPtr>(this); return tmp->x(std::forward<Args>(args)...); }
-
-#define CRTP(x) RET_CRTP(x, void)
-#define CRTP_VAR(x) VAR_RET_CRTP(x, void)
-
-class GLFWwindow;
+struct GLFWwindow;
 
 namespace Sunset
 {
@@ -28,50 +17,28 @@ namespace Sunset
 	{
 		using DerivedPtr = Derived*;
 	public:
-		BasicRender(const std::string& _name, const FVec2& size)
-			: m_Window(nullptr)
-			, m_WindowTitle(_name.c_str())
-			, m_Width(size.x)
-			, m_Height(size.y)
+		BasicRender(GLFWwindow* m_Window)
+			: m_Window(m_Window)
 		{ }
 
 		virtual ~BasicRender() = default;
 
-		CRTP(BeginFrame)
+		CRTP(SwapBuffers)
 
-		// Will draw light like once. cuz I don't know yet how i want it to be.
-		CRTP_VAR(DrawLight)
+		//CRTP(BeginFrame)
 
-		CRTP_VAR(Draw)
+		//// Will draw light like once. cuz I don't know yet how i want it to be.
+		//CRTP_VAR(DrawLight)
 
-		CRTP(EndFrame)
+		//CRTP_VAR(Draw)
 
-		RET_CRTP(IsRunning, bool)
+		//CRTP(EndFrame)
 
-		CRTP(CloseWindow)
-
-		void BindInputCallback(const CallbackFunction& func)
-		{
-			OnEventFunc = func;
-		}
-
-		void OnWindowResize(int width, int height)
-		{
-			m_Width = width;
-			m_Height = height;
-		}
-
-		void* GetWindow() const { return m_Window; }
+		//RET_CRTP(IsRunning, bool)
 
 	protected:
-
+		
 		GLFWwindow* m_Window;
 
-		int m_Width;
-		int m_Height;
-
-		std::string m_WindowTitle;
-
-		CallbackFunction OnEventFunc;
 	};
 }

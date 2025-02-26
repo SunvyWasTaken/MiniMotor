@@ -33,7 +33,8 @@ namespace Sunset
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		ImGui::StyleColorsDark();
 		io.DisplaySize = ImVec2{1280, 720};
-		void* WinPtr = BasicApp::Get().GetWindow();
+		BasicApp& app = BasicApp::Get();
+		void* WinPtr = app.GetWindow().GetNativeWindow();
 		assert(WinPtr);
 		ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow*>(WinPtr), true);
 		ImGui_ImplOpenGL3_Init("#version 330");
