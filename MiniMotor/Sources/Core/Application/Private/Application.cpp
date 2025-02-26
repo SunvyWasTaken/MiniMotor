@@ -2,7 +2,7 @@
 #include "BasicRender.h"
 #include "ImGuiLayer.h"
 
-#include "RendererAPi.h"
+#include "Renderer.h"
 
 Sunset::BasicApp* Sunset::BasicApp::AppPtr = nullptr;
 
@@ -11,6 +11,7 @@ namespace Sunset
 	BasicApp::BasicApp()
 		: m_Window(nullptr)
 		, b_IsWinOpen(true)
+
 	{
 		AppPtr = this;
 
@@ -26,6 +27,10 @@ namespace Sunset
 		Init();
 		while (b_IsWinOpen)
 		{
+			RenderCommand::SetClearColor({0.1, 0.1, 0.1, 0.1});
+			RenderCommand::Clear();
+			Renderer::BeginScene();
+			Renderer::EndScene();
 			for (auto& layer : layerStack)
 			{
 				layer->OnUpdate();

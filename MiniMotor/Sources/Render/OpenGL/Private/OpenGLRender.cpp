@@ -29,8 +29,10 @@ namespace Sunset
 		: BasicRender<OpenGLRender>()
 		, m_Window(window)
 	{
+		glfwMakeContextCurrent(m_Window);
+
 		//glViewport(0, 0, , );
-		glEnable(GL_DEPTH_TEST);
+		//glEnable(GL_DEPTH_TEST);
 
 		//LoadShader();
 	}
@@ -41,6 +43,7 @@ namespace Sunset
 
 	void OpenGLRender::SwapBuffers()
 	{
+		assert(m_Window);
 		glfwSwapBuffers(m_Window);
 	}
 
