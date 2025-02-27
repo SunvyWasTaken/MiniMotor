@@ -17,9 +17,17 @@ namespace Sunset
 	OpenGLRender::OpenGLRender(GLFWwindow* window)
 		: m_Window(window)
 	{
-		//glViewport(0, 0, , );
-		glEnable(GL_DEPTH_TEST);
 		LOG("Creation OpenGL render")
+
+		glfwMakeContextCurrent(m_Window);
+		gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+
+		LOG("OpenGL Info:");
+		std::cerr << "Vendor : " << glGetString(GL_VENDOR) << std::endl;
+		std::cerr << "Renderer : " << glGetString(GL_RENDERER) << std::endl;
+		std::cerr << "Version : " << glGetString(GL_VERSION) << std::endl;
+
+		glEnable(GL_DEPTH_TEST);
 
 		//LoadShader();
 	}

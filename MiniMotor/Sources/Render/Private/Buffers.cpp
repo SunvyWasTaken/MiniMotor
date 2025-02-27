@@ -63,7 +63,7 @@ namespace Sunset
 
 	void BufferLayout::CalculateOffsetsAndStride()
 	{
-		uint32_t offset = 0;
+		size_t offset = 0;
 		m_Stride = 0;
 		for (auto& element : m_Elements)
 		{

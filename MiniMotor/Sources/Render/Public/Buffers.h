@@ -17,7 +17,7 @@ namespace Sunset
 		std::string Name;
 		ShaderDataType::Type Type;
 		uint32_t Size;
-		uint32_t Offset;
+		size_t Offset;
 		bool Normalized;
 	};
 

@@ -66,7 +66,7 @@ namespace Sunset
 				ShaderDataTypeToOpenGLBaseType(element.Type),
 				element.Normalized ? GL_TRUE : GL_FALSE,
 				layout.GetStride(),
-				static_cast<const void*>(&element.Offset));
+				(const void*)element.Offset);
 			++index;
 		}
 		m_VertexBuffers.emplace_back(vertexBuffer);

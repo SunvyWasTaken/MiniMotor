@@ -29,10 +29,10 @@ namespace Sunset
 	{
 		Init();
 
-		std::array<float, 3*7> Vertices = {
-			-.5f, -.5f, 0.f, .8f, .2f, .8f, 1.f,
-			 .5f, -.5f, 0.f, .2f, .3f, .8f, 1.f,
-			 .0f,  .5f, 0.f, .8f, .8f, .2f, 1.f
+		std::array<float, 9> Vertices = {
+			-.5f, -.5f, 0.f,
+			 .5f, -.5f, 0.f,
+			 .0f,  .5f, 0.f
 		};
 
 		std::array<uint32_t, 3> indices = { 0, 1, 2 };
@@ -46,8 +46,7 @@ namespace Sunset
 		VBO.reset(VertexBuffer::Create(&Vertices[0], Vertices.size()));
 		VBO->SetLayout(
 			{
-				{ShaderDataType::Float3(), "aPos"},
-				{ShaderDataType::Float4(), "aColor"}
+				{ShaderDataType::Float3(), "aPos"}
 			});
 		VAO->AddVertexBuffer(VBO);
 

@@ -17,7 +17,6 @@ namespace Sunset
 
 	void OpenGLRendererAPI::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray)
 	{
-		LOG("Draw elements : {}", vertexArray->GetIndexBuffer()->GetCount())
 		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 	}
 }

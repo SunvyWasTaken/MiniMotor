@@ -36,7 +36,6 @@ namespace Sunset
 	{
 		LOG("Window creation")
 		Init();
-		CreateContext();
 	}
 
 	WindowPC::~WindowPC()
@@ -76,23 +75,13 @@ namespace Sunset
 		if (!s_GLFMInitialized)
 		{
 			glfwInit();
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
-			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 			glfwSetErrorCallback(GLFWErrorCallback);
 			s_GLFMInitialized = true;
 		}
 
 		m_Window = glfwCreateWindow((int)m_Data.Width, (int)m_Data.Height, m_Data.Title.c_str(), nullptr, nullptr);
 
-		glfwMakeContextCurrent(m_Window);
-		glfwSetWindowUserPointer(m_Window, &m_Data);
-
-		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-		{
-			glfwTerminate();
-			return;
-		}
+		CreateContext();
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(VSync);
