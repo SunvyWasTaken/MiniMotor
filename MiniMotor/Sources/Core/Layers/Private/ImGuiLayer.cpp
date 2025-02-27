@@ -33,10 +33,10 @@ namespace Sunset
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		ImGui::StyleColorsDark();
 		io.DisplaySize = ImVec2{1280, 720};
-		void* WinPtr = BasicApp::Get().GetWindow();
-		assert(WinPtr);
-		ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow*>(WinPtr), true);
-		ImGui_ImplOpenGL3_Init("#version 330");
+		BasicApp& app = BasicApp::Get();
+		GLFWwindow* WinPtr = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
+		ImGui_ImplGlfw_InitForOpenGL(WinPtr, true);
+		ImGui_ImplOpenGL3_Init("#version 410");
 	}
 
 	void ImGuiLayer::OnDetach()
@@ -48,9 +48,45 @@ namespace Sunset
 
 	void ImGuiLayer::OnImGuiRender()
 	{
+		//ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+
+		//ImGuiViewport* viewport = ImGui::GetMainViewport();
+		//ImGui::SetNextWindowPos(viewport->Pos);
+		//ImGui::SetNextWindowSize(viewport->Size);
+		//ImGui::SetNextWindowViewport(viewport->ID);
+
+		//window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
+		//	ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		//window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+		//ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		//ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+
+		//ImGui::Begin("DockSpace Demo", nullptr, window_flags);
+		//ImGui::PopStyleVar(2);
+
+		//// Création du DockSpace
+		//ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+		//ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+
+		//ImGui::End();
+
 		static bool show = true;
 		ImGui::ShowDemoWindow(&show);
 
+		ImGui::Begin("Log");
+		if (ImGui::Button("Clear"))
+		{
+			Logger::Get().clear();
+		}
+
+		ImGui::BeginListBox("Log");
+		for (const auto& msg : Logger::Get())
+		{
+			ImGui::TextUnformatted(msg.c_str());
+		}
+		ImGui::EndListBox();
+		ImGui::End();
 	}
 
 	void ImGuiLayer::Begin()

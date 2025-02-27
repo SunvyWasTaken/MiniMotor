@@ -31,5 +31,10 @@ namespace Sunset
 		}
 	};
 
-	using Events = std::variant<KeyEvent, MouseEvent>;
+	class MM_API WinCloseEvent
+	{
+
+	};
+
+	using Events = std::variant<KeyEvent, MouseEvent, WinCloseEvent>;
 }

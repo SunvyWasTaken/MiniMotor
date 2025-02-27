@@ -31,9 +31,47 @@ namespace Sunset
 		glShaderSource(vertex, 1, &vShaderCode, NULL);
 		glCompileShader(vertex);
 
+		GLint isCompiled = 0;
+		glGetShaderiv(vertex, GL_COMPILE_STATUS, &isCompiled);
+		if (isCompiled == GL_FALSE)
+		{
+			GLint maxLength = 0;
+			glGetShaderiv(vertex, GL_INFO_LOG_LENGTH, &maxLength);
+
+			// The maxLength includes the NULL character
+			std::vector<GLchar> infoLog(maxLength);
+			glGetShaderInfoLog(vertex, maxLength, &maxLength, &infoLog[0]);
+
+			// We don't need the shader anymore.
+			glDeleteShader(vertex);
+
+			LOG("{}", infoLog.data());
+			assert(false, "Vertex shader compilation failure!");
+			return;
+		}
+
 		fragment = glCreateShader(GL_FRAGMENT_SHADER);
 		glShaderSource(fragment, 1, &fShaderCode, NULL);
 		glCompileShader(fragment);
+
+		isCompiled = 0;
+		glGetShaderiv(fragment, GL_COMPILE_STATUS, &isCompiled);
+		if (isCompiled == GL_FALSE)
+		{
+			GLint maxLength = 0;
+			glGetShaderiv(fragment, GL_INFO_LOG_LENGTH, &maxLength);
+
+			// The maxLength includes the NULL character
+			std::vector<GLchar> infoLog(maxLength);
+			glGetShaderInfoLog(fragment, maxLength, &maxLength, &infoLog[0]);
+
+			// We don't need the shader anymore.
+			glDeleteShader(fragment);
+
+			LOG("{}", infoLog.data());
+			assert(false, "Vertex shader compilation failure!");
+			return;
+		}
 
 		_id = glCreateProgram();
 
@@ -46,7 +84,7 @@ namespace Sunset
 		{
 			char infoLog[512];
 			glGetProgramInfoLog(_id, 512, NULL, infoLog);
-			std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+			LOG("ERROR::SHADER::PROGRAM::LINKING_FAILED\n {}", infoLog);
 		}
 
 		glDeleteShader(vertex);
@@ -73,13 +111,13 @@ namespace Sunset
 		glUniform1f(glGetUniformLocation(_id, target.c_str()), value);
 	}
 
-	void ShaderOGL::SetVec3F(const std::string& target, const FVec3& value)
+	void ShaderOGL::SetVec3F(const std::string& target, const glm::vec3& value)
 	{
-		glUniform3fv(glGetUniformLocation(_id, target.c_str()), 1, LeafMath::GetData(value));
+		glUniform3fv(glGetUniformLocation(_id, target.c_str()), 1, glm::value_ptr(value));
 	}
 
-	void ShaderOGL::SetMatrice4(const std::string& target, const FMat4& value)
+	void ShaderOGL::SetMatrice4(const std::string& target, const glm::mat4& value)
 	{
-		glUniformMatrix4fv(glGetUniformLocation(_id, target.c_str()), 1, GL_FALSE, LeafMath::GetData(value));
+		glUniformMatrix4fv(glGetUniformLocation(_id, target.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 	}
 }

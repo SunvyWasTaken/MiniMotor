@@ -1,29 +1,17 @@
 #pragma once
 
+#include "Camera.h"
 #include "Event.h"
-#include "Lights.h"
-#include "Scene.h"
 #include "LayersStack.h"
+#include "WindowPC.h"
 
 namespace Sunset
 {
-	struct OpenGL {};
-	struct Vulkan {};
+	class ImGuiLayer;
 
-	using RenderType = std::variant<OpenGL, Vulkan>;
-	using Renders = Typelist<class OpenGLRender, class VulkanRender>;
-
-	template <typename T>
-	class BasicRender;
-
-	class OpenGLRender;
-	class Camera;
-
-	class MM_EXPORT BasicApp
+	class MM_API BasicApp
 	{
-
-		using RenderPtr = std::unique_ptr<BasicRender<OpenGLRender>>;
-		using ListLight = std::vector<Lights>;
+		using Win = Window<WindowPC>;
 
 	public:
 
@@ -39,42 +27,27 @@ namespace Sunset
 
 		void OnEvents(const Events& even);
 
-		Scene* GetWorld();
-
-		static BasicApp& Get() { return *AppPtr; }
-
-		void* GetWindow();
-
 		void PushLayer(class Layer* layer)
 		{
 			layerStack.PushLayer(layer);
 		}
 
-	protected:
+		inline Win& GetWindow() { return *m_Window; }
 
-		virtual const char* GetApplicationName() const { return "MiniMotor App"; }
-
-	public:
-
-		// todo : for the moment all light will be static.
-		ListLight LightList;
-
-		RenderPtr render;
-
-	protected:
-
-		float Deltatime;
+		inline static BasicApp& Get() { return *AppPtr; }
 
 	private:
 
-		static BasicApp* AppPtr;
+		Camera m_Camera;
 
-		Scene world;
+		std::unique_ptr<Win> m_Window;
 
-		Camera* cam;
+		bool b_IsWinOpen;
 
 		LayerStack layerStack;
 
-		class ImGuiLayer* imLayer;
+		ImGuiLayer* imLayer;
+
+		static BasicApp* AppPtr;
 	};
 }

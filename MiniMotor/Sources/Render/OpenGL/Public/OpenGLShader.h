@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Maths.h"
-
 namespace Sunset
 {
 	class MM_API ShaderOGL
@@ -18,12 +16,12 @@ namespace Sunset
 
 		void Set1F(const std::string& target, const float value);
 
-		void SetVec3F(const std::string& target, const FVec3& value);
+		void SetVec3F(const std::string& target, const glm::vec3& value);
 
-		void SetMatrice4(const std::string& target, const FMat4& value);
+		void SetMatrice4(const std::string& target, const glm::mat4& value);
 
 	private:
 
-		unsigned int _id;
+		uint32_t _id;
 	};
 }

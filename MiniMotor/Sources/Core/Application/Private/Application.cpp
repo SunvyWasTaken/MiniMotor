@@ -1,71 +1,68 @@
 #include "Application.h"
-#include "BasicRender.h"
-#include "Camera.h"
-#include "Entity.h"
+
 #include "ImGuiLayer.h"
-#include "InputComponent.h"
-#include "MesheComponent.h"
-#include "Meshes.h"
-#include "OpenGLRender.h"
-#include "TransformComponent.h"
+#include "Renderer.h"
+
+#include "VertexArray.h"
+#include "OpenGLShader.h"
 
 Sunset::BasicApp* Sunset::BasicApp::AppPtr = nullptr;
 
 namespace Sunset
 {
 	BasicApp::BasicApp()
-		: render(std::make_unique<OpenGLRender>(GetApplicationName(), FVec2{1280, 720}))
-		, Deltatime(0.f)
+		: m_Window(nullptr)
+		, b_IsWinOpen(true)
 	{
 		AppPtr = this;
-		render->BindInputCallback(std::bind(&BasicApp::OnEvents, this, std::placeholders::_1));
-		cam = world.SpawnEntity<Camera>();
-
-		imLayer = new ImGuiLayer();
-		PushLayer(imLayer);
+		LOG("BasicApp init")
+		m_Window = std::make_unique<WindowPC>(WindowData{});
+		m_Window->SetEventCallBack(std::bind(&BasicApp::OnEvents, AppPtr, std::placeholders::_1));
 	}
 
 	BasicApp::~BasicApp()
-	{
-	}
+	{}
 
 	void BasicApp::Run()
 	{
-		auto PreviousTime = std::chrono::steady_clock::now();
-
 		Init();
 
-		// todo : change the way light info is send cuz right now they will be copy to the render. i don't want to do such a thing.
-		for (auto& currLight : LightList)
+		std::shared_ptr<VertexArray> VAO = nullptr;
+		VAO.reset(VertexArray::Create());
+
+		float Vertices[3 * 7] = {
+			-0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
+			 0.5f, -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f,
+			 0.0f,  0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
+		};
+
+		uint32_t indices[3] = { 0, 1, 2 };
+
+		std::shared_ptr<VertexBuffer> vbo = nullptr;
+		vbo.reset(VertexBuffer::Create(Vertices, sizeof(Vertices)));
+		vbo->SetLayout({
+			{ ShaderDataType::Float3(), "a_Position"},
+			{ ShaderDataType::Float4(), "a_Color"}
+		});
+		VAO->AddVertexBuffer(vbo);
+
+		std::shared_ptr<IndexBuffer> ebo = nullptr;
+
+		ebo.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		VAO->SetIndexBuffer(ebo);
+
+		std::shared_ptr<ShaderOGL> shader = std::make_shared<ShaderOGL>("../../MiniMotor/Sources/Shaders/vShader.vert", "../../MiniMotor/Sources/Shaders/fShader.frag");
+
+		while (b_IsWinOpen)
 		{
-			render->DrawLight(&currLight);
-		}
-
-		while (render->IsRunning())
-		{
-			auto CurrentTime = std::chrono::steady_clock::now();
-			std::chrono::duration<float> deltatime = CurrentTime - PreviousTime;
-			PreviousTime = CurrentTime;
-			Deltatime = deltatime.count();
-
-			Update();
-
-			world.Update(Deltatime);
-
-			// Start rendering maybe it's going to be in another thread oO!
-			render->BeginFrame();
-
+			RenderCommand::SetClearColor({0.8, 0.2, 0.5, 0.1});
+			RenderCommand::Clear();
+			Renderer::BeginScene(m_Camera);
+			Renderer::Submit(shader, VAO);
+			Renderer::EndScene();
 			for (auto& layer : layerStack)
 			{
 				layer->OnUpdate();
-			}
-
-			auto views = world.entitys.view<MeshComponent, TransformComponent>();
-			for (auto curr : views)
-			{
-				MeshComponent& currMesh = world.entitys.get<MeshComponent>(curr);
-				TransformComponent& currTrans = world.entitys.get<TransformComponent>(curr);
-				render->Draw(cam, currMesh(), currTrans());
 			}
 
 			imLayer->Begin();
@@ -75,43 +72,25 @@ namespace Sunset
 			}
 			imLayer->End();
 
-			render->EndFrame();
+			m_Window->OnUpdate();
 		}
 	}
 
 	void BasicApp::OnEvents(const Events& even)
 	{
-		auto views = world.entitys.view<InputComponent>();
-		for (auto curr : views)
+		std::visit(Overloaded
 		{
-			InputComponent& currInput = world.entitys.get<InputComponent>(curr);
-			currInput.OnEvent(even, Deltatime);
-		}
-		// Todo : Move elsewhere like in the camera directly. and make a Input Manager.
-		float InputSpeed = 200.f * Deltatime;
-		std::visit(Overloaded{
-			[&](KeyEvent key)
+			[&](KeyEvent arg)
 			{
-				if (key == 256)
-				{
-					render->CloseWindow();
-					return;
-				}
 			},
-			[&](MouseEvent mouse)
+			[&](MouseEvent arg)
 			{
-				cam->ChangeRotation(mouse.x, mouse.y);
+			},
+			[&](WinCloseEvent arg)
+			{
+				b_IsWinOpen = false;
 			}
-			}, even);
+		}, even);
 	}
 
-	Scene* BasicApp::GetWorld()
-	{
-		return &world;
-	}
-
-	void* BasicApp::GetWindow()
-	{
-		return render->GetWindow();
-	}
 }

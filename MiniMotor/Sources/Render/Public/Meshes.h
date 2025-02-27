@@ -1,15 +1,14 @@
 #pragma once
 
-#include "Maths.h"
 #include "Textures.h"
 
 namespace Sunset
 {
 	struct Vertex
 	{
-		FVec3 Position;
-		FVec3 Normal;
-		FVec2 TexCoords;
+		glm::vec3 Position;
+		glm::vec3 Normal;
+		glm::vec2 TexCoords;
 	};
 
 	class MM_EXPORT Mesh final

@@ -4,6 +4,8 @@
   > So there is actully like 3 more version of this Engine but we are not gonna talk about them.
 - I want to keep learning and progress so **MiniMotor** is my sandbox to test things out.
   > I'm unemployed so this project keep me busy and ~~is~~ *(will be)* my Showcase.
+- The project is base from the [Game Engine](https://youtube.com/playlist?list=PLlrATfBNZ98dC-V-N3m0Go4deliWHPFwT&si=tWydNMZS-z3zxjo2) serie from the cherno.
+  > Huge thanks to him. For giving me the motivation to learn graphic rendering.
 ## How to Start
 ### Clone
 Start by clonning the main branch somewhere on your computer.
