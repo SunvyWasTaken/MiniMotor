@@ -22,6 +22,6 @@ namespace Sunset
 
 	private:
 
-		unsigned int _id;
+		uint32_t _id;
 	};
 }

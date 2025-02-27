@@ -19,6 +19,12 @@ namespace
 		Sunset::Events even = Sunset::WinCloseEvent();
 		data.EventCallBack(even);
 	}
+
+	using namespace Sunset;
+	void GLFWErrorCallback(int error, const char* description)
+	{
+		LOG("GLFW Error ({}: {})", error, description);
+	}
 }
 
 namespace Sunset
@@ -70,10 +76,10 @@ namespace Sunset
 		if (!s_GLFMInitialized)
 		{
 			glfwInit();
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-			// glfwSetErrorCallback(GLFWErrorCallback);
+			glfwSetErrorCallback(GLFWErrorCallback);
 			s_GLFMInitialized = true;
 		}
 
@@ -85,10 +91,8 @@ namespace Sunset
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
 			glfwTerminate();
-			LOG("Load Glad failed!");
 			return;
 		}
-		LOG("Load Glad succed")
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(VSync);
@@ -142,6 +146,7 @@ namespace Sunset
 
 	void WindowPC::CreateContext()
 	{
+		SCOPE_PROFILING("CreateContext");
 		LOG("Create Contex");
 		std::visit(Overloaded
 		{

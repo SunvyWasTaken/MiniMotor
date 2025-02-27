@@ -1,6 +1,7 @@
 #include "OpenGLVertexArray.h"
 
 #include <glad/glad.h>
+#include "glfw/glfw3.h"
 
 namespace
 {
@@ -28,6 +29,7 @@ namespace Sunset
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
 		LOG("Vertex array Creation")
+
 		glCreateVertexArrays(1, &m_RendererID);
 	}
 
@@ -49,6 +51,7 @@ namespace Sunset
 
 	void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer)
 	{
+		SCOPE_PROFILING("AddVertexBuffer")
 		glBindVertexArray(m_RendererID);
 		vertexBuffer->Bind();
 
@@ -71,7 +74,6 @@ namespace Sunset
 	{
 		glBindVertexArray(m_RendererID);
 		indexBuffer->Bind();
-
 		m_IndexBuffer = indexBuffer;
 	}
 }

@@ -39,20 +39,13 @@ namespace Sunset
 
 	private:
 
-		void CalculateOffsetsAndStride()
-		{
-			uint32_t offset = 0;
-			for (auto& element : m_Elements)
-			{
-				element.Offset = offset;
-				offset += element.Size;
-				m_Stride += element.Size;
-			}
-		}
+		void CalculateOffsetsAndStride();
+
 	private:
 		BufferElements m_Elements;
 		uint32_t m_Stride;
 	};
+
 	class VertexBuffer
 	{
 	public:

@@ -1,6 +1,7 @@
 #include "Buffers.h"
 
 #include "OpenGLBuffers.h"
+#include "RendererApi.h"
 
 namespace
 {
@@ -60,6 +61,18 @@ namespace Sunset
 		CalculateOffsetsAndStride();
 	}
 
+	void BufferLayout::CalculateOffsetsAndStride()
+	{
+		uint32_t offset = 0;
+		m_Stride = 0;
+		for (auto& element : m_Elements)
+		{
+			element.Offset = offset;
+			offset += element.Size;
+			m_Stride += element.Size;
+		}
+	}
+
 	VertexBuffer::~VertexBuffer()
 	{
 
@@ -67,7 +80,12 @@ namespace Sunset
 
 	VertexBuffer* VertexBuffer::Create(float* vertices, size_t size)
 	{
-		return new OpenGlVertexBuffer(vertices, size);
+		return std::visit(Overloaded
+		{
+			[&](Render::None arg)	->VertexBuffer* { return nullptr; },
+			[&](Render::OpenGL arg)	->VertexBuffer* { return new OpenGlVertexBuffer(vertices, size); },
+			[&](Render::Vulkan arg)	->VertexBuffer* { return nullptr; }
+		}, RendererApi::GetAPI());
 	}
 
 	IndexBuffer::~IndexBuffer()
@@ -77,7 +95,12 @@ namespace Sunset
 
 	IndexBuffer* IndexBuffer::Create(uint32_t* indices, size_t count)
 	{
-		return new OpenGLIndexBuffer(indices, count);
+		return std::visit(Overloaded
+		{
+			[&](Render::None arg)	->IndexBuffer* { return nullptr; },
+			[&](Render::OpenGL arg)	->IndexBuffer* { return new OpenGLIndexBuffer(indices, count); },
+			[&](Render::Vulkan arg)	->IndexBuffer* { return nullptr; }
+		}, RendererApi::GetAPI());
 	}
 
 }
