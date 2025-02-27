@@ -7,8 +7,10 @@ namespace Sunset
 	OpenGlVertexBuffer::OpenGlVertexBuffer(float* vertices, size_t size)
 		: m_RenderID(0)
 	{
+		LOG("Bind vertex buffer : {}", size);
 		glCreateBuffers(1, &m_RenderID);
-		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, m_RenderID);
+		glBufferData(GL_ARRAY_BUFFER, size * sizeof(float), vertices, GL_STATIC_DRAW);
 	}
 
 	OpenGlVertexBuffer::~OpenGlVertexBuffer()
@@ -33,6 +35,7 @@ namespace Sunset
 	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, size_t count)
 		: m_Count(count)
 	{
+		LOG("Bind Index buffer");
 		glCreateBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Count * sizeof(uint32_t), indices, GL_STATIC_DRAW);

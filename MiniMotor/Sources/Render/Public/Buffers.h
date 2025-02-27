@@ -53,6 +53,7 @@ namespace Sunset
 		virtual void Bind() = 0;
 		virtual void UnBind() = 0;
 		virtual const BufferLayout& GetLayout() const = 0;
+		// This function need a ShaderDataType and a name
 		virtual void SetLayout(const BufferLayout& layout) = 0;
 		static VertexBuffer* Create(float* vertices, size_t size);
 	};

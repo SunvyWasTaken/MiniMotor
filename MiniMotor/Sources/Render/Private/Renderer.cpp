@@ -31,5 +31,6 @@ namespace Sunset
 		shader->SetMatrice4("view", m_SceneData.ViewProjectionMatrix);
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
+		vertexArray->Unbind();
 	}
 }

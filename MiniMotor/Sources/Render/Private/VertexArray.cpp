@@ -7,12 +7,10 @@ namespace Sunset
 {
 	VertexArray::~VertexArray()
 	{
-		LOG("Vertex Array detruit");
 	}
 
 	VertexArray* VertexArray::Create()
 	{
-		SCOPE_PROFILING("Vertex array create")
 		return std::visit(Overloaded
 		{
 			[&](Render::None arg)	->VertexArray*	{ return nullptr; },

@@ -46,7 +46,7 @@ namespace Sunset
 			glDeleteShader(vertex);
 
 			LOG("{}", infoLog.data());
-			assert(false, "Vertex shader compilation failure!");
+			assert(false);
 			return;
 		}
 
@@ -69,7 +69,7 @@ namespace Sunset
 			glDeleteShader(fragment);
 
 			LOG("{}", infoLog.data());
-			assert(false, "Vertex shader compilation failure!");
+			assert(false);
 			return;
 		}
 
