@@ -22,12 +22,12 @@ namespace Sunset
 		: time(std::chrono::steady_clock::now())
 		, txt(text)
 	{
-		LOG("Start : {}", txt);
+		LOG("- Start : {}", txt);
 	}
 
 	Mesure::~Mesure()
 	{
 		std::chrono::duration<float> delta = std::chrono::steady_clock::now() - time;
-		LOG("End : {} -> {}s", txt, delta.count());
+		LOG("- End : {} -> {}s", txt, delta.count());
 	}
 }

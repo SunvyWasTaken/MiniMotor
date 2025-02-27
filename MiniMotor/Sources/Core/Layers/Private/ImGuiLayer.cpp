@@ -80,12 +80,15 @@ namespace Sunset
 			Logger::Get().clear();
 		}
 
-		ImGui::BeginListBox("Log");
-		for (const auto& msg : Logger::Get())
+		if (ImGui::BeginListBox("##Log", ImVec2(-FLT_MIN, -FLT_MIN)))
 		{
-			ImGui::TextUnformatted(msg.c_str());
+
+			for (const auto& msg : Logger::Get())
+			{
+				ImGui::TextUnformatted(msg.c_str());
+			}
+			ImGui::EndListBox();
 		}
-		ImGui::EndListBox();
 		ImGui::End();
 	}
 

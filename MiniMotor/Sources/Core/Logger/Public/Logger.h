@@ -20,4 +20,4 @@ namespace Sunset
 }
 
 #define LOG(x, ...) Logger::AddLog(std::format(x, ##__VA_ARGS__));
-#define SCOPE_PROFILING(x) Mesure _az(x);
+#define SCOPE_PROFILING(x, ...) Mesure _az(std::format(x, ##__VA_ARGS__));

@@ -46,6 +46,7 @@ namespace Sunset
 		uint32_t m_Stride;
 	};
 
+	// This is the class VBO
 	class VertexBuffer
 	{
 	public:
@@ -58,6 +59,7 @@ namespace Sunset
 		static VertexBuffer* Create(float* vertices, size_t size);
 	};
 
+	// This is the EBO
 	class IndexBuffer
 	{
 	public:
