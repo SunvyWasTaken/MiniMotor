@@ -33,15 +33,15 @@ namespace Sunset
 
 		ViewMode viewMode;
 
-	private:
-
-		glm::vec2 Res;
+		float yaw, pitch, roll;
 
 		glm::vec3 m_UpVector;
 
 		glm::vec3 m_ForwardVector;
 
-		float yaw, pitch, roll;
+	private:
+
+		glm::vec2 Res;
 
 		double lastX;
 

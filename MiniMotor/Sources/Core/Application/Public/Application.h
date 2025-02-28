@@ -34,6 +34,9 @@ namespace Sunset
 
 		inline static BasicApp& Get() { return *AppPtr; }
 
+		// todo : TMP
+		Camera* GetCam();
+
 	private:
 
 		std::unique_ptr<Win> m_Window;

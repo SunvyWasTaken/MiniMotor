@@ -119,4 +119,9 @@ namespace Sunset
 		layerStack.PushLayer(layer);
 	}
 
+	Camera* BasicApp::GetCam()
+	{
+		return &m_Camera;
+	}
+
 }

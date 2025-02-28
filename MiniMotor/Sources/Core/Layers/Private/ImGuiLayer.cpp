@@ -71,8 +71,26 @@ namespace Sunset
 
 		//ImGui::End();
 
-		static bool show = true;
+		bool show = true;
 		ImGui::ShowDemoWindow(&show);
+
+		ImGui::Begin("Camera info");
+
+		Camera* cam = BasicApp::Get().GetCam();
+		ImGui::Text("Camera info:");
+		std::string text = std::format("	Position : x:{}, y:{}, z:{}", cam->m_Position.x, cam->m_Position.y, cam->m_Position.z);
+		ImGui::Text(text.c_str());
+		text = std::format("	UpVector : x:{}, y:{}, z:{}", cam->m_UpVector.x, cam->m_UpVector.y, cam->m_UpVector.z);
+		ImGui::Text(text.c_str());
+		text = std::format("	ForwardVec : x:{}, y:{}, z:{}", cam->m_ForwardVector.x, cam->m_ForwardVector.y, cam->m_ForwardVector.z);
+		ImGui::Text(text.c_str());
+		text = std::format("	Rotation : roll:{}", cam->roll);
+		float s8_min = 0;
+		float s8_max = 360;
+		ImGui::SliderScalar("Camera rotation", ImGuiDataType_Float, &(cam->roll), &s8_min, &s8_max);
+		ImGui::Text(text.c_str());
+
+		ImGui::End();
 
 		ImGui::Begin("Log");
 		if (ImGui::Button("Clear"))
