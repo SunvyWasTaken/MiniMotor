@@ -45,6 +45,11 @@ namespace Sunset
 		glfwTerminate();
 	}
 
+	double WindowPC::GetTime()
+	{
+		return glfwGetTime();
+	}
+
 	void WindowPC::OnUpdate()
 	{
 		glfwPollEvents();

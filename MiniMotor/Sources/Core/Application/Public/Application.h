@@ -11,6 +11,7 @@ namespace Sunset
 
 	class MM_API BasicApp
 	{
+
 		using Win = Window<WindowPC>;
 
 	public:
@@ -27,27 +28,18 @@ namespace Sunset
 
 		void OnEvents(const Events& even);
 
-		void PushLayer(class Layer* layer)
-		{
-			layerStack.PushLayer(layer);
-		}
+		void PushLayer(class Layer* layer);
 
-		inline Win& GetWindow() { return *m_Window; }
+		inline Win& GetWindow() { return *m_Window; };
 
 		inline static BasicApp& Get() { return *AppPtr; }
 
 	private:
 
-		Camera m_Camera;
-
 		std::unique_ptr<Win> m_Window;
 
-		bool b_IsWinOpen;
+		static BasicApp* AppPtr;
 
 		LayerStack layerStack;
-
-		ImGuiLayer* imLayer;
-
-		static BasicApp* AppPtr;
 	};
 }

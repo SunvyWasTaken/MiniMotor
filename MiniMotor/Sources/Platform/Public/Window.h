@@ -28,6 +28,8 @@ namespace Sunset
 
 		virtual ~Window() {}
 
+		RET_CRTP(GetTime, double)
+
 		CRTP(OnUpdate)
 
 		uint32_t GetWidth() const { return m_Data.Width; }

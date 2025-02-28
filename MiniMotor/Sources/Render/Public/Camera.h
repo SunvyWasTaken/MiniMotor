@@ -17,7 +17,7 @@ namespace Sunset
 
 		//virtual void Init() override;
 
-		//virtual void Update(float deltatime) override;
+		void Update(float deltatime);
 
 		glm::mat4 GetViewMatrice() const;
 

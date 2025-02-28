@@ -8,18 +8,29 @@
 
 #include <glad/glad.h>
 
-Sunset::BasicApp* Sunset::BasicApp::AppPtr = nullptr;
+namespace
+{
+	Sunset::Camera m_Camera;
+
+	bool b_IsWinOpen = true;
+
+	Sunset::ImGuiLayer* imLayer;
+}
 
 namespace Sunset
 {
+	BasicApp* BasicApp::AppPtr = nullptr;
+
 	BasicApp::BasicApp()
 		: m_Window(nullptr)
-		, b_IsWinOpen(true)
 	{
 		AppPtr = this;
 		LOG("BasicApp init")
 		m_Window = std::make_unique<WindowPC>(WindowData{});
 		m_Window->SetEventCallBack(std::bind(&BasicApp::OnEvents, AppPtr, std::placeholders::_1));
+
+		imLayer = new Sunset::ImGuiLayer();
+		PushLayer(imLayer);
 	}
 
 	BasicApp::~BasicApp()
@@ -37,8 +48,6 @@ namespace Sunset
 
 		std::array<uint32_t, 3> indices = { 0, 1, 2 };
 
-		LOG("-------------------------------------------")
-
 		std::shared_ptr<VertexArray> VAO = nullptr;
 		VAO.reset(VertexArray::Create());
 
@@ -54,44 +63,24 @@ namespace Sunset
 		EBO.reset(IndexBuffer::Create(&indices[0], indices.size()));
 
 		VAO->SetIndexBuffer(EBO);
-		LOG("-------------------------------------------")
-
-		//uint32_t VAO;
-		//uint32_t VBO;
-		//uint32_t EBO;
-
-		//glCreateVertexArrays(1, &VAO);
-		//glGenBuffers(1, &VBO);
-		//glGenBuffers(1, &EBO);
-
-		//glBindVertexArray(VAO);
-		//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-		//glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(float), &Vertices[0], GL_STATIC_DRAW);
-
-		//glEnableVertexAttribArray(0);
-		//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
-
-		//glEnableVertexAttribArray(1);
-		//glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3 * sizeof(float)));
-
-		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		//glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), &indices[0], GL_STATIC_DRAW);
-
 
 		std::shared_ptr<ShaderOGL> shader = std::make_shared<ShaderOGL>("../../MiniMotor/Sources/Shaders/vShader.vert", "../../MiniMotor/Sources/Shaders/fShader.frag");
 
+		double previousTime = m_Window->GetTime();
 		while (b_IsWinOpen)
 		{
+			double nextTime = m_Window->GetTime();
+			float deltatime = previousTime - nextTime;
+			previousTime = nextTime;
+
+			m_Camera.Update((float)deltatime);
+
 			RenderCommand::SetClearColor({0.8, 0.2, 0.5, 0.1});
 			RenderCommand::Clear();
 			Renderer::BeginScene(m_Camera);
 			Renderer::Submit(shader, VAO);
-			//shader->Use();
-			//glBindVertexArray(VAO);
-			//glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-
 			Renderer::EndScene();
+
 			for (auto& layer : layerStack)
 			{
 				layer->OnUpdate();
@@ -106,9 +95,6 @@ namespace Sunset
 
 			m_Window->OnUpdate();
 		}
-		//glDeleteVertexArrays(1, &VAO);
-		//glDeleteBuffers(1, &VBO);
-		//glDeleteBuffers(1, &EBO);
 	}
 
 	void BasicApp::OnEvents(const Events& even)
@@ -126,6 +112,11 @@ namespace Sunset
 				b_IsWinOpen = false;
 			}
 		}, even);
+	}
+
+	void BasicApp::PushLayer(Layer* layer)
+	{
+		layerStack.PushLayer(layer);
 	}
 
 }

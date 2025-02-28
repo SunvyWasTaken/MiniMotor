@@ -20,6 +20,8 @@ namespace Sunset
 
 		virtual ~WindowPC();
 
+		double GetTime();
+
 		void OnUpdate();
 
 		void SetEventCallBack(const EventCallBackFn& _callback);

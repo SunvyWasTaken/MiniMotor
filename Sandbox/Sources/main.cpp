@@ -5,7 +5,7 @@ class DefaultApp : public Sunset::BasicApp
 public:
 	void Init()
 	{
-		PushLayer(new Sunset::ImGuiLayer());
+		
 	};
 	void Update() {};
 };

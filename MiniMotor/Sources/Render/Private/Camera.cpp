@@ -7,7 +7,7 @@ namespace Sunset
 {
 	Camera::Camera()
 		: m_Position({0.f, 0.f, 10.f})
-		, viewMode(Sunset::ViewMode::Perspective)
+		, viewMode(ViewMode::Ortho)
 		, Res(1920, 1080)
 		, m_UpVector({ 0.f, 1.f, 0.f })
 		, m_ForwardVector({0.f, 0.f, -1.f})
@@ -17,7 +17,7 @@ namespace Sunset
 		, lastX(0.0)
 		, lastY(0.0)
 		, firstMouse(true)
-		, MovementSpeed(10.f)
+		, MovementSpeed(1.f)
 	{
 	}
 
@@ -52,17 +52,51 @@ namespace Sunset
 	//		}, std::placeholders::_1));
 	//}
 
-	//void Camera::Update(float deltatime)
-	//{
-	//	//if (Inputs::IsKeyPressed(87))
-	//	//{
-	//	//	UpdateLocation(glm::vec3{ 0.f, 0.f, 1.f } *deltatime * MovementSpeed);
-	//	//}
-	//}
+	void Camera::Update(float deltatime)
+	{
+		if (Inputs::IsKeyPressed(87))
+		{
+			UpdateLocation(glm::vec3{ 0.f, 0.f, 1.f } * deltatime * MovementSpeed);
+			LOG("Camera position : x:{}, y:{}, z:{}", m_Position.x, m_Position.y, m_Position.z);
+		}
+		if (Inputs::IsKeyPressed(83))
+		{
+			UpdateLocation(glm::vec3{ 0.f, 0.f, -1.f } * deltatime * MovementSpeed);
+			LOG("Camera position : x:{}, y:{}, z:{}", m_Position.x, m_Position.y, m_Position.z);
+		}
+		if (Inputs::IsKeyPressed(68))
+		{
+			UpdateLocation(glm::vec3{ 1.f, 0.f, 0.f } * deltatime * MovementSpeed);
+			LOG("Camera position : x:{}, y:{}, z:{}", m_Position.x, m_Position.y, m_Position.z);
+		}
+		if (Inputs::IsKeyPressed(65))
+		{
+			UpdateLocation(glm::vec3{ -1.f, 0.f, 0.f } * deltatime * MovementSpeed);
+			LOG("Camera position : x:{}, y:{}, z:{}", m_Position.x, m_Position.y, m_Position.z);
+		}
+		if (Inputs::IsKeyPressed(69))
+		{
+			UpdateLocation(glm::vec3{ 0.f, 1.f, 0.f } *deltatime * MovementSpeed);
+			LOG("Camera position : x:{}, y:{}, z:{}", m_Position.x, m_Position.y, m_Position.z);
+		}
+		if (Inputs::IsKeyPressed(81))
+		{
+			UpdateLocation(glm::vec3{ 0.f, -1.f, 0.f } *deltatime * MovementSpeed);
+			LOG("Camera position : x:{}, y:{}, z:{}", m_Position.x, m_Position.y, m_Position.z);
+		}
+	}
 
 	glm::mat4 Camera::GetViewMatrice() const
 	{
-		return glm::lookAt(m_Position, m_ForwardVector, m_UpVector);
+		if (viewMode == ViewMode::Perspective)
+		{
+			return glm::lookAt(m_Position, m_ForwardVector, m_UpVector);
+		}
+		else if (viewMode == ViewMode::Ortho)
+		{
+			return glm::inverse(glm::translate(glm::mat4(1.f), m_Position) * glm::rotate(glm::mat4(1.f), roll, glm::vec3(0, 0, 1)));
+		}
+		return glm::mat4(1.f);
 	}
 
 	void Camera::ChangeRotation(const double xPos, const double yPos)
@@ -100,9 +134,22 @@ namespace Sunset
 
 	void Camera::UpdateLocation(const glm::vec3& vec)
 	{
-		m_Position += m_ForwardVector * vec.z;
-		m_Position += m_UpVector * vec.y;
-		m_Position += glm::cross(m_ForwardVector, m_UpVector) * vec.x;
+		if (viewMode == ViewMode::Perspective)
+		{
+			m_Position += m_ForwardVector * vec.z;
+			m_Position += m_UpVector * vec.y;
+			m_Position += glm::cross(m_ForwardVector, m_UpVector) * vec.x;
+		}
+		else if (viewMode == ViewMode::Ortho)
+		{
+			roll -= vec.y;
+			//LOG("Forward vec -> x:{}, y:{}, z:{}", m_ForwardVector.x, m_ForwardVector.y, m_ForwardVector.z);
+			glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.f), glm::radians(roll), -m_ForwardVector);
+			m_UpVector = glm::vec3(rotationMatrix * glm::vec4(m_UpVector, 0.0f));
+
+			m_Position -= glm::cross(m_ForwardVector, m_UpVector) * vec.x;
+			m_Position -= m_UpVector * vec.z;
+		}
 	}
 
 	glm::mat4 Camera::GetProjection() const
