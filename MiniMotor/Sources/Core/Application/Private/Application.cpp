@@ -2,6 +2,9 @@
 
 #include "ImGuiLayer.h"
 #include "Renderer.h"
+#include "Scene.h"
+#include "MesheComponent.h"
+#include "TransformComponent.h"
 
 #include "VertexArray.h"
 #include "OpenGLShader.h"
@@ -23,11 +26,14 @@ namespace Sunset
 
 	BasicApp::BasicApp()
 		: m_Window(nullptr)
+		, m_Scene(nullptr)
 	{
 		AppPtr = this;
 		LOG("BasicApp init")
 		m_Window = std::make_unique<WindowPC>(WindowData{});
 		m_Window->SetEventCallBack(std::bind(&BasicApp::OnEvents, AppPtr, std::placeholders::_1));
+
+		m_Scene = std::make_unique<Scene>();
 
 		imLayer = new Sunset::ImGuiLayer();
 		PushLayer(imLayer);
@@ -40,45 +46,32 @@ namespace Sunset
 	{
 		Init();
 
-		std::array<float, 9> Vertices = {
-			-.5f, -.5f, 0.f,
-			 .5f, -.5f, 0.f,
-			 .0f,  .5f, 0.f
-		};
 
-		std::array<uint32_t, 3> indices = { 0, 1, 2 };
-
-		std::shared_ptr<VertexArray> VAO = nullptr;
-		VAO.reset(VertexArray::Create());
-
-		std::shared_ptr<VertexBuffer> VBO = nullptr;
-		VBO.reset(VertexBuffer::Create(&Vertices[0], Vertices.size()));
-		VBO->SetLayout(
-			{
-				{ShaderDataType::Float3(), "aPos"}
-			});
-		VAO->AddVertexBuffer(VBO);
-
-		std::shared_ptr<IndexBuffer> EBO = nullptr;
-		EBO.reset(IndexBuffer::Create(&indices[0], indices.size()));
-
-		VAO->SetIndexBuffer(EBO);
-
-		std::shared_ptr<ShaderOGL> shader = std::make_shared<ShaderOGL>("../../MiniMotor/Sources/Shaders/vShader.vert", "../../MiniMotor/Sources/Shaders/fShader.frag");
+		std::shared_ptr<Sunset::ShaderOGL> shader = std::make_shared<Sunset::ShaderOGL>("../../MiniMotor/Sources/Shaders/vShader.vert", "../../MiniMotor/Sources/Shaders/fShader.frag");
 
 		double previousTime = m_Window->GetTime();
 		while (b_IsWinOpen)
 		{
 			double nextTime = m_Window->GetTime();
-			float deltatime = previousTime - nextTime;
+			float deltatime = nextTime - previousTime;
 			previousTime = nextTime;
 
-			m_Camera.Update((float)deltatime);
+			Update();
+			m_Scene->Update(deltatime);
+			m_Camera.Update(deltatime);
 
-			RenderCommand::SetClearColor({0.8, 0.2, 0.5, 0.1});
+			RenderCommand::SetClearColor({0.1, 0.1, 0.1, 1.0});
 			RenderCommand::Clear();
 			Renderer::BeginScene(m_Camera);
-			Renderer::Submit(shader, VAO);
+
+			auto IDs = m_Scene->entitys.view<MeshComponent, TransformComponent>();
+			for (auto ID : IDs)
+			{
+				auto mesh = m_Scene->entitys.get<MeshComponent>(ID);
+				auto trans = m_Scene->entitys.get<TransformComponent>(ID);
+				Renderer::Submit(shader, mesh(), trans(), mesh.color);
+			}
+			
 			Renderer::EndScene();
 
 			for (auto& layer : layerStack)

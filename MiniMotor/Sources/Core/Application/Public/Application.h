@@ -7,6 +7,7 @@
 
 namespace Sunset
 {
+	class Scene;
 	class ImGuiLayer;
 
 	class MM_API BasicApp
@@ -32,7 +33,9 @@ namespace Sunset
 
 		inline Win& GetWindow() { return *m_Window; };
 
-		inline static BasicApp& Get() { return *AppPtr; }
+		inline Scene& GetWorld() { return *m_Scene; };
+
+		inline static BasicApp& Get() { return *AppPtr; };
 
 		// todo : TMP
 		Camera* GetCam();
@@ -41,8 +44,10 @@ namespace Sunset
 
 		std::unique_ptr<Win> m_Window;
 
-		static BasicApp* AppPtr;
+		std::unique_ptr<Scene> m_Scene;
 
 		LayerStack layerStack;
+
+		static BasicApp* AppPtr;
 	};
 }

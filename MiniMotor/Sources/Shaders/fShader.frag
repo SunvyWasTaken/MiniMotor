@@ -44,6 +44,8 @@ in vec3 Normal;
 uniform Material material;
 uniform vec3 viewPos;
 
+uniform vec3 Color;
+
 uniform DirLight dirLight;
 
 #define NR_POINT_LIGHTS 4
@@ -103,5 +105,5 @@ void main()
     //result += CalcSpotLight(spotLight, norm, FragPos, viewDir);
     
     // FragColor = vec4(result, 1.0);
-    FragColor = vec4(0.1, 0.1, 1.0, 1.0);
+    FragColor = vec4(Color, 1.0);
 }

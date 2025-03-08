@@ -19,6 +19,8 @@ namespace Sunset
 		template <typename T>
 		T& GetComponent() const;
 
+		Scene* GetWorld() { return world; }
+
 	private:
 
 		void InitImpl(const entt::entity& _id, Scene* _world);

@@ -18,4 +18,26 @@ namespace Sunset
 		return glfwGetKey((GLFWwindow*)app.GetWindow().GetNativeWindow(), key) == GLFW_RELEASE;
 	}
 
+	glm::vec2 Inputs::GetMousePosition()
+	{
+		double x, y;
+		BasicApp& app = BasicApp::Get();
+		glfwGetCursorPos((GLFWwindow*)app.GetWindow().GetNativeWindow(), &x, &y);
+
+		auto height = app.GetWindow().GetHeight();
+		auto width = app.GetWindow().GetWidth();
+
+		if (x < 0)
+			x = 0;
+		else if (x > width)
+			x = width;
+
+		if (y < 0)
+			y = 0;
+		else if(y > height)
+			y = height;
+
+		return glm::vec2(x, y);
+	}
+
 }

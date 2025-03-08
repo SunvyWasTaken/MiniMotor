@@ -56,19 +56,19 @@ namespace Sunset
 	{
 		if (Inputs::IsKeyPressed(87))
 		{
-			UpdateLocation(glm::vec3{ 0.f, 0.f, 1.f } * deltatime * MovementSpeed);
+			UpdateLocation(glm::vec3{ 0.f, 0.f,-1.f } * deltatime * MovementSpeed);
 		}
 		if (Inputs::IsKeyPressed(83))
 		{
-			UpdateLocation(glm::vec3{ 0.f, 0.f, -1.f } * deltatime * MovementSpeed);
+			UpdateLocation(glm::vec3{ 0.f, 0.f, 1.f } * deltatime * MovementSpeed);
 		}
 		if (Inputs::IsKeyPressed(68))
 		{
-			UpdateLocation(glm::vec3{ 1.f, 0.f, 0.f } * deltatime * MovementSpeed);
+			UpdateLocation(glm::vec3{-1.f, 0.f, 0.f } * deltatime * MovementSpeed);
 		}
 		if (Inputs::IsKeyPressed(65))
 		{
-			UpdateLocation(glm::vec3{ -1.f, 0.f, 0.f } * deltatime * MovementSpeed);
+			UpdateLocation(glm::vec3{ 1.f, 0.f, 0.f } * deltatime * MovementSpeed);
 		}
 		if (Inputs::IsKeyPressed(69))
 		{
@@ -88,7 +88,10 @@ namespace Sunset
 		}
 		else if (viewMode == ViewMode::Ortho)
 		{
-			return glm::inverse(glm::translate(glm::mat4(1.f), m_Position) * glm::rotate(glm::mat4(1.f), glm::radians(roll), glm::vec3(0, 0, 1)));
+			glm::mat4 view = glm::mat4(1.f);
+			view = glm::translate(view, m_Position);
+			view = glm::rotate(view, glm::radians(roll), glm::vec3(0, 0, 1));
+			return glm::inverse(view);
 		}
 		return glm::mat4(1.f);
 	}
@@ -136,7 +139,7 @@ namespace Sunset
 		}
 		else if (viewMode == ViewMode::Ortho)
 		{
-			float LimitRotation = 360.f;
+			constexpr float LimitRotation = 360.f;
 			roll -= vec.y;
 			if (roll > LimitRotation)
 				roll -= LimitRotation;
@@ -161,7 +164,7 @@ namespace Sunset
 		}
 		else if (viewMode == Sunset::ViewMode::Ortho)
 		{
-			float multi = 2;
+			constexpr float multi = 4;
 			float width = (Res.y / Res.x) * multi;
 			float heigh = (1 - (Res.y / Res.x)) * multi;
 			return glm::ortho(-width, width, -heigh, heigh, -1.f, 100.f);

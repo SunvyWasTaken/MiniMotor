@@ -1,6 +1,5 @@
 #pragma once
 
-
 #define NEW_TEXTURE_TYPE(_name) struct _name { constexpr inline decltype(auto) name() const { return #_name; }; };
 
 namespace Sunset
@@ -20,6 +19,8 @@ namespace Sunset
 			, type(_type)
 		{
 		}
+
+		void Bind();
 
 		bool isValid;
 		uint32_t id;

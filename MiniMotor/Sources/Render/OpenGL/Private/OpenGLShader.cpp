@@ -101,6 +101,11 @@ namespace Sunset
 		glUseProgram(_id);
 	}
 
+	void ShaderOGL::UnBind()
+	{
+		glUseProgram(_id);
+	}
+
 	void ShaderOGL::Set1I(const std::string& target, const int value)
 	{
 		glUniform1i(glGetUniformLocation(_id, target.c_str()), value);

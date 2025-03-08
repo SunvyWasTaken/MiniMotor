@@ -1,7 +1,9 @@
 #pragma once
 
-#include "RenderCommand.h"
 #include "Camera.h"
+#include "RenderCommand.h"
+#include "TransformComponent.h"
+
 
 namespace Sunset
 {
@@ -13,7 +15,7 @@ namespace Sunset
 		static void BeginScene(Camera& m_camera);
 		static void EndScene();
 
-		static void Submit(const std::shared_ptr<ShaderOGL>& shader, const std::shared_ptr<VertexArray>& vertexArray);
+		static void Submit(const std::shared_ptr<ShaderOGL>& shader, const std::shared_ptr<VertexArray>& vertexArray, const Transform& transform, const glm::vec3& color);
 
 		inline static Render::Type GetAPI() { return RendererApi::GetAPI(); }
 	};

@@ -27,13 +27,17 @@ namespace Sunset
 	{
 	}
 
-	void Renderer::Submit(const std::shared_ptr<ShaderOGL>& shader, const std::shared_ptr<VertexArray>& vertexArray)
+	void Renderer::Submit(const std::shared_ptr<ShaderOGL>& shader, const std::shared_ptr<VertexArray>& vertexArray, const Transform& transform, const glm::vec3& color)
 	{
 		shader->Use();
 		shader->SetMatrice4("view", m_SceneData.ViewMatrix);
 		shader->SetMatrice4("projection", m_SceneData.ProjectionMatrix);
-		shader->SetMatrice4("model", glm::mat4(1.f));
+		shader->SetMatrice4("model", transform.GetModel());
+
+		shader->SetVec3F("Color", color);
+
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
+		shader->UnBind();
 	}
 }

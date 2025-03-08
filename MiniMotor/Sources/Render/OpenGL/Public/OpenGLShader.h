@@ -12,6 +12,8 @@ namespace Sunset
 
 		void Use();
 
+		void UnBind();
+
 		void Set1I(const std::string& target, const int value);
 
 		void Set1F(const std::string& target, const float value);

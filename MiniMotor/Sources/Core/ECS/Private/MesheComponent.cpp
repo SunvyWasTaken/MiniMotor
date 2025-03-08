@@ -1,6 +1,8 @@
 
 #include "MesheComponent.h"
-#include "Meshes.h"
+
+#include "Buffers.h"
+#include "VertexArray.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -9,52 +11,18 @@
 
 namespace
 {
-	// Todo : this should be temporary
-	std::vector<Sunset::Vertex> vertices = {
-		// positions						// normals					// texture coords
-		Sunset::Vertex{glm::vec3{-1.f, -1.f, -1.f},  glm::vec3{0.0f,  0.0f, -1.0f},  glm::vec2{0.0f, 0.0f}},
-		Sunset::Vertex{glm::vec3{ 1.f, -1.f, -1.f},  glm::vec3{0.0f,  0.0f, -1.0f},  glm::vec2{1.0f, 0.0f}},
-		Sunset::Vertex{glm::vec3{ 1.f,  1.f, -1.f},  glm::vec3{0.0f,  0.0f, -1.0f},  glm::vec2{1.0f, 1.0f}},
-		Sunset::Vertex{glm::vec3{ 1.f,  1.f, -1.f},  glm::vec3{0.0f,  0.0f, -1.0f},  glm::vec2{1.0f, 1.0f}},
-		Sunset::Vertex{glm::vec3{-1.f,  1.f, -1.f},  glm::vec3{0.0f,  0.0f, -1.0f},  glm::vec2{0.0f, 1.0f}},
-		Sunset::Vertex{glm::vec3{-1.f, -1.f, -1.f},  glm::vec3{0.0f,  0.0f, -1.0f},  glm::vec2{0.0f, 0.0f}},
 
-		Sunset::Vertex{glm::vec3{-1.f, -1.f,  1.f},  glm::vec3{0.0f,  0.0f, 1.0f},   glm::vec2{0.0f, 0.0f}},
-		Sunset::Vertex{glm::vec3{ 1.f, -1.f,  1.f},  glm::vec3{0.0f,  0.0f, 1.0f},   glm::vec2{1.0f, 0.0f}},
-		Sunset::Vertex{glm::vec3{ 1.f,  1.f,  1.f},  glm::vec3{0.0f,  0.0f, 1.0f},   glm::vec2{1.0f, 1.0f}},
-		Sunset::Vertex{glm::vec3{ 1.f,  1.f,  1.f},  glm::vec3{0.0f,  0.0f, 1.0f},   glm::vec2{1.0f, 1.0f}},
-		Sunset::Vertex{glm::vec3{-1.f,  1.f,  1.f},  glm::vec3{0.0f,  0.0f, 1.0f},   glm::vec2{0.0f, 1.0f}},
-		Sunset::Vertex{glm::vec3{-1.f, -1.f,  1.f},  glm::vec3{0.0f,  0.0f, 1.0f},   glm::vec2{0.0f, 0.0f}},
-
-		Sunset::Vertex{glm::vec3{-1.f,  1.f,  1.f}, glm::vec3{-1.0f,  0.0f,  0.0f},  glm::vec2{1.0f, 0.0f}},
-		Sunset::Vertex{glm::vec3{-1.f,  1.f, -1.f}, glm::vec3{-1.0f,  0.0f,  0.0f},  glm::vec2{1.0f, 1.0f}},
-		Sunset::Vertex{glm::vec3{-1.f, -1.f, -1.f}, glm::vec3{-1.0f,  0.0f,  0.0f},  glm::vec2{0.0f, 1.0f}},
-		Sunset::Vertex{glm::vec3{-1.f, -1.f, -1.f}, glm::vec3{-1.0f,  0.0f,  0.0f},  glm::vec2{0.0f, 1.0f}},
-		Sunset::Vertex{glm::vec3{-1.f, -1.f,  1.f}, glm::vec3{-1.0f,  0.0f,  0.0f},  glm::vec2{0.0f, 0.0f}},
-		Sunset::Vertex{glm::vec3{-1.f,  1.f,  1.f}, glm::vec3{-1.0f,  0.0f,  0.0f},  glm::vec2{1.0f, 0.0f}},
-
-		Sunset::Vertex{glm::vec3{ 1.f,  1.f,  1.f},  glm::vec3{1.0f,  0.0f,  0.0f},  glm::vec2{1.0f, 0.0f}},
-		Sunset::Vertex{glm::vec3{ 1.f,  1.f, -1.f},  glm::vec3{1.0f,  0.0f,  0.0f},  glm::vec2{1.0f, 1.0f}},
-		Sunset::Vertex{glm::vec3{ 1.f, -1.f, -1.f},  glm::vec3{1.0f,  0.0f,  0.0f},  glm::vec2{0.0f, 1.0f}},
-		Sunset::Vertex{glm::vec3{ 1.f, -1.f, -1.f},  glm::vec3{1.0f,  0.0f,  0.0f},  glm::vec2{0.0f, 1.0f}},
-		Sunset::Vertex{glm::vec3{ 1.f, -1.f,  1.f},  glm::vec3{1.0f,  0.0f,  0.0f},  glm::vec2{0.0f, 0.0f}},
-		Sunset::Vertex{glm::vec3{ 1.f,  1.f,  1.f},  glm::vec3{1.0f,  0.0f,  0.0f},  glm::vec2{1.0f, 0.0f}},
-
-		Sunset::Vertex{glm::vec3{-1.f, -1.f, -1.f},  glm::vec3{0.0f, -1.0f,  0.0f},  glm::vec2{0.0f, 1.0f}},
-		Sunset::Vertex{glm::vec3{ 1.f, -1.f, -1.f},  glm::vec3{0.0f, -1.0f,  0.0f},  glm::vec2{1.0f, 1.0f}},
-		Sunset::Vertex{glm::vec3{ 1.f, -1.f,  1.f},  glm::vec3{0.0f, -1.0f,  0.0f},  glm::vec2{1.0f, 0.0f}},
-		Sunset::Vertex{glm::vec3{ 1.f, -1.f,  1.f},  glm::vec3{0.0f, -1.0f,  0.0f},  glm::vec2{1.0f, 0.0f}},
-		Sunset::Vertex{glm::vec3{-1.f, -1.f,  1.f},  glm::vec3{0.0f, -1.0f,  0.0f},  glm::vec2{0.0f, 0.0f}},
-		Sunset::Vertex{glm::vec3{-1.f, -1.f, -1.f},  glm::vec3{0.0f, -1.0f,  0.0f},  glm::vec2{0.0f, 1.0f}},
-
-		Sunset::Vertex{glm::vec3{-1.f,  1.f, -1.f},  glm::vec3{0.0f,  1.0f,  0.0f},  glm::vec2{0.0f, 1.0f}},
-		Sunset::Vertex{glm::vec3{ 1.f,  1.f, -1.f},  glm::vec3{0.0f,  1.0f,  0.0f},  glm::vec2{1.0f, 1.0f}},
-		Sunset::Vertex{glm::vec3{ 1.f,  1.f,  1.f},  glm::vec3{0.0f,  1.0f,  0.0f},  glm::vec2{1.0f, 0.0f}},
-		Sunset::Vertex{glm::vec3{ 1.f,  1.f,  1.f},  glm::vec3{0.0f,  1.0f,  0.0f},  glm::vec2{1.0f, 0.0f}},
-		Sunset::Vertex{glm::vec3{-1.f,  1.f,  1.f},  glm::vec3{0.0f,  1.0f,  0.0f},  glm::vec2{0.0f, 0.0f}},
-		Sunset::Vertex{glm::vec3{-1.f,  1.f, -1.f},  glm::vec3{0.0f,  1.0f,  0.0f},  glm::vec2{0.0f, 1.0f}}
+	std::array<float, 12> Vertices = {
+		-.1f, -.1f, 0.f,
+		 .1f, -.1f, 0.f,
+		 .1f,  .1f, 0.f,
+		-.1f,  .1f, 0.f
 	};
 
+	std::array<uint32_t, 6> indices = { 0, 1, 2, 3, 2, 0 };
+
+	// This function only support JPG and PNG
+	// Might cuz issue with image with less or more channel than 3 and 4.
 	uint32_t LoadTexture(const std::string& path)
 	{
 		uint32_t texture;
@@ -86,9 +54,27 @@ namespace
 namespace Sunset
 {
 	MeshComponent::MeshComponent(const NamesList& names)
+		: color(glm::vec3(1.f))
+		, VAO(nullptr)
+		, VBO(nullptr)
+		, EBO(nullptr)
 	{
 		InitTextures(m_Textures, names, std::make_index_sequence<std::variant_size_v<TextureType>>{});
-		m_Mesh = std::make_unique<Mesh>(vertices, m_Textures);
+	
+		VAO.reset(Sunset::VertexArray::Create());
+
+		std::shared_ptr<Sunset::VertexBuffer> VBO = nullptr;
+		VBO.reset(Sunset::VertexBuffer::Create(&Vertices[0], Vertices.size()));
+		VBO->SetLayout(
+			{
+				{Sunset::ShaderDataType::Float3(), "aPos"}
+			});
+		VAO->AddVertexBuffer(VBO);
+
+		std::shared_ptr<Sunset::IndexBuffer> EBO = nullptr;
+		EBO.reset(Sunset::IndexBuffer::Create(&indices[0], indices.size()));
+
+		VAO->SetIndexBuffer(EBO);
 	}
 
 	MeshComponent::~MeshComponent()
@@ -99,9 +85,14 @@ namespace Sunset
 		}
 	}
 
-	Mesh* MeshComponent::operator()()
+	std::shared_ptr<VertexArray>& MeshComponent::operator()()
 	{
-		return m_Mesh.get();
+		return VAO;
+	}
+
+	TextureList& MeshComponent::GetTextures()
+	{
+		return m_Textures;
 	}
 }
 
