@@ -28,14 +28,12 @@ namespace Sunset
 {
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
-		LOG("VAO creation")
 		glCreateVertexArrays(1, &m_RendererID);
 		glBindVertexArray(m_RendererID);
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
-		LOG("VAO destruction")
 		glDeleteVertexArrays(1, &m_RendererID);
 	}
 
@@ -51,7 +49,6 @@ namespace Sunset
 
 	void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer)
 	{
-		SCOPE_PROFILING("AddVertexBuffer")
 		glBindVertexArray(m_RendererID);
 		vertexBuffer->Bind();
 
@@ -59,7 +56,6 @@ namespace Sunset
 		const auto& layout = vertexBuffer->GetLayout();
 		for (const auto& element : layout)
 		{
-			LOG("Vert attrib : {}, {}, {}, {}", index, element.GetComponentCount(), layout.GetStride(), element.Offset);
 			glEnableVertexAttribArray(index);
 			glVertexAttribPointer(index,
 				element.GetComponentCount(),
@@ -74,7 +70,6 @@ namespace Sunset
 
 	void OpenGLVertexArray::SetIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer)
 	{
-		LOG("Set Index buffer")
 		glBindVertexArray(m_RendererID);
 		indexBuffer->Bind();
 

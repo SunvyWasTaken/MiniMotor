@@ -40,6 +40,10 @@ namespace Sunset
 		// todo : TMP
 		Camera* GetCam();
 
+	public:
+
+		float deltatime;
+
 	private:
 
 		std::unique_ptr<Win> m_Window;

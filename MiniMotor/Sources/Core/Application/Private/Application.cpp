@@ -53,7 +53,7 @@ namespace Sunset
 		while (b_IsWinOpen)
 		{
 			double nextTime = m_Window->GetTime();
-			float deltatime = nextTime - previousTime;
+			deltatime = nextTime - previousTime;
 			previousTime = nextTime;
 
 			Update();
@@ -74,10 +74,10 @@ namespace Sunset
 			
 			Renderer::EndScene();
 
-			for (auto& layer : layerStack)
-			{
-				layer->OnUpdate();
-			}
+			//for (auto& layer : layerStack)
+			//{
+			//	layer->OnUpdate();
+			//}
 
 			imLayer->Begin();
 			for (auto& layer : layerStack)

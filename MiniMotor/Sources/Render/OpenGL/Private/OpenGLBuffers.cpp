@@ -28,7 +28,6 @@ namespace Sunset
 	OpenGlVertexBuffer::OpenGlVertexBuffer(float* vertices, size_t size)
 		: m_RenderID(0)
 	{
-		LOG("VBO creation")
 		glGenBuffers(1, &m_RenderID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_RenderID);
 		glBufferData(GL_ARRAY_BUFFER, size * sizeof(float), vertices, GL_STATIC_DRAW);
@@ -36,7 +35,6 @@ namespace Sunset
 
 	OpenGlVertexBuffer::~OpenGlVertexBuffer()
 	{
-		LOG("VBO destruction")
 		glDeleteBuffers(1, &m_RenderID);
 	}
 	
@@ -57,7 +55,6 @@ namespace Sunset
 	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, size_t count)
 		: m_Count(count)
 	{
-		LOG("EBO creation")
 		glGenBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
@@ -65,13 +62,11 @@ namespace Sunset
 
 	OpenGLIndexBuffer::~OpenGLIndexBuffer()
 	{
-		LOG("EBO destruction")
 		glDeleteBuffers(1, &m_RendererID);
 	}
 
 	void OpenGLIndexBuffer::Bind() const
 	{
-		LOG("Bind index")
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
 	}
 

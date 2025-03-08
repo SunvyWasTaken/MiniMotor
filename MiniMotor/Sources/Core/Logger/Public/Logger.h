@@ -9,7 +9,7 @@ namespace Sunset
 		static MsgList& Get();
 	};
 
-	struct Mesure
+	struct MM_API Mesure
 	{
 		explicit Mesure(const std::string& text);
 		~Mesure();

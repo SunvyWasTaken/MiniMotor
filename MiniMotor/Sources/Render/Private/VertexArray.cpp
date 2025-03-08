@@ -7,7 +7,6 @@ namespace Sunset
 {
 	VertexArray::~VertexArray()
 	{
-		LOG("Vertex array destruction")
 	}
 
 	VertexArray* VertexArray::Create()

@@ -7,7 +7,7 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-#include "glfw/glfw3.h"
+#include <glfw/glfw3.h>
 
 namespace Sunset
 {
@@ -71,14 +71,17 @@ namespace Sunset
 
 		//ImGui::End();
 
-		bool show = true;
-		ImGui::ShowDemoWindow(&show);
+		//bool show = true;
+		//ImGui::ShowDemoWindow(&show);
 
-		ImGui::Begin("Camera info");
+		ImGui::Begin("Data");
+		BasicApp& app = BasicApp::Get();
+		std::string text = std::format("Deltatime : {}s", app.deltatime);
+		ImGui::Text(text.c_str());
 
-		Camera* cam = BasicApp::Get().GetCam();
+		Camera* cam = app.GetCam();
 		ImGui::Text("Camera info:");
-		std::string text = std::format("	Position : x:{}, y:{}, z:{}", cam->m_Position.x, cam->m_Position.y, cam->m_Position.z);
+		text = std::format("	Position : x:{}, y:{}, z:{}", cam->m_Position.x, cam->m_Position.y, cam->m_Position.z);
 		ImGui::Text(text.c_str());
 		text = std::format("	UpVector : x:{}, y:{}, z:{}", cam->m_UpVector.x, cam->m_UpVector.y, cam->m_UpVector.z);
 		ImGui::Text(text.c_str());
@@ -120,6 +123,7 @@ namespace Sunset
 	void ImGuiLayer::End()
 	{
 		ImGui::Render();
+
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		ImGuiIO& io = ImGui::GetIO();
 

@@ -103,7 +103,7 @@ namespace Sunset
 
 	void ShaderOGL::UnBind()
 	{
-		glUseProgram(_id);
+		glUseProgram(0);
 	}
 
 	void ShaderOGL::Set1I(const std::string& target, const int value)

@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "ImGuiLayer.h"
 #include "Inputs.h"
+#include "Logger.h"
 #include "MesheComponent.h"
 #include "OpenGLShader.h"
 #include "TransformComponent.h"

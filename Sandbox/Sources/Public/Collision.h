@@ -24,11 +24,11 @@ void TestAndResolveCollision(T1& a, T2& b)
 }
 
 template <typename T1, typename T2>
-bool TestCollision(const T1& a, const T2& b)
+inline bool TestCollision(const T1& a, const T2& b)
 {}
 
 template <>
-bool TestCollision(const Sphere& a, const Sphere& b)
+inline bool TestCollision(const Sphere& a, const Sphere& b)
 {
 	glm::vec3 vecDirection = b.Location - a.Location;
 	float Distance = vecDirection.x * vecDirection.x + vecDirection.y * vecDirection.y + vecDirection.z * vecDirection.z;
@@ -38,19 +38,19 @@ bool TestCollision(const Sphere& a, const Sphere& b)
 }
 
 template <>
-bool TestCollision(const Rect& a, const Sphere& b)
+inline bool TestCollision(const Rect& a, const Sphere& b)
 {
 	return false;
 }
 
 template <>
-bool TestCollision(const Sphere& a, const Rect& b)
+inline bool TestCollision(const Sphere& a, const Rect& b)
 {
 	return TestCollision(b, a);
 }
 
 template <>
-bool TestCollision(const Rect& a, const Rect& b)
+inline bool TestCollision(const Rect& a, const Rect& b)
 {
 	// Pour l'axe X
 	if (fabs(a.Location.x - b.Location.x) > (a.Width + b.Width))

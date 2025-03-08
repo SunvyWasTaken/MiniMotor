@@ -2,7 +2,10 @@
 #include "Collision.h"
 #include "Quadtree.h"
 
-#define ALOG(x, ...) std::cerr << std::format(x, ##__VA_ARGS__) << std::endl;
+constexpr int NbrRow = 55;
+
+// nbr de cube dans la scene
+constexpr int Nbr = NbrRow * NbrRow;
 
 class Cursor : public Sunset::Entity
 {
@@ -73,13 +76,14 @@ class DefaultApp : public Sunset::BasicApp
 public:
 	void Init()
 	{
+		quad = Quadtree<Rect>(glm::vec3(0), glm::vec3{3000, 3000, 1});
 		cur = GetWorld().SpawnEntity<Cursor>();
 		float y = 0;
 		float x = 0;
-		for (uint8_t i = 0; i < 100; ++i)
+		for (uint32_t i = 0; i < Nbr; ++i)
 		{
-			constexpr float Size = 0.4f;
-			auto val = i%10;
+			constexpr float Size = 0.21f;
+			auto val = i%NbrRow;
 			if (val == 0)
 			{
 				x = 0;
@@ -88,6 +92,12 @@ public:
 			++x;
 			
 			walls[i] = GetWorld().SpawnEntity<CubeStatic>(Sunset::Transform{x * Size - 2.f, y * Size - 2.f, 0.f});
+
+			Rect tmp;
+			tmp.Location = { x * Size - 2.f, y * Size - 2.f, 0.f };
+			tmp.Height = 0.1f;
+			tmp.Width = 0.1f;
+			quad.Push(tmp);
 		}
 	};
 
@@ -98,23 +108,32 @@ public:
 		Cusor.Height = 0.1;
 		Cusor.Width = 0.1;
 
-		Rect Wall;
+		Rect Wall1;
+		Wall1.Height = 0.1f;
+		Wall1.Width = 0.1f;
+
 		for (auto wa : walls)
 		{
-			Wall.Location = wa->trans.pos;
-			Wall.Height = 0.1f;
-			Wall.Width = 0.1f;
+			wa->SetColor(glm::vec3(1.f));
+			Wall1.Location = wa->GetComponent<Sunset::TransformComponent>().GetLocation();
 
-			if (TestCollision(Cusor, Wall))
-				wa->SetColor({0.1, 0.8, 0.9});
+			if (TestCollision(Cusor, Wall1))
+				wa->SetColor({ 0.1, 0.8, 0.9 });
+		}
 
-			else
-				wa->SetColor(glm::vec3(1.f));
+		std::vector<Rect> res;
+
+		quad.Get(Cusor, res);
+
+		for (auto& tmp : res)
+		{
+			std::cerr << "Collision with : " << tmp.Location.x << " " << tmp.Location.y << std::endl;
 		}
 	};
 
 	Cursor* cur = nullptr;
-	std::array<CubeStatic*, 100> walls;
+	std::array<CubeStatic*, Nbr> walls;
+	Quadtree<Rect> quad;
 };
 
 

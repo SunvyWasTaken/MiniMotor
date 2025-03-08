@@ -38,6 +38,7 @@ namespace Sunset
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
+
 		shader->UnBind();
 	}
 }

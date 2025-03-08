@@ -59,7 +59,7 @@ namespace Sunset
 		, VBO(nullptr)
 		, EBO(nullptr)
 	{
-		InitTextures(m_Textures, names, std::make_index_sequence<std::variant_size_v<TextureType>>{});
+		//InitTextures(m_Textures, names, std::make_index_sequence<std::variant_size_v<TextureType>>{});
 	
 		VAO.reset(Sunset::VertexArray::Create());
 
