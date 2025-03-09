@@ -11,5 +11,6 @@ namespace Sunset
 		virtual void Clear() override;
 
 		virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray) override;
+		virtual void DrawLine(const std::vector<glm::vec2>& vertexArray) override;
 	};
 }

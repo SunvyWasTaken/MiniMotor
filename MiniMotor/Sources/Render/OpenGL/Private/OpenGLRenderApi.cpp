@@ -19,4 +19,9 @@ namespace Sunset
 	{
 		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 	}
+
+	void OpenGLRendererAPI::DrawLine(const std::vector<glm::vec2>& vertexArray)
+	{
+		glDrawArrays(GL_LINES, 0, vertexArray.size());
+	}
 }

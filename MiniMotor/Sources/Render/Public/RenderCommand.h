@@ -21,6 +21,11 @@ namespace Sunset
 		{
 			s_RendererAPI->DrawIndexed(vertexArray);
 		}
+
+		inline static void DrawLine(const std::vector<glm::vec2>& points)
+		{
+			s_RendererAPI->DrawLine(points);
+		}
 	private:
 		static RendererApi* s_RendererAPI;
 	};

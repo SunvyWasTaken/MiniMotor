@@ -18,6 +18,12 @@ namespace Sunset
 		return glfwGetKey((GLFWwindow*)app.GetWindow().GetNativeWindow(), key) == GLFW_RELEASE;
 	}
 
+	bool Inputs::IsMouseButtonPressed(int32_t button)
+	{
+		BasicApp& app = BasicApp::Get();
+		return glfwGetMouseButton((GLFWwindow*)app.GetWindow().GetNativeWindow(), button) == GLFW_PRESS;
+	}
+
 	glm::vec2 Inputs::GetMousePosition()
 	{
 		double x, y;
